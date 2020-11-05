@@ -91,8 +91,13 @@ class DataDownloader(object):
             pool.apply_async(DataDownloader.output_img, args=(out_dir, p_idx, maker, label_str, url, True))
             if idx % 1000 == 0:
                 print('[Info] idx: {}'.format(idx))
+                break  # 测试
 
-        print('[Info] 下载完成: {}'.format(data_path))
+        # 多进程逻辑
+        pool.close()
+        pool.join()
+
+        print('[Info] 图像下载完成: {}'.format(data_path))
 
     def process_folder(self, task_folder, out_dir):
         """
@@ -106,10 +111,6 @@ class DataDownloader(object):
 
         for path, name in zip(paths_list, names_list):
             self.process_excel(path, out_dir, pool)  # 处理excel文件
-
-        # 多进程逻辑
-        pool.close()
-        pool.join()
 
         print('[Info] 全部下载完成')
 
