@@ -35,7 +35,12 @@ class DataDownloader(object):
         解析数据, 获取boxes列表
         """
         bbox_list = []
-        box_list = json.loads(boxes_str)
+        try:
+            box_list = json.loads(boxes_str)
+        except Exception as e:
+            print('[Exception] boxes_str: {}'.format(boxes_str))
+            return False, bbox_list
+
         boxes = box_list[0]
 
         n_box = len(boxes)
@@ -75,10 +80,11 @@ class DataDownloader(object):
         处理excel文件
         """
         # 标签: ["index", "markTime", "checkLabel", "label", "checker", "url", "marker", "_id", "taskId"]
+        # 不指定names, 指定header，则数据以header的文本为keys
         pd_data = pd.read_csv(
             data_path,
-            header=0,
-            names=["index", "markTime", "checkLabel", "label", "checker", "url", "marker", "_id", "taskId"]
+            header=0
+            # names=["index", "markTime", "checkLabel", "label", "checker", "url", "marker", "_id", "taskId"]
         )
 
         labels = pd_data["label"]
@@ -86,13 +92,14 @@ class DataDownloader(object):
         indexes = pd_data["index"]
         makers = pd_data["marker"]
 
-        n_prc = 20
+        n_prc = 40
         pool = Pool(processes=n_prc)  # 多线程下载
 
         for idx, (p_idx, maker, label_str, url) in enumerate(zip(indexes, makers, labels, urls)):
             # 多进程存储图像
             pool.apply_async(DataDownloader.output_img, args=(out_dir, p_idx, maker, label_str, url))
-            if idx % 1000 == 0:
+            # DataDownloader.output_img(out_dir, p_idx, maker, label_str, url)  # 单进程调试
+            if (idx+1) % 1000 == 0:
                 print('[Info] idx: {}'.format(idx))
                 break  # 测试
 
@@ -112,7 +119,6 @@ class DataDownloader(object):
 
         for path, name in zip(paths_list, names_list):
             self.process_excel(path, out_dir)  # 处理excel文件
-            break
 
         print('[Info] 全部下载完成')
 
