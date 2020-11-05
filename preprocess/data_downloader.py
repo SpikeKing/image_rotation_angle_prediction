@@ -69,7 +69,8 @@ class DataDownloader(object):
         cv2.imwrite(out_path, img_bgr)
         print('[Info] 写入文件: {}'.format(out_path))
 
-    def process_excel(self, data_path, out_dir, pool):
+    @staticmethod
+    def process_excel(data_path, out_dir, pool):
         """
         处理excel文件
         """
