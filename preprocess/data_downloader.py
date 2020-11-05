@@ -91,7 +91,7 @@ class DataDownloader(object):
 
         for idx, (p_idx, maker, label_str, url) in enumerate(zip(indexes, makers, labels, urls)):
             # 多进程存储图像
-            pool.apply_async(DataDownloader.output_img, args=(out_dir, p_idx, maker, label_str, url, True))
+            pool.apply_async(DataDownloader.output_img, args=(out_dir, p_idx, maker, label_str, url))
             if idx % 1000 == 0:
                 print('[Info] idx: {}'.format(idx))
                 break  # 测试
@@ -112,6 +112,7 @@ class DataDownloader(object):
 
         for path, name in zip(paths_list, names_list):
             self.process_excel(path, out_dir)  # 处理excel文件
+            break
 
         print('[Info] 全部下载完成')
 
