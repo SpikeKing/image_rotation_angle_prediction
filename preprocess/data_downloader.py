@@ -70,7 +70,7 @@ class DataDownloader(object):
         print('[Info] 写入文件: {}'.format(out_path))
 
     @staticmethod
-    def process_excel(data_path, out_dir, pool):
+    def process_excel(data_path, out_dir):
         """
         处理excel文件
         """
@@ -85,6 +85,9 @@ class DataDownloader(object):
         urls = pd_data["url"]
         indexes = pd_data["index"]
         makers = pd_data["marker"]
+
+        n_prc = 20
+        pool = Pool(processes=n_prc)  # 多线程下载
 
         for idx, (p_idx, maker, label_str, url) in enumerate(zip(indexes, makers, labels, urls)):
             # 多进程存储图像
@@ -106,11 +109,9 @@ class DataDownloader(object):
         mkdir_if_not_exist(out_dir)
 
         paths_list, names_list = traverse_dir_files(task_folder)
-        n_prc = 40
-        pool = Pool(processes=n_prc)  # 多线程下载
 
         for path, name in zip(paths_list, names_list):
-            self.process_excel(path, out_dir, pool)  # 处理excel文件
+            self.process_excel(path, out_dir)  # 处理excel文件
 
         print('[Info] 全部下载完成')
 
