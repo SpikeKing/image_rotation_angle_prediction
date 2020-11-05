@@ -100,8 +100,8 @@ class DataDownloader(object):
             pool.apply_async(DataDownloader.output_img, args=(out_dir, p_idx, maker, label_str, url))
             # DataDownloader.output_img(out_dir, p_idx, maker, label_str, url)  # 单进程调试
             if (idx+1) % 1000 == 0:
-                print('[Info] idx: {}'.format(idx))
-                break  # 测试
+                print('[Info] idx: {}'.format(idx+1))
+                # break  # 测试
 
         # 多进程逻辑
         pool.close()
