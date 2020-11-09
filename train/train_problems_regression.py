@@ -15,7 +15,7 @@ from train.data_utils import get_problems_data
 from root_dir import ROOT_DIR
 
 
-data_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_13w_512')
+data_path = os.path.join(ROOT_DIR, '..', '..', 'datasets', 'rotation_datasets_13w_512')
 train_filenames, test_filenames = get_problems_data(data_path)
 
 print(len(train_filenames), 'train samples')
