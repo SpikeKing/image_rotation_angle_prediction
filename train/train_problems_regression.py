@@ -61,7 +61,7 @@ early_stopping = EarlyStopping(patience=2)
 tensorboard = TensorBoard()
 
 # training loop
-model.fit_generator(
+model.fit(
     RotNetDataGenerator(
         train_filenames,
         input_shape=input_shape,
