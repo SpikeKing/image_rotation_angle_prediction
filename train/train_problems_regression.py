@@ -85,7 +85,7 @@ model.fit(
     ),
     validation_steps=len(test_filenames) / batch_size,
     callbacks=[checkpointer, early_stopping, tensorboard],
-    nb_worker=10,
-    pickle_safe=True,
+    # nb_worker=10,
+    # pickle_safe=True,
     verbose=1
 )
