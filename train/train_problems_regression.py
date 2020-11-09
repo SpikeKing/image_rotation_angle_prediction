@@ -9,13 +9,13 @@ from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Flatten
 
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import angle_error_regression, RotNetDataGenerator
 from train.data_utils import get_problems_data
+from root_dir import ROOT_DIR
 
 
-data_path = os.path.join('data', 'street_view')
+data_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_13w_512')
 train_filenames, test_filenames = get_problems_data(data_path)
 
 print(len(train_filenames), 'train samples')
@@ -46,7 +46,7 @@ model.compile(loss=angle_error_regression,
 
 # training parameters
 batch_size = 64
-nb_epoch = 50
+nb_epoch = 100
 
 output_folder = 'models'
 if not os.path.exists(output_folder):
