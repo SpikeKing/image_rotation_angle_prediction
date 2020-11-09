@@ -7,10 +7,17 @@ Created by C. L. Wang on 4.11.20
 
 import copy
 import os
+import sys
 
 import cv2
 import numpy as np
 import random
+
+from multiprocessing.pool import Pool
+
+p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if p not in sys.path:
+    sys.path.append(p)
 
 from myutils.cv_utils import get_patch, show_img_bgr
 from myutils.project_utils import traverse_dir_files, mkdir_if_not_exist, safe_div, shuffle_two_list
@@ -163,15 +170,14 @@ class DataProcessor(object):
         out_name = name.replace('.jpg', "") + ".p.jpg"
         out_path = os.path.join(out_dir, out_name)
 
-        # try:
-        img_bgr = cv2.imread(path)
-        print('[Info] path: {}'.format(path))
-        print('[Info] img_bgr: {}'.format(img_bgr.shape))
-        # is_ok, img_patch = DataProcessor.cut_img_without_margin(img_bgr)
-        img_patch = DataProcessor.cut_img_v2(img_bgr)
-        cv2.imwrite(out_path, img_patch)
-        # except Exception as e:
-        #     print('[Exception] out_path: {}'.format(out_path))
+        try:
+            img_bgr = cv2.imread(path)
+            # print('[Info] path: {}'.format(path))
+            # print('[Info] img_bgr: {}'.format(img_bgr.shape))
+            img_patch = DataProcessor.cut_img_v2(img_bgr)
+            cv2.imwrite(out_path, img_patch)
+        except Exception as e:
+            print('[Exception] out_path: {}'.format(out_path))
 
     def process_folder(self, in_dir, out_dir):
         """
@@ -187,13 +193,20 @@ class DataProcessor(object):
         random.seed(47)
         paths_list, names_list = shuffle_two_list(paths_list, names_list)
 
-        for idx, (path, name) in enumerate(zip(paths_list, names_list)):
-            DataProcessor.process_img(path, name, out_dir)
-            if (idx + 1) % 200 == 0:
-                print('[Info] num: {}'.format(idx + 1))
-                break
+        n_prc = 40
+        pool = Pool(processes=n_prc)  # 多线程下载
 
-        print('[Info] 处理完成!')
+        for idx, (path, name) in enumerate(zip(paths_list, names_list)):
+            pool.apply_async(DataProcessor.process_img, args=(path, name, out_dir))
+            # DataProcessor.process_img(path, name, out_dir)
+            if (idx + 1) % 1000 == 0:
+                print('[Info] num: {}'.format(idx + 1))
+
+        # 多进程逻辑
+        pool.close()
+        pool.join()
+
+        print('[Info] 处理完成! {}'.format(out_dir))
         return
 
 
@@ -215,8 +228,8 @@ def demo_of_process_folder():
     """
     dp = DataProcessor()
 
-    data_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'task-raw-out-512')
-    out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'task-raw-out-512-p')
+    data_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_13w_512')
+    out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_13w_512_p')
 
     dp.process_folder(data_dir, out_dir)
 
