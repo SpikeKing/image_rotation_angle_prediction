@@ -45,7 +45,7 @@ model.compile(loss=angle_error_regression,
               optimizer='adam')
 
 # training parameters
-batch_size = 64
+batch_size = 128
 nb_epoch = 100
 
 output_folder = 'models'
