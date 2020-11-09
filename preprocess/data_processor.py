@@ -153,7 +153,7 @@ class DataProcessor(object):
 
             h_offset = safe_div(25, h)
             w_offset = safe_div(25, w)
-            print(h_offset, w_offset)
+            # print(h_offset, w_offset)
 
             sh = int(h_offset * h)
             eh = int((1 - h_offset) * h)
