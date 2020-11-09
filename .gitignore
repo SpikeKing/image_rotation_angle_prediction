@@ -171,3 +171,5 @@ cython_debug/
 # mydata
 data/
 .idea/
+train/models/
+train/logs/
