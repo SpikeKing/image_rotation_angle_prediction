@@ -78,7 +78,7 @@ def check_error(img_dir):
     for path in paths_list:
         try:
             img_bgr = cv2.imread(path)
-            img_re = cv2.resize(img_dir, (224, 224))
+            img_re = cv2.resize(img_bgr, (224, 224))
         except Exception as e:
             print('[Info] Error: {}'.format(path))
             n_error += 1
