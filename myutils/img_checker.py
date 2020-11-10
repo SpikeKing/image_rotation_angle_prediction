@@ -75,7 +75,7 @@ def check_error(img_dir):
     print('[Info] 数据总量: {}'.format(len(paths_list)))
 
     n_error = 0  # 错误数量
-    for path in paths_list:
+    for idx, path in enumerate(paths_list):
         try:
             img_bgr = cv2.imread(path)
             img_re = cv2.resize(img_bgr, (224, 224))
@@ -83,6 +83,9 @@ def check_error(img_dir):
             print('[Info] Error: {}'.format(path))
             n_error += 1
             continue
+        if (idx+1) % 1000 == 0:
+            print('[Info] idx: {}'.format(idx+1))
+
     print('[Info] 错误图像数量: {}'.format(n_error))
 
 
