@@ -8,6 +8,8 @@ from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
+from tensorflow.keras.optimizers import Adam
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import angle_error_regression, RotNetDataGenerator
@@ -40,6 +42,14 @@ final_output = Dense(1, activation='sigmoid', name='fc1')(x)
 model = Model(inputs=base_model.input, outputs=final_output)
 
 model.summary()
+
+lr_schedule = ExponentialDecay(
+    initial_learning_rate=0.1,
+    decay_steps=1000,
+    decay_rate=0.9
+)
+
+optimizer = Adam(learning_rate=lr_schedule)
 
 # model compilation
 model.compile(loss=angle_error_regression,
