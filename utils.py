@@ -211,13 +211,17 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         else:
             width = height
 
-    image = rotate(image, angle)
+    try:
+        image = rotate(image, angle)
 
-    if crop_largest_rect:
-        image = crop_largest_rectangle(image, angle, height, width)
+        if crop_largest_rect:
+            image = crop_largest_rectangle(image, angle, height, width)
 
-    if size:
-        image = cv2.resize(image, size)
+        if size:
+            image = cv2.resize(image, size)
+    except Exception as e:
+        print('[Info] error: {}'.format(e))
+        print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
 
     return image
 
