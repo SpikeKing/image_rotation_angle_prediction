@@ -72,12 +72,12 @@ def traverse_dir_files(root_dir, ext=None):
     return paths_list, names_list
 
 
-def check_img(path):
+def check_img(path, size):
     is_good = True
     try:
         img_bgr = cv2.imread(path)
         h, w, _ = img_bgr.shape
-        if h < 20 or w < 20:
+        if h < size or w < size:
             is_good = False
         img_re = cv2.resize(img_bgr, (224, 224))
     except Exception as e:
@@ -90,7 +90,7 @@ def check_img(path):
     #     print('[Info] path: {}'.format(path))
 
 
-def check_error(img_dir, n_prc):
+def check_error(img_dir, n_prc, size):
     """
     检查错误图像的数量
     """
@@ -100,8 +100,8 @@ def check_error(img_dir, n_prc):
 
     pool = Pool(processes=n_prc)  # 多线程下载
     for idx, path in enumerate(paths_list):
-        check_img(path)
-        # pool.apply_async(check_img, path)
+        # check_img(path, size)
+        pool.apply_async(check_img, (path, size))
         if (idx+1) % 1000 == 0:
             print('[Info] idx: {}'.format(idx+1))
 
@@ -118,20 +118,23 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='压缩图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
-    parser.add_argument('-p', dest='n_prc', required=False, default=20, help='进程数', type=str)
+    parser.add_argument('-p', dest='n_prc', required=False, default=40, help='进程数', type=str)
+    parser.add_argument('-s', dest='size', required=False, default=40, help='最小边长', type=str)
     args = parser.parse_args()
 
     in_folder = args.in_folder
-    n_prc = args.n_prc
+    size = int(args.size)
+    n_prc = int(args.n_prc)
     print("文件路径：{}".format(in_folder))
     print("进程数: {}".format(n_prc))
+    print("边长: {}".format(size))
 
-    return in_folder, n_prc
+    return in_folder, n_prc, size
 
 
 def main():
-    arg_in, n_prc = parse_args()
-    check_error(arg_in, n_prc)
+    arg_in, n_prc, size = parse_args()
+    check_error(arg_in, n_prc, size)
 
 
 if __name__ == '__main__':
