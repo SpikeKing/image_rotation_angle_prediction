@@ -50,14 +50,14 @@ model = Model(inputs=base_model.input, outputs=final_output)
 # model.summary()
 
 lr_schedule = ExponentialDecay(
-    initial_learning_rate=0.001,
+    initial_learning_rate=0.01,
     decay_steps=10000,
     decay_rate=0.9
 )
 
 # model compilation
 model.compile(loss=angle_error_regression,
-              optimizer=Adam(learning_rate=0.01))
+              optimizer=Adam(learning_rate=lr_schedule))
 
 output_folder = 'models'
 if not os.path.exists(output_folder):
@@ -67,7 +67,7 @@ model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # training parameters
 batch_size = 128
-nb_epoch = 200
+nb_epoch = 400
 
 # callbacks
 checkpointer = ModelCheckpoint(
