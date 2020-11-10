@@ -84,6 +84,8 @@ def check_img(path):
 
     if not is_good:
         print('[Info] error path: {}'.format(path))
+    else:
+        print('[Info] path: {}'.format(path))
 
 
 def check_error(img_dir, n_prc):
@@ -95,8 +97,6 @@ def check_error(img_dir, n_prc):
     print('[Info] 数据总量: {}'.format(len(paths_list)))
 
     pool = Pool(processes=n_prc)  # 多线程下载
-
-    n_error = 0  # 错误数量
     for idx, path in enumerate(paths_list):
         pool.apply_async(check_img, path)
         if (idx+1) % 1000 == 0:
@@ -104,9 +104,6 @@ def check_error(img_dir, n_prc):
 
     pool.close()
     pool.join()
-
-    print('[Info] 错误图像数量: {}'.format(n_error))
-
 
 def parse_args():
     """
