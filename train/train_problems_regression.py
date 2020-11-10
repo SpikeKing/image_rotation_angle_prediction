@@ -50,7 +50,7 @@ model = Model(inputs=base_model.input, outputs=final_output)
 # model.summary()
 
 lr_schedule = ExponentialDecay(
-    initial_learning_rate=0.01,
+    initial_learning_rate=0.004,
     decay_steps=10000,
     decay_rate=0.9
 )
