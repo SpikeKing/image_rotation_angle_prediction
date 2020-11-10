@@ -14,7 +14,7 @@ from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.optimizers import Adam
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import angle_error_regression, RotNetDataGenerator
+from utils import angle_error_regression, RotNetDataGenerator, angle_error
 from train.data_utils import get_problems_data
 from root_dir import ROOT_DIR
 
@@ -26,7 +26,8 @@ train_filenames, test_filenames = get_problems_data(data_path)
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
-model_name = 'problem_rotnet_resnet50_regression'
+# model_name = 'problem_rotnet_resnet50_regression'
+model_name = 'problem_rotnet_resnet50_category'
 
 # input image shape
 input_shape = (224, 224, 3)
@@ -40,12 +41,23 @@ base_model = ResNet50(weights='imagenet', include_top=False,
                       input_shape=input_shape)
 
 # append classification layer
-x = base_model.output
-x = Flatten()(x)
-final_output = Dense(1, activation='sigmoid', name='fc1')(x)
+# x = base_model.output
+# x = Flatten()(x)
+# final_output = Dense(1, activation='sigmoid', name='fc1')(x)
 
 # create the new model
-model = Model(inputs=base_model.input, outputs=final_output)
+# model = Model(inputs=base_model.input, outputs=final_output)
+
+# number of classes
+nb_classes = 360
+
+# append classification layer
+x = base_model.output
+x = Flatten()(x)
+final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
+
+# create the new model
+model = Model(input=base_model.input, output=final_output)
 
 # model.summary()
 
@@ -56,14 +68,18 @@ lr_schedule = ExponentialDecay(
 )
 
 # model compilation
-model.compile(loss=angle_error_regression,
-              optimizer=Adam(learning_rate=lr_schedule))
+# model.compile(loss=angle_error_regression,
+#               optimizer=Adam(learning_rate=lr_schedule))
+
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics=[angle_error])
 
 output_folder = 'models'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
+# model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # training parameters
 batch_size = 128
