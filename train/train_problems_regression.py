@@ -3,6 +3,8 @@ from __future__ import print_function
 import os
 import sys
 
+import tensorflow as tf
+
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
@@ -29,41 +31,46 @@ model_name = 'problem_rotnet_resnet50_regression'
 # input image shape
 input_shape = (224, 224, 3)
 
-# load base model
-base_model = ResNet50(weights='imagenet', include_top=False,
-                      input_shape=input_shape)
+strategy = tf.distribute.MirroredStrategy()
+print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
-# append classification layer
-x = base_model.output
-x = Flatten()(x)
-final_output = Dense(1, activation='sigmoid', name='fc1')(x)
+# Open a strategy scope.
+with strategy.scope():
+    # load base model
+    base_model = ResNet50(weights='imagenet', include_top=False,
+                          input_shape=input_shape)
 
-# create the new model
-model = Model(inputs=base_model.input, outputs=final_output)
+    # append classification layer
+    x = base_model.output
+    x = Flatten()(x)
+    final_output = Dense(1, activation='sigmoid', name='fc1')(x)
 
-model.summary()
+    # create the new model
+    model = Model(inputs=base_model.input, outputs=final_output)
 
-lr_schedule = ExponentialDecay(
-    initial_learning_rate=0.001,
-    decay_steps=1000,
-    decay_rate=0.9
-)
+    # model.summary()
 
-optimizer = Adam(learning_rate=lr_schedule)
+    lr_schedule = ExponentialDecay(
+        initial_learning_rate=0.001,
+        decay_steps=1000,
+        decay_rate=0.9
+    )
 
-# model compilation
-model.compile(loss=angle_error_regression,
-              optimizer='adam')
+    optimizer = Adam(learning_rate=lr_schedule)
+
+    # model compilation
+    model.compile(loss=angle_error_regression,
+                  optimizer='adam')
+
+    output_folder = 'models'
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # training parameters
 batch_size = 128
 nb_epoch = 100
-
-output_folder = 'models'
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
-
-model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # callbacks
 checkpointer = ModelCheckpoint(
