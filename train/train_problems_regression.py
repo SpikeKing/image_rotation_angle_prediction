@@ -24,7 +24,7 @@ train_filenames, test_filenames = get_problems_data(data_path)
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
-model_name = 'rotnet_street_view_resnet50_regression'
+model_name = 'problem_rotnet_resnet50_regression'
 
 # input image shape
 input_shape = (224, 224, 3)
@@ -62,6 +62,8 @@ nb_epoch = 100
 output_folder = 'models'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
+
+model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # callbacks
 checkpointer = ModelCheckpoint(
