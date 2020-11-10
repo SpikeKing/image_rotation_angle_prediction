@@ -70,14 +70,14 @@ with strategy.scope():
 
 # training parameters
 batch_size = 512
-nb_epoch = 100
+nb_epoch = 200
 
 # callbacks
 checkpointer = ModelCheckpoint(
     filepath=os.path.join(output_folder, model_name + '.hdf5'),
     save_best_only=True
 )
-early_stopping = EarlyStopping(patience=2)
+early_stopping = EarlyStopping(patience=10)
 tensorboard = TensorBoard()
 
 # training loop

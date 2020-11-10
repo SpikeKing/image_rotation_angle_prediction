@@ -6,6 +6,8 @@ Created by C. L. Wang on 10.11.20
 """
 
 import os
+from multiprocessing import Pool
+
 import cv2
 import argparse
 
@@ -69,22 +71,39 @@ def traverse_dir_files(root_dir, ext=None):
     return paths_list, names_list
 
 
-def check_error(img_dir):
+def check_img(path):
+    is_good = True
+    try:
+        img_bgr = cv2.imread(path)
+        h, w, _ = img_bgr.shape
+        if h < 20 or w < 20:
+            is_good = False
+        img_re = cv2.resize(img_bgr, (224, 224))
+    except Exception as e:
+        is_good = False
+
+    if not is_good:
+        print('[Info] error path: {}'.format(path))
+
+
+def check_error(img_dir, n_prc):
+    """
+    检查错误图像的数量
+    """
     print('[Info] 处理文件夹路径: {}'.format(img_dir))
     paths_list, names_list = traverse_dir_files(img_dir)
     print('[Info] 数据总量: {}'.format(len(paths_list)))
 
+    pool = Pool(processes=n_prc)  # 多线程下载
+
     n_error = 0  # 错误数量
     for idx, path in enumerate(paths_list):
-        try:
-            img_bgr = cv2.imread(path)
-            img_re = cv2.resize(img_bgr, (224, 224))
-        except Exception as e:
-            print('[Info] Error: {}'.format(path))
-            n_error += 1
-            continue
+        pool.apply_async(check_img, path)
         if (idx+1) % 1000 == 0:
             print('[Info] idx: {}'.format(idx+1))
+
+    pool.close()
+    pool.join()
 
     print('[Info] 错误图像数量: {}'.format(n_error))
 
@@ -96,17 +115,20 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='压缩图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
+    parser.add_argument('-p', dest='n_prc', required=False, default=20, help='进程数', type=str)
     args = parser.parse_args()
 
     in_folder = args.in_folder
+    n_prc = args.n_prc
     print("文件路径：{}".format(in_folder))
+    print("进程数: {}".format(n_prc))
 
-    return in_folder
+    return in_folder, n_prc
 
 
 def main():
-    arg_in = parse_args()
-    check_error(arg_in)
+    arg_in, n_prc = parse_args()
+    check_error(arg_in, n_prc)
 
 
 if __name__ == '__main__':
