@@ -86,8 +86,8 @@ def check_img(path):
     if not is_good:
         print('[Info] error path: {}'.format(path))
         shutil.rmtree(path)
-    else:
-        print('[Info] path: {}'.format(path))
+    # else:
+    #     print('[Info] path: {}'.format(path))
 
 
 def check_error(img_dir, n_prc):
