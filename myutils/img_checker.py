@@ -119,7 +119,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='压缩图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
     parser.add_argument('-p', dest='n_prc', required=False, default=40, help='进程数', type=str)
-    parser.add_argument('-s', dest='size', required=False, default=40, help='最小边长', type=str)
+    parser.add_argument('-s', dest='size', required=False, default=50, help='最小边长', type=str)
     args = parser.parse_args()
 
     in_folder = args.in_folder
