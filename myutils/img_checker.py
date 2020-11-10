@@ -85,7 +85,7 @@ def check_img(path):
 
     if not is_good:
         print('[Info] error path: {}'.format(path))
-        shutil.rmtree(path)
+        os.remove(path)
     # else:
     #     print('[Info] path: {}'.format(path))
 
