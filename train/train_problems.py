@@ -46,7 +46,7 @@ model.summary()
 
 # model compilation
 model.compile(loss='categorical_crossentropy',
-              optimizer=SGD(lr=0.01, momentum=0.9),
+              optimizer=SGD(lr=0.001, momentum=0.9),
               metrics=[angle_error])
 
 # training parameters
