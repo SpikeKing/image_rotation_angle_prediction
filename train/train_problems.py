@@ -57,6 +57,9 @@ output_folder = 'models'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
+# 加载已有模型
+model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50_4.9835.hdf5'))
+
 # callbacks
 monitor = 'val_angle_error'
 checkpointer = ModelCheckpoint(
