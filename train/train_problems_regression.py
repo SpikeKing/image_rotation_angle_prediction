@@ -69,7 +69,7 @@ with strategy.scope():
     model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # training parameters
-batch_size = 128
+batch_size = 512
 nb_epoch = 100
 
 # callbacks
