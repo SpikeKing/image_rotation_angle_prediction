@@ -105,6 +105,9 @@ def check_error(img_dir, n_prc):
     pool.close()
     pool.join()
 
+    print('[Info] 数据处理完成: {}'.format(img_dir))
+
+
 def parse_args():
     """
     处理脚本参数，支持相对路径
