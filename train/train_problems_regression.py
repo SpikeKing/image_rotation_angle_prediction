@@ -57,7 +57,7 @@ x = Flatten()(x)
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
 # create the new model
-model = Model(input=base_model.input, output=final_output)
+model = Model(inputs=base_model.input, outputs=final_output)
 
 # model.summary()
 
