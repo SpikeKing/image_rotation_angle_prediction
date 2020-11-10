@@ -222,6 +222,8 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     except Exception as e:
         print('[Info] error: {}'.format(e))
         print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
+        image = np.ones((size[1], size[0], 3)) * 255
+        image = image.astype(np.uint8)
 
     return image
 
