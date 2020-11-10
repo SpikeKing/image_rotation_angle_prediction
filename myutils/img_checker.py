@@ -98,7 +98,8 @@ def check_error(img_dir, n_prc):
 
     pool = Pool(processes=n_prc)  # 多线程下载
     for idx, path in enumerate(paths_list):
-        pool.apply_async(check_img, path)
+        check_img(path)
+        # pool.apply_async(check_img, path)
         if (idx+1) % 1000 == 0:
             print('[Info] idx: {}'.format(idx+1))
 
