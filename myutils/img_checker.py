@@ -6,6 +6,7 @@ Created by C. L. Wang on 10.11.20
 """
 
 import os
+import shutil
 from multiprocessing import Pool
 
 import cv2
@@ -84,6 +85,7 @@ def check_img(path):
 
     if not is_good:
         print('[Info] error path: {}'.format(path))
+        shutil.rmtree(path)
     else:
         print('[Info] path: {}'.format(path))
 
