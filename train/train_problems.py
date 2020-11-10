@@ -51,7 +51,7 @@ model.compile(loss='categorical_crossentropy',
 
 # training parameters
 batch_size = 128
-nb_epoch = 50
+nb_epoch = 200
 
 output_folder = 'models'
 if not os.path.exists(output_folder):
