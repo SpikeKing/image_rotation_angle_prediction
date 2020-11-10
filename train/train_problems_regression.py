@@ -31,45 +31,44 @@ model_name = 'problem_rotnet_resnet50_regression'
 # input image shape
 input_shape = (224, 224, 3)
 
-strategy = tf.distribute.MirroredStrategy()
-print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
+# strategy = tf.distribute.MirroredStrategy()
+# print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
 # Open a strategy scope.
-with strategy.scope():
     # load base model
-    base_model = ResNet50(weights='imagenet', include_top=False,
-                          input_shape=input_shape)
+base_model = ResNet50(weights='imagenet', include_top=False,
+                      input_shape=input_shape)
 
-    # append classification layer
-    x = base_model.output
-    x = Flatten()(x)
-    final_output = Dense(1, activation='sigmoid', name='fc1')(x)
+# append classification layer
+x = base_model.output
+x = Flatten()(x)
+final_output = Dense(1, activation='sigmoid', name='fc1')(x)
 
-    # create the new model
-    model = Model(inputs=base_model.input, outputs=final_output)
+# create the new model
+model = Model(inputs=base_model.input, outputs=final_output)
 
-    # model.summary()
+# model.summary()
 
-    lr_schedule = ExponentialDecay(
-        initial_learning_rate=0.001,
-        decay_steps=10000,
-        decay_rate=0.9
-    )
+lr_schedule = ExponentialDecay(
+    initial_learning_rate=0.001,
+    decay_steps=10000,
+    decay_rate=0.9
+)
 
-    optimizer = Adam(learning_rate=lr_schedule)
+optimizer = Adam(learning_rate=lr_schedule)
 
-    # model compilation
-    model.compile(loss=angle_error_regression,
-                  optimizer='adam')
+# model compilation
+model.compile(loss=angle_error_regression,
+              optimizer='adam')
 
-    output_folder = 'models'
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+output_folder = 'models'
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
-    model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
+model.load_weights(os.path.join(output_folder, model_name + '.hdf5'))
 
 # training parameters
-batch_size = 512
+batch_size = 128
 nb_epoch = 200
 
 # callbacks
