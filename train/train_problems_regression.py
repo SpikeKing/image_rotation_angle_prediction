@@ -55,11 +55,9 @@ lr_schedule = ExponentialDecay(
     decay_rate=0.9
 )
 
-optimizer = Adam(learning_rate=lr_schedule)
-
 # model compilation
 model.compile(loss=angle_error_regression,
-              optimizer='adam')
+              optimizer=Adam(learning_rate=0.01))
 
 output_folder = 'models'
 if not os.path.exists(output_folder):
