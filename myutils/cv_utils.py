@@ -518,6 +518,29 @@ def merge_imgs(imgs, cols=6, rows=6, is_h=True):
     return large_imgs
 
 
+def merge_two_imgs(img1, img2):
+    """
+    左右合并2张图像, 高度相同, 宽度等比例变化
+    """
+    import cv2
+    import numpy as np
+
+    h1, w1, _ = img1.shape
+    h2, w2, _ = img2.shape
+    h = min(h1, h2)
+    n_w1 = int(w1 * h / h1)
+    n_w2 = int(w2 * h / h2)
+    n_img1 = cv2.resize(img1, (n_w1, h))
+    n_img2 = cv2.resize(img2, (n_w2, h))
+
+    large_img = np.ones((h, n_w1 + n_w2, 3)) * 255
+    large_img[:, 0: n_w1] = n_img1
+    large_img[:, n_w1: n_w1+n_w2] = n_img2
+    large_img = large_img.astype(np.uint8)
+
+    return large_img
+
+
 def rotate_img_with_bound(img_np, angle):
     """
     旋转图像角度
@@ -546,6 +569,23 @@ def rotate_img_with_bound(img_np, angle):
     # perform the actual rotation and return the image
     return cv2.warpAffine(img_np, M, (nW, nH))
 
+
+def resize_img_fixed(img, x, is_height=True):
+    """
+    resize图像，根据某一个边的长度
+    """
+    import cv2
+
+    h, w, _ = img.shape
+    if is_height:
+        nh = x
+        nw = int(w * nh / h)
+    else:
+        nw = x
+        nh = int(h * nw / w)
+
+    img_r = cv2.resize(img, (nw, nh))
+    return img_r
 
 def main():
     labels = [u'大型', u'中型', u'小型', u'微型']  # 定义标签
