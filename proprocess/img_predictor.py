@@ -8,10 +8,16 @@ import cv2
 import copy
 import json
 import os
+import sys
 import numpy as np
 import tensorflow.keras.backend as K
 
 from tensorflow_core.python.keras.models import load_model
+
+p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if p not in sys.path:
+    sys.path.append(p)
+
 from myutils.cv_utils import show_img_bgr, rotate_img_with_bound, merge_two_imgs, draw_text, resize_img_fixed
 from myutils.project_utils import *
 
