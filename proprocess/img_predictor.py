@@ -51,7 +51,7 @@ class ImgPredictor(object):
         # show_img_bgr(out_img_bgr)
         return angle
 
-    def process_item(self, data_dict):
+    def process_item(self, data_dict, out_dir):
         """
         处理单个数据
         """
@@ -65,7 +65,16 @@ class ImgPredictor(object):
         s_time = time.time()
         p_angle = self.predict_img(img_bgr)
         elapsed_time = time.time() - s_time
-        abs_angle = abs((angle - p_angle))
+        a = angle - p_angle
+        abs_angle = abs((a + 180) % 360 - 180)
+
+        if abs_angle > 5:
+            img_bgr_d = rotate_img_with_bound(img_bgr, angle)
+            img_bgr_p = rotate_img_with_bound(img_bgr, p_angle)
+            img_merged = merge_two_imgs(img_bgr_d, img_bgr_p)
+            out_file = os.path.join(out_dir, '{}_{}.jpg'.format(img_id, abs_angle))
+            cv2.imwrite(out_file, img_merged)
+
         print('[Info] p_angle: {}'.format(p_angle))
         return [img_id, url, angle, p_angle, abs_angle, elapsed_time]
 
@@ -75,6 +84,9 @@ class ImgPredictor(object):
         """
         in_file = os.path.join(DATA_DIR, '2020_11_12_out.9979.txt')
         out_file_format = os.path.join(DATA_DIR, 'out_file.{}.xlsx')
+        out_dir = os.path.join(DATA_DIR, 'out_imgs')
+        mkdir_if_not_exist(out_dir)
+
         data_lines = read_file(in_file)
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
@@ -84,7 +96,7 @@ class ImgPredictor(object):
         res_list = []
         for idx, data_line in enumerate(data_lines):
             data_dict = json.loads(data_line)
-            item_list = self.process_item(data_dict)
+            item_list = self.process_item(data_dict, out_dir)
             res_list.append(item_list)
 
             # img_bgr_d = rotate_img_with_bound(img_bgr, angle)
@@ -94,15 +106,14 @@ class ImgPredictor(object):
             # img_bgr_p = resize_img_fixed(img_bgr_p, 512)
             # draw_text(img_bgr_d, str(angle), org=(10, 50))
             # draw_text(img_bgr_p, str(p_angle), org=(10, 50))
-            #
-            # img_merged = merge_two_imgs(img_bgr_d, img_bgr_p)
+
             # show_img_bgr(img_merged)
 
             # show_img_bgr(img_bgr_d)
             # show_img_bgr(img_bgr_p)
 
             print('-' * 10)
-            if idx == 1000:
+            if idx == 200:
                 break
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]
