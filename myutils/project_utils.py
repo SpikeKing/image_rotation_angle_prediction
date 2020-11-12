@@ -800,3 +800,11 @@ def write_list_to_excel(file_name, titles, res_list):
 
     wk.close()
     print('[Info] 文件保存完成: {}'.format(file_name))
+
+
+def random_prob(prob):
+    """
+    随机生成真值
+    """
+    x = random.choices([True, False], [prob, 1-prob])
+    return x[0]

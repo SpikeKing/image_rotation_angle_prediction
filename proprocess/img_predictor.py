@@ -113,7 +113,7 @@ class ImgPredictor(object):
             # show_img_bgr(img_bgr_p)
 
             print('-' * 10)
-            if idx == 200:
+            if (idx+1) == 200:
                 break
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]

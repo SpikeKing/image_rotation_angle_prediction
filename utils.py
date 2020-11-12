@@ -9,6 +9,8 @@ from tensorflow.keras.preprocessing.image import Iterator
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.backend as K
 
+from myutils.project_utils import random_pick, random_prob
+
 
 def angle_difference(x, y):
     """
@@ -287,7 +289,10 @@ class RotNetDataGenerator(Iterator):
 
             if self.rotate:
                 # get a random angle
-                rotation_angle = np.random.randint(360)
+                if random_prob(0.2):
+                    rotation_angle = np.random.randint(360)
+                else:  # 增加边界角度计算
+                    rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
             else:
                 rotation_angle = 0
 
@@ -445,3 +450,18 @@ def display_examples(model, input, num_images=5, size=None, crop_center=False,
 
     if save_path:
         plt.savefig(save_path)
+
+
+def main():
+    import os
+    from myutils.cv_utils import show_img_bgr
+    from root_dir import DATA_DIR
+    img_path = os.path.join(DATA_DIR, '1.jpg')
+    img_bgr = cv2.imread(img_path)
+    img_out = generate_rotated_image(
+        img_bgr, 45, crop_center=True, crop_largest_rect=True)
+    show_img_bgr(img_out)
+
+
+if __name__ == '__main__':
+    main()
