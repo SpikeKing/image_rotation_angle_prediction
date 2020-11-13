@@ -52,6 +52,7 @@ class DataPaper(object):
             out_name = "{}_{}.jpg".format(s_id, u_id)
             out_path = os.path.join(out_dir, out_name)
             cv2.imwrite(out_path, img_bgr)
+        print('[Info] 完成: {}, {}'.format(s_id, img_urls_path))
 
     def process_3499(self):
         img_path = os.path.join(DATA_DIR, 'papers', 'application_3499.json')
@@ -67,8 +68,7 @@ class DataPaper(object):
 
         pool = Pool(processes=40)
         for idx, item_dict in enumerate(json_list):
-            print(item_dict)
-            DataPaper.process_page(item_dict, out_dir)
+            # DataPaper.process_page(item_dict, out_dir)
             pool.apply_async(DataPaper.process_page, (item_dict, out_dir))
             # if (idx + 1) % 10 == 0:
             #     print('[Info] idx: {}'.format(idx+1))
