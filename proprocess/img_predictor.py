@@ -84,7 +84,7 @@ class ImgPredictor(object):
         处理全部数据
         """
         in_file = os.path.join(DATA_DIR, '2020_11_12_out.9979.txt')
-        out_file_format = os.path.join(DATA_DIR, 'out_file.{}.xlsx')
+        out_file_format = os.path.join(DATA_DIR, 'out_file.{}.{}.xlsx')
         out_dir = os.path.join(DATA_DIR, 'out_imgs')
         mkdir_if_not_exist(out_dir)
 
@@ -118,7 +118,7 @@ class ImgPredictor(object):
                 break
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]
-        out_file = out_file_format.format(len(res_list))
+        out_file = out_file_format.format(len(res_list), get_current_day_str())
         write_list_to_excel(out_file, titles, res_list)
         print('[Info] 写入文件完成! {}'.format(out_file))
 
