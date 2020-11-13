@@ -66,6 +66,8 @@ class ImgPredictor(object):
         is_ok, img_bgr = download_url_img(url)
         s_time = time.time()
         p_angle = self.predict_img(img_bgr)
+        print('[Info] p_angle: {}'.format(p_angle))
+
         elapsed_time = time.time() - s_time
         a = angle - p_angle
         abs_angle = abs((a + 180) % 360 - 180)
@@ -77,7 +79,6 @@ class ImgPredictor(object):
             out_file = os.path.join(out_dir, '{}_{}.jpg'.format(img_id, abs_angle))
             cv2.imwrite(out_file, img_merged)
 
-        print('[Info] p_angle: {}'.format(p_angle))
         return [img_id, url, angle, p_angle, abs_angle, elapsed_time]
 
     def process(self):
@@ -119,7 +120,7 @@ class ImgPredictor(object):
                 break
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]
-        out_file = out_file_format.format(len(res_list), get_current_day_str())
+        out_file = out_file_format.format(len(res_list), get_current_time_str())
         write_list_to_excel(out_file, titles, res_list)
         print('[Info] 写入文件完成! {}'.format(out_file))
 
