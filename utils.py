@@ -9,6 +9,7 @@ from tensorflow.keras.preprocessing.image import Iterator
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.backend as K
 
+from myutils.cv_utils import random_crop
 from myutils.project_utils import random_pick, random_prob
 
 
@@ -288,8 +289,7 @@ class RotNetDataGenerator(Iterator):
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 if random_prob(0.5):
                     h, w, _ = image.shape
-                    x = int(h // 4)
-                    image = image[x:h-x, :, :]
+                    image = random_crop(image, int(h // 2), w)
 
             if self.rotate:
                 # get a random angle

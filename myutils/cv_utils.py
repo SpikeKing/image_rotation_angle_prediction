@@ -587,6 +587,18 @@ def resize_img_fixed(img, x, is_height=True):
     img_r = cv2.resize(img, (nw, nh))
     return img_r
 
+
+def random_crop(img, height, width):
+    """
+    随机剪裁
+    """
+    import random
+    x = random.randint(0, img.shape[1] - width)
+    y = random.randint(0, img.shape[0] - height)
+    img = img[y:y+height, x:x+width]
+    return img
+
+
 def main():
     labels = [u'大型', u'中型', u'小型', u'微型']  # 定义标签
     sizes = [46, 253, 321, 66]  # 每块值
