@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import sys
+import random
 
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.keras.applications.resnet50 import ResNet50
@@ -21,6 +22,7 @@ print('[Info] data_path: {}'.format(data_path))
 train_filenames, test_filenames = get_problems_data(data_path)
 
 train_filenames = train_filenames * 10
+random.shuffle(train_filenames)
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
