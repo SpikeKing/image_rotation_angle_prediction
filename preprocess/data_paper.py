@@ -12,6 +12,11 @@ import json
 import sys
 
 from multiprocessing.pool import Pool
+
+p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if p not in sys.path:
+    sys.path.append(p)
+
 from root_dir import DATA_DIR
 from myutils.project_utils import read_file, download_url_img, download_url_txt, mkdir_if_not_exist
 
