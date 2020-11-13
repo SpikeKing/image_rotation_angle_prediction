@@ -286,6 +286,9 @@ class RotNetDataGenerator(Iterator):
                 image = cv2.imread(self.filenames[j], is_color)
                 if is_color:
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                if random_prob(0.5):
+                    h, w, _ = image.shape
+                    image = image[0:int(h//2), :, :]
 
             if self.rotate:
                 # get a random angle

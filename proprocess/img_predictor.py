@@ -42,8 +42,9 @@ class ImgPredictor(object):
         预测角度
         """
         # show_img_bgr(img_bgr)
-        test_img_bgr = cv2.resize(test_img_bgr, (224, 224))
-        test_img_bgr_b = np.expand_dims(test_img_bgr, axis=0)
+        test_img_rgb = cv2.cvtColor(test_img_bgr, cv2.COLOR_BGR2RGB)
+        test_img_rgb = cv2.resize(test_img_rgb, (224, 224))
+        test_img_bgr_b = np.expand_dims(test_img_rgb, axis=0)
         prediction = self.model.predict(test_img_bgr_b)
         angle = (360 - int(K.argmax(prediction[0]))) % 360
         # print('[Info] angle: {}'.format(angle))

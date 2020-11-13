@@ -209,6 +209,30 @@ class DataProcessor(object):
         print('[Info] 处理完成! {}'.format(out_dir))
         return
 
+    def filter_folder(self, in_dir):
+        paths_list, names_list = traverse_dir_files(in_dir)
+        print('[Info] 样本数: {}'.format(len(paths_list)))
+
+        n_remove = 0
+        count = 0
+        for path, name in zip(paths_list, names_list):
+            img_bgr = cv2.imread(path)
+            h, w, _ = img_bgr.shape
+            x = safe_div(h, w)
+
+            if x > 2:
+                print('[Info] 删除: {}'.format(path))
+                os.remove(path)
+                n_remove += 1
+            count += 1
+            if count % 100 == 0:
+                print(count)
+
+        print('[Info] 删除: {}'.format(n_remove))
+        paths_list, names_list = traverse_dir_files(in_dir)
+        print('[Info] 处理后, 样本数: {}'.format(len(paths_list)))
+
+
 
 def demo_of_cut_img_without_margin():
     """
@@ -234,9 +258,17 @@ def demo_of_process_folder():
     dp.process_folder(data_dir, out_dir)
 
 
+def demo_of_remove_folder():
+    in_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_13w_512_p_x')
+
+    dp = DataProcessor()
+    dp.filter_folder(in_dir)
+
+
 def main():
     # demo_of_cut_img_without_margin()
-    demo_of_process_folder()
+    # demo_of_process_folder()
+    demo_of_remove_folder()
 
 
 if __name__ == '__main__':
