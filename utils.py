@@ -301,7 +301,13 @@ class RotNetDataGenerator(Iterator):
                         b = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
                         rotation_angle = abs(a + b)
                 else:  # 增加边界角度计算
-                    rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
+                    if random_prob(0.5):
+                        rotation_angle = 90
+                    else:
+                        if random_prob(0.8):
+                            rotation_angle = random_pick([90, 270], [0.5, 0.5])
+                        else:
+                            rotation_angle = random_pick([0, 180], [0.5, 0.5])
             else:
                 rotation_angle = 0
 
