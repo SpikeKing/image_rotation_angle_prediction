@@ -729,6 +729,30 @@ def download_url_img(url):
         return True, parsed_image
 
 
+def download_url_txt(url, is_split=False):
+    """
+    下载txt文本
+    """
+    import requests
+
+    try:
+        response = requests.get(url, timeout=3)
+    except Exception as e:
+        print(str(e))
+        return False, []
+    # with open(file_name, "wb") as code:
+    #     code.write(down_res.content)
+    if response is not None and response.status_code == 200:
+        text_data = response.content
+        if not is_split:
+            return True, text_data
+        else:
+            return True, text_data.splitlines()
+    else:
+        return False, []
+
+
+
 def save_dict_to_json(json_path, save_dict):
     """
     将字典保存成JSON文件
