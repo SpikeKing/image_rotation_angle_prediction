@@ -67,10 +67,11 @@ class DataPaper(object):
 
         pool = Pool(processes=40)
         for idx, item_dict in enumerate(json_list):
+            print(item_dict)
             DataPaper.process_page(item_dict, out_dir)
             pool.apply_async(DataPaper.process_page, (item_dict, out_dir))
-            if (idx + 1) % 10 == 0:
-                print('[Info] idx: {}'.format(idx+1))
+            # if (idx + 1) % 10 == 0:
+            #     print('[Info] idx: {}'.format(idx+1))
 
         pool.close()
         pool.join()
