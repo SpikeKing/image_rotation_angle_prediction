@@ -69,7 +69,7 @@ class DataPaper(object):
         for idx, item_dict in enumerate(json_list):
             DataPaper.process_page(item_dict, out_dir)
             pool.apply_async(DataPaper.process_page, (item_dict, out_dir))
-            if (idx + 1) % 1000 == 0:
+            if (idx + 1) % 10 == 0:
                 print('[Info] idx: {}'.format(idx+1))
 
         pool.close()
