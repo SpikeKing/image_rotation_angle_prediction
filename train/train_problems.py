@@ -20,6 +20,8 @@ data_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_12w')
 print('[Info] data_path: {}'.format(data_path))
 train_filenames, test_filenames = get_problems_data(data_path)
 
+train_filenames = train_filenames * 10
+
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
