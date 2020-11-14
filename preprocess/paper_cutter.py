@@ -6,7 +6,12 @@ Created by C. L. Wang on 14.11.20
 """
 
 import os
+import sys
 import cv2
+
+p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if p not in sys.path:
+    sys.path.append(p)
 
 from root_dir import DATA_DIR, ROOT_DIR
 from myutils.project_utils import *
@@ -52,8 +57,8 @@ class PaperCutter(object):
         return rotated_image, rotation_angle
 
     def process(self):
-        # data_dir = os.path.join(DATA_DIR, 'papers', "application_3499_1024")
-        data_dir = os.path.join(ROOT_DIR, '..', 'datasets', "rotation_datasets_12w")
+        data_dir = os.path.join(DATA_DIR, 'papers', "application_3499_1024")
+        # data_dir = os.path.join(ROOT_DIR, '..', 'datasets', "rotation_datasets_12w")
         out_dir = os.path.join(DATA_DIR, 'papers', "application_3499_1024_out")
         mkdir_if_not_exist(out_dir)
         paths_list, names_list = traverse_dir_files(data_dir)
@@ -64,17 +69,18 @@ class PaperCutter(object):
             img_name = name.split('.')[0]
             img_bgr = cv2.imread(path)
             h, w, _ = img_bgr.shape
+            for i in range(5):
+                out_path = os.path.join(out_dir, img_name + ".out-{}.jpg".format(i))
+                if random_prob(0.5):
+                    img_out = random_crop(img_bgr, h // 10, int(w * 0.8))
+                else:
+                    x = random.randint(2, 10)
+                    img_out = random_crop(img_bgr, h // x, int(w * 0.8))
+                cv2.imwrite(out_path, img_out)
             # for i in range(20):
-            #     out_path = os.path.join(out_dir, img_name + ".out{}.jpg".format(i))
-            #     if random_prob(0.5):
-            #         img_out = random_crop(img_bgr, h // 10, int(w * 0.8))
-            #     else:
-            #         x = random.randint(2, 10)
-            #         img_out = random_crop(img_bgr, h // x, int(w * 0.8))
-            for i in range(20):
-                rotated_image, rotation_angle = self.process_img(img_bgr)
-                out_path = os.path.join(out_dir, img_name + ".out.{}.jpg".format(rotation_angle))
-                cv2.imwrite(out_path, rotated_image)
+            #     rotated_image, rotation_angle = self.process_img(img_bgr)
+            #     out_path = os.path.join(out_dir, img_name + ".out.{}.jpg".format(rotation_angle))
+            #     cv2.imwrite(out_path, rotated_image)
 
 
 def main():
