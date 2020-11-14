@@ -64,7 +64,7 @@ if not os.path.exists(output_folder):
 # 加载已有模型
 # model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50_4.6894.hdf5'))
 # model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50.1.2659.hdf5'))
-model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50.1.6377.hdf5'))
+model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50.1.3564.hdf5'))
 
 # callbacks
 monitor = 'val_angle_error'
