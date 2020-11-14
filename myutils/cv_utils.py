@@ -588,13 +588,19 @@ def resize_img_fixed(img, x, is_height=True):
     return img_r
 
 
-def random_crop(img, height, width):
+def random_crop(img, height, width, sh=0, sw=0):
     """
     随机剪裁
     """
     import random
-    x = random.randint(0, img.shape[1] - width)
-    y = random.randint(0, img.shape[0] - height)
+    # print(sh, img.shape[0] - height - sh)
+    h, w, _ = img.shape
+    img = img[sh:h-sh, sw:w-sw]
+    h, w, _ = img.shape
+
+    y = random.randint(0, h - height)
+    x = random.randint(0, w - width)
+
     img = img[y:y+height, x:x+width]
     return img
 

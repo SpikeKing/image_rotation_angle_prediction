@@ -227,8 +227,9 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image = np.ones((size[1], size[0], 3)) * 255
         image = image.astype(np.uint8)
+        angle = 0
 
-    return image
+    return image, angle
 
 
 class RotNetDataGenerator(Iterator):
@@ -272,6 +273,38 @@ class RotNetDataGenerator(Iterator):
 
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
+    def process_img(self, image):
+        if self.rotate:
+            # get a random angle
+            if random_prob(0.2):
+                if random_prob(0.4):
+                    rotation_angle = np.random.randint(360)
+                else:
+                    a = np.random.randint(-5, 5)
+                    b = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
+                    rotation_angle = abs(a + b)
+            else:  # 增加边界角度计算
+                if random_prob(0.5):
+                    rotation_angle = 270
+                else:
+                    if random_prob(0.8):
+                        rotation_angle = random_pick([90, 270], [0.5, 0.5])
+                    else:
+                        rotation_angle = random_pick([0, 180], [0.5, 0.5])
+        else:
+            rotation_angle = 0
+
+        # generate the rotated image
+        rotated_image, rotation_angle = generate_rotated_image(
+            image,
+            rotation_angle,
+            size=self.input_shape[:2],
+            crop_center=self.crop_center,
+            crop_largest_rect=self.crop_largest_rect
+        )
+
+        return rotated_image, rotation_angle
+
     def _get_batches_of_transformed_samples(self, index_array):
         # create array to hold the images
         batch_x = np.zeros((len(index_array),) + self.input_shape, dtype='float32')
@@ -289,36 +322,9 @@ class RotNetDataGenerator(Iterator):
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 if random_prob(0.5):
                     h, w, _ = image.shape
-                    image = random_crop(image, int(h // 2), w)
+                    image = random_crop(image, int(h // 3), w)
 
-            if self.rotate:
-                # get a random angle
-                if random_prob(0.2):
-                    if random_prob(0.4):
-                        rotation_angle = np.random.randint(360)
-                    else:
-                        a = np.random.randint(-5, 5)
-                        b = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
-                        rotation_angle = abs(a + b)
-                else:  # 增加边界角度计算
-                    if random_prob(0.5):
-                        rotation_angle = 270
-                    else:
-                        if random_prob(0.8):
-                            rotation_angle = random_pick([90, 270], [0.5, 0.5])
-                        else:
-                            rotation_angle = random_pick([0, 180], [0.5, 0.5])
-            else:
-                rotation_angle = 0
-
-            # generate the rotated image
-            rotated_image = generate_rotated_image(
-                image,
-                rotation_angle,
-                size=self.input_shape[:2],
-                crop_center=self.crop_center,
-                crop_largest_rect=self.crop_largest_rect
-            )
+            rotated_image, rotation_angle = self.process_img(image)
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:

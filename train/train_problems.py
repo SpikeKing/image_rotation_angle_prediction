@@ -84,7 +84,7 @@ model.fit_generator(
         input_shape=input_shape,
         batch_size=batch_size,
         preprocess_func=preprocess_input,
-        crop_center=True,
+        crop_center=False,
         crop_largest_rect=True,
         shuffle=True
     ),
@@ -95,7 +95,7 @@ model.fit_generator(
         input_shape=input_shape,
         batch_size=batch_size,
         preprocess_func=preprocess_input,
-        crop_center=True,
+        crop_center=False,
         crop_largest_rect=True
     ),
     validation_steps=len(test_filenames) / batch_size,

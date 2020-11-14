@@ -55,8 +55,8 @@ class DataPaper(object):
         print('[Info] 完成: {}, {}'.format(s_id, img_urls_path))
 
     def process_3499(self):
-        img_path = os.path.join(DATA_DIR, 'papers', 'application_3499.json')
-        out_dir = os.path.join(DATA_DIR, 'papers', 'application_3499')
+        img_path = os.path.join(DATA_DIR, 'papers', 'application_3499_1024.json')
+        out_dir = os.path.join(DATA_DIR, 'papers', 'application_3499_1024')
 
         mkdir_if_not_exist(out_dir)
 
