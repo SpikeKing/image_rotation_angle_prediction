@@ -223,8 +223,8 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         if size:
             image = cv2.resize(image, size)
     except Exception as e:
-        print('[Info] error: {}'.format(e))
-        print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
+        # print('[Info] error: {}'.format(e))
+        # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image = np.ones((size[1], size[0], 3)) * 255
         image = image.astype(np.uint8)
         angle = 0
