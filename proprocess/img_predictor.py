@@ -33,7 +33,7 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.6377.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.3564.hdf5')
         print('[Info] model_location: {}'.format(model_location))
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
         return model
@@ -88,7 +88,7 @@ class ImgPredictor(object):
         """
         in_file = os.path.join(DATA_DIR, '2020_11_12_out.9979.txt')
         out_file_format = os.path.join(DATA_DIR, 'out_file.{}.{}.xlsx')
-        out_dir = os.path.join(DATA_DIR, 'out_imgs')
+        out_dir = os.path.join(DATA_DIR, 'out_imgs_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
 
         data_lines = read_file(in_file)
