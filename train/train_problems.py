@@ -30,7 +30,7 @@ print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1
 data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'imgs-formatted_512_51w')
 print('[Info] data2_path: {}'.format(data2_path))
 train2_filenames, test2_filenames = get_problems_data(data2_path)
-train2_filenames = train2_filenames
+train2_filenames = train2_filenames * 2
 random.shuffle(train2_filenames)
 test2_filenames = test2_filenames[:10000]
 print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
@@ -39,7 +39,7 @@ data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'application_3499_1024_358
 print('[Info] data3_path: {}'.format(data3_path))
 train3_filenames, test3_filenames = get_problems_data(data3_path)
 random.shuffle(train3_filenames)
-train3_filenames = train3_filenames[:500000]
+train3_filenames = train3_filenames[:1000000]
 test3_filenames = test3_filenames[:10000]
 print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
 
