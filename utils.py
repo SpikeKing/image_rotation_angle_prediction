@@ -276,21 +276,18 @@ class RotNetDataGenerator(Iterator):
     def process_img(self, image):
         if self.rotate:
             # get a random angle
-            if random_prob(0.2):
-                if random_prob(0.4):
+            if random_prob(0.3):
+                if random_prob(0.5):
                     rotation_angle = np.random.randint(360)
                 else:
                     a = np.random.randint(-5, 5)
                     b = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
                     rotation_angle = abs(a + b)
             else:  # 增加边界角度计算
-                if random_prob(0.5):
+                if random_prob(0.7):
                     rotation_angle = 270
                 else:
-                    if random_prob(0.8):
-                        rotation_angle = random_pick([90, 270], [0.5, 0.5])
-                    else:
-                        rotation_angle = random_pick([0, 180], [0.5, 0.5])
+                    rotation_angle = random_pick([0, 90, 180], [0.5, 0.25, 0.25])
         else:
             rotation_angle = 0
 
