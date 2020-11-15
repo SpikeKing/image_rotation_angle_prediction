@@ -83,9 +83,9 @@ batch_size = 128
 nb_epoch = 200
 
 # 加载已有模型
-# model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50_4.6894.hdf5'))
-# model.load_weights(os.path.join(output_folder, 'problem_rotnet_resnet50.1.2659.hdf5'))
-model.load_weights(os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5'))
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5')
+model.load_weights(model_path)
+print('[Info] 加载模型的路径: {}'.format(model_path))
 
 output_folder = 'models_100w_{}'.format(get_current_time_str())
 if not os.path.exists(output_folder):
