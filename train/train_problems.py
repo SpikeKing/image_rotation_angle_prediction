@@ -27,13 +27,13 @@ test1_filenames = test1_filenames * 5
 test1_filenames = test1_filenames[:20000]
 print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1_filenames)))
 
-data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'imgs-formatted_512_51w')
-print('[Info] data2_path: {}'.format(data2_path))
-train2_filenames, test2_filenames = get_problems_data(data2_path)
-train2_filenames = train2_filenames * 2
-random.shuffle(train2_filenames)
-test2_filenames = test2_filenames[:10000]
-print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
+# data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'imgs-formatted_512_51w')
+# print('[Info] data2_path: {}'.format(data2_path))
+# train2_filenames, test2_filenames = get_problems_data(data2_path)
+# train2_filenames = train2_filenames * 2
+# random.shuffle(train2_filenames)
+# test2_filenames = test2_filenames[:10000]
+# print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
 
 # data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'application_3499_1024_358w')
 # print('[Info] data3_path: {}'.format(data3_path))
@@ -46,8 +46,8 @@ print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2
 # train_filenames = train1_filenames + train2_filenames + train3_filenames
 # test_filenames = test1_filenames + test2_filenames + test3_filenames
 
-train_filenames = train1_filenames + train2_filenames
-test_filenames = test1_filenames + test2_filenames
+train_filenames = train1_filenames
+test_filenames = test1_filenames
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -87,7 +87,7 @@ model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.100w-1.53
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
-output_folder = 'models_200w_{}'.format(get_current_time_str())
+output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
