@@ -54,7 +54,8 @@ print(len(test_filenames), 'test samples')
 model_name = 'problem_rotnet_resnet50'
 
 # number of classes
-nb_classes = 360
+# nb_classes = 360
+nb_classes = 4
 # input image shape
 input_shape = (224, 224, 3)
 
