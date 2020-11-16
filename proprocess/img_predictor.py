@@ -33,7 +33,7 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.200w-1.7241-20201116.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.4c-20201106.hdf5')
         print('[Info] model_location: {}'.format(model_location))
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
         return model
@@ -67,6 +67,7 @@ class ImgPredictor(object):
         is_ok, img_bgr = download_url_img(url)
         s_time = time.time()
         p_angle = self.predict_img(img_bgr)
+        p_angle *= 90
         print('[Info] p_angle: {}'.format(p_angle))
 
         elapsed_time = time.time() - s_time
