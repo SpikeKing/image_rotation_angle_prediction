@@ -276,19 +276,7 @@ class RotNetDataGenerator(Iterator):
     def process_img(self, image):
         if self.rotate:
             # get a random angle
-            if random_prob(0.3):
-                if random_prob(0.8):  # 24%
-                    rotation_angle = np.random.randint(360)
-                else:  # 6%
-                    a = np.random.randint(-5, 5)
-                    b = random_pick([0, 90, 180, 270], [0.30, 0.10, 0.25, 0.35])
-                    rotation_angle = abs(a + b)
-            else:  # 增加边界角度计算
-                if random_prob(0.8):  # 46%
-                    a = np.random.randint(-5, 5)
-                    rotation_angle = abs(a + 270)
-                else:  # 14%
-                    rotation_angle = random_pick([0, 90, 180, 270], [0.30, 0.10, 0.25, 0.35])
+            rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.08, 0.02, 0.65])
         else:
             rotation_angle = 0
 
@@ -330,11 +318,11 @@ class RotNetDataGenerator(Iterator):
 
             # store the image and label in their corresponding batches
             batch_x[i] = rotated_image
-            batch_y[i] = rotation_angle
+            batch_y[i] = rotation_angle // 90
 
         if self.one_hot:
             # convert the numerical labels to binary labels
-            batch_y = to_categorical(batch_y, 360)
+            batch_y = to_categorical(batch_y, 4)
         else:
             batch_y /= 360
 

@@ -21,7 +21,7 @@ from myutils.project_utils import get_current_time_str
 data1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_12w')
 print('[Info] data1_path: {}'.format(data1_path))
 train1_filenames, test1_filenames = get_problems_data(data1_path)
-train1_filenames = train1_filenames * 10
+train1_filenames = train1_filenames * 5
 random.shuffle(train1_filenames)
 test1_filenames = test1_filenames * 5
 test1_filenames = test1_filenames[:20000]
@@ -30,7 +30,6 @@ print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1
 data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'imgs-formatted_512_51w')
 print('[Info] data2_path: {}'.format(data2_path))
 train2_filenames, test2_filenames = get_problems_data(data2_path)
-train2_filenames = train2_filenames * 2
 random.shuffle(train2_filenames)
 test2_filenames = test2_filenames[:10000]
 print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
@@ -84,7 +83,7 @@ nb_epoch = 200
 
 # 加载已有模型
 # model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.100w-1.5339.20201115.hdf5')
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.200w-1.5046.20201115.hdf5')
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.200w-1.7241-20201116.hdf5')
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
