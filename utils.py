@@ -198,7 +198,7 @@ def crop_largest_rectangle(image, angle, height, width):
     )
 
 
-def generate_rotated_image(image, angle, size=None, crop_center=False,
+def generate_rotated_image(image, angle_idx, size=None, crop_center=False,
                            crop_largest_rect=False):
     """
     Generate a valid rotated image for the RotNetDataGenerator. If the
@@ -213,6 +213,8 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
             height = width
         else:
             width = height
+
+    angle = angle_idx * 90
 
     try:
         image = rotate(image, angle)
@@ -283,7 +285,7 @@ class RotNetDataGenerator(Iterator):
         # generate the rotated image
         rotated_image, rotation_angle_idx = generate_rotated_image(
             image,
-            rotation_angle_idx * 90,
+            rotation_angle_idx,
             size=self.input_shape[:2],
             crop_center=self.crop_center,
             crop_largest_rect=self.crop_largest_rect
