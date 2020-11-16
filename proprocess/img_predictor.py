@@ -33,7 +33,7 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.100w-1.9942-20201116.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.200w-1.7241-20201116.hdf5')
         print('[Info] model_location: {}'.format(model_location))
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
         return model
