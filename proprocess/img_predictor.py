@@ -33,7 +33,7 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.4c-0.0016.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.6492.hdf5')
         print('[Info] model_location: {}'.format(model_location))
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
         return model
@@ -47,7 +47,8 @@ class ImgPredictor(object):
         test_img_rgb = cv2.resize(test_img_rgb, (224, 224))
         test_img_bgr_b = np.expand_dims(test_img_rgb, axis=0)
         prediction = self.model.predict(test_img_bgr_b)
-        angle = int(K.argmax(prediction[0])) * 90
+        # angle = int(K.argmax(prediction[0])) * 90
+        angle = int(K.argmax(prediction[0]))
         # print('[Info] angle: {}'.format(angle))
         # out_img_bgr = rotate_img_with_bound(img_bgr, angle)
         # show_img_bgr(out_img_bgr)
