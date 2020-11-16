@@ -47,7 +47,7 @@ class ImgPredictor(object):
         test_img_rgb = cv2.resize(test_img_rgb, (224, 224))
         test_img_bgr_b = np.expand_dims(test_img_rgb, axis=0)
         prediction = self.model.predict(test_img_bgr_b)
-        angle = int(K.argmax(prediction[0])) % 360
+        angle = int(K.argmax(prediction[0]))
         # print('[Info] angle: {}'.format(angle))
         # out_img_bgr = rotate_img_with_bound(img_bgr, angle)
         # show_img_bgr(out_img_bgr)
