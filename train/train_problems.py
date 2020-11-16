@@ -100,7 +100,7 @@ checkpointer = ModelCheckpoint(
     save_best_only=True
 )
 reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
-# early_stopping = EarlyStopping(monitor=monitor, patience=5)
+early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
 # training loop
@@ -125,7 +125,7 @@ model.fit_generator(
         crop_largest_rect=True
     ),
     validation_steps=len(test_filenames) / batch_size,
-    # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
-    callbacks=[checkpointer, reduce_lr, tensorboard],
+    callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
+    # callbacks=[checkpointer, reduce_lr, tensorboard],
     workers=10
 )

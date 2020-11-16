@@ -227,7 +227,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image = np.ones((size[1], size[0], 3)) * 255
         image = image.astype(np.uint8)
-        angle = 270
+        angle = 0
 
     return image, angle
 
@@ -276,20 +276,20 @@ class RotNetDataGenerator(Iterator):
     def process_img(self, image):
         if self.rotate:
             # get a random angle
-            rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.08, 0.02, 0.65])
+            rotation_angle_idx = random_pick([0, 1, 2, 3], [0.25, 0.25, 0.25, 0.25])
         else:
-            rotation_angle = 0
+            rotation_angle_idx = 0
 
         # generate the rotated image
-        rotated_image, rotation_angle = generate_rotated_image(
+        rotated_image, rotation_angle_idx = generate_rotated_image(
             image,
-            rotation_angle,
+            rotation_angle_idx * 90,
             size=self.input_shape[:2],
             crop_center=self.crop_center,
             crop_largest_rect=self.crop_largest_rect
         )
 
-        return rotated_image, rotation_angle
+        return rotated_image, rotation_angle_idx
 
     def _get_batches_of_transformed_samples(self, index_array):
         # create array to hold the images
@@ -308,9 +308,9 @@ class RotNetDataGenerator(Iterator):
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 if random_prob(0.5):
                     h, w, _ = image.shape
-                    image = random_crop(image, int(h // 3), w)
+                    image = random_crop(image, int(h // 2), w)
 
-            rotated_image, rotation_angle = self.process_img(image)
+            rotated_image, rotation_angle_idx = self.process_img(image)
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
@@ -318,7 +318,7 @@ class RotNetDataGenerator(Iterator):
 
             # store the image and label in their corresponding batches
             batch_x[i] = rotated_image
-            batch_y[i] = rotation_angle // 90
+            batch_y[i] = rotation_angle_idx
 
         if self.one_hot:
             # convert the numerical labels to binary labels
@@ -465,9 +465,11 @@ def main():
     from root_dir import DATA_DIR
     img_path = os.path.join(DATA_DIR, '1.jpg')
     img_bgr = cv2.imread(img_path)
-    img_out = generate_rotated_image(
-        img_bgr, 45, crop_center=True, crop_largest_rect=True)
-    show_img_bgr(img_out)
+    for i in range(10):
+        angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
+        img_out, angle = generate_rotated_image(
+            img_bgr, angle, crop_center=False, crop_largest_rect=True)
+        show_img_bgr(img_out)
 
 
 if __name__ == '__main__':
