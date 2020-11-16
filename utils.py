@@ -229,9 +229,9 @@ def generate_rotated_image(image, angle_idx, size=None, crop_center=False,
         # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image = np.ones((size[1], size[0], 3)) * 255
         image = image.astype(np.uint8)
-        angle = 0
+        angle_idx = 3
 
-    return image, angle
+    return image, angle_idx
 
 
 class RotNetDataGenerator(Iterator):
