@@ -1,6 +1,7 @@
 from __future__ import division
 
 import math
+import random
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -198,7 +199,7 @@ def crop_largest_rectangle(image, angle, height, width):
     )
 
 
-def generate_rotated_image(image, angle_idx, size=None, crop_center=False,
+def generate_rotated_image(image, angle, size=None, crop_center=False,
                            crop_largest_rect=False):
     """
     Generate a valid rotated image for the RotNetDataGenerator. If the
@@ -214,8 +215,6 @@ def generate_rotated_image(image, angle_idx, size=None, crop_center=False,
         else:
             width = height
 
-    angle = angle_idx * 90
-
     try:
         image = rotate(image, angle)
 
@@ -229,9 +228,9 @@ def generate_rotated_image(image, angle_idx, size=None, crop_center=False,
         # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image = np.ones((size[1], size[0], 3)) * 255
         image = image.astype(np.uint8)
-        angle_idx = 3
+        angle = 270
 
-    return image, angle_idx
+    return image, angle
 
 
 class RotNetDataGenerator(Iterator):
@@ -278,14 +277,16 @@ class RotNetDataGenerator(Iterator):
     def process_img(self, image):
         if self.rotate:
             # get a random angle
-            rotation_angle_idx = random_pick([0, 1, 2, 3], [0.25, 0.25, 0.25, 0.25])
+            offset_angle = random.randint(-5, 5)
+            rotation_angle = random_pick([0, 90, 180, 270], [0.35, 0.10, 0.05, 0.60])
+            rotation_angle = (rotation_angle + offset_angle) % 360
         else:
-            rotation_angle_idx = 0
+            rotation_angle = 0
 
         # generate the rotated image
         rotated_image, rotation_angle_idx = generate_rotated_image(
             image,
-            rotation_angle_idx,
+            rotation_angle,
             size=self.input_shape[:2],
             crop_center=self.crop_center,
             crop_largest_rect=self.crop_largest_rect
@@ -312,7 +313,7 @@ class RotNetDataGenerator(Iterator):
                     h, w, _ = image.shape
                     image = random_crop(image, int(h // 2), w)
 
-            rotated_image, rotation_angle_idx = self.process_img(image)
+            rotated_image, rotation_angle = self.process_img(image)
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
@@ -320,11 +321,11 @@ class RotNetDataGenerator(Iterator):
 
             # store the image and label in their corresponding batches
             batch_x[i] = rotated_image
-            batch_y[i] = rotation_angle_idx
+            batch_y[i] = rotation_angle
 
         if self.one_hot:
             # convert the numerical labels to binary labels
-            batch_y = to_categorical(batch_y, 4)
+            batch_y = to_categorical(batch_y, 360)
         else:
             batch_y /= 360
 
@@ -462,16 +463,18 @@ def display_examples(model, input, num_images=5, size=None, crop_center=False,
 
 
 def main():
-    import os
-    from myutils.cv_utils import show_img_bgr
-    from root_dir import DATA_DIR
-    img_path = os.path.join(DATA_DIR, '1.jpg')
-    img_bgr = cv2.imread(img_path)
-    for i in range(10):
-        angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
-        img_out, angle = generate_rotated_image(
-            img_bgr, angle, crop_center=False, crop_largest_rect=True)
-        show_img_bgr(img_out)
+    # import os
+    # from myutils.cv_utils import show_img_bgr
+    # from root_dir import DATA_DIR
+    # img_path = os.path.join(DATA_DIR, '1.jpg')
+    # img_bgr = cv2.imread(img_path)
+    # for i in range(10):
+    #     angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
+    #     img_out, angle = generate_rotated_image(
+    #         img_bgr, angle, crop_center=False, crop_largest_rect=True)
+    #     show_img_bgr(img_out)
+
+    print(-1 % 360)
 
 
 if __name__ == '__main__':
