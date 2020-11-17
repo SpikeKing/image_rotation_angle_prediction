@@ -66,7 +66,8 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5')
+        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.5448-20201117.hdf5')
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         # sess = K.get_session()
@@ -78,39 +79,39 @@ class ImgPredictor(object):
         # print('[Info] model_location: {}'.format(model_location))
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
-        # Convert Keras model to ConcreteFunction
-        full_model = tf.function(lambda x: model(x))
-        full_model = full_model.get_concrete_function(
-            tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
-        # Get frozen ConcreteFunction
-        frozen_func = convert_variables_to_constants_v2(full_model)
-        frozen_func.graph.as_graph_def()
-        layers = [op.name for op in frozen_func.graph.get_operations()]
-        print("-" * 60)
-        print("Frozen model layers: ")
-        for layer in layers:
-            print(layer)
-        print("-" * 60)
-        print("Frozen model inputs: ")
-        print(frozen_func.inputs)
-        print("Frozen model outputs: ")
-        print(frozen_func.outputs)
-
-        # path of the directory where you want to save your model
-        frozen_out_path = ''
-        # name of the .pb file
-        frozen_graph_filename = "frozen_graph"
-
-        # Save frozen graph to disk
-        tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
-                          logdir=frozen_out_path,
-                          name=f"{frozen_graph_filename}.pb",
-                          as_text=False)
-        # Save its text representation
-        tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
-                          logdir=frozen_out_path,
-                          name=f"{frozen_graph_filename}.pbtxt",
-                          as_text=True)
+        # # Convert Keras model to ConcreteFunction
+        # full_model = tf.function(lambda x: model(x))
+        # full_model = full_model.get_concrete_function(
+        #     tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
+        # # Get frozen ConcreteFunction
+        # frozen_func = convert_variables_to_constants_v2(full_model)
+        # frozen_func.graph.as_graph_def()
+        # layers = [op.name for op in frozen_func.graph.get_operations()]
+        # print("-" * 60)
+        # print("Frozen model layers: ")
+        # for layer in layers:
+        #     print(layer)
+        # print("-" * 60)
+        # print("Frozen model inputs: ")
+        # print(frozen_func.inputs)
+        # print("Frozen model outputs: ")
+        # print(frozen_func.outputs)
+        #
+        # # path of the directory where you want to save your model
+        # frozen_out_path = ''
+        # # name of the .pb file
+        # frozen_graph_filename = "frozen_graph"
+        #
+        # # Save frozen graph to disk
+        # tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+        #                   logdir=frozen_out_path,
+        #                   name=f"{frozen_graph_filename}.pb",
+        #                   as_text=False)
+        # # Save its text representation
+        # tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+        #                   logdir=frozen_out_path,
+        #                   name=f"{frozen_graph_filename}.pbtxt",
+        #                   as_text=True)
 
         return model
 
@@ -124,7 +125,7 @@ class ImgPredictor(object):
         test_img_bgr_b = np.expand_dims(test_img_rgb, axis=0)
         prediction = self.model.predict(test_img_bgr_b)
         # angle = int(K.argmax(prediction[0])) * 90
-        angle = int(K.argmax(prediction[0]))
+        angle = int(K.argmax(prediction[0])) % 360
         # print('[Info] angle: {}'.format(angle))
         # out_img_bgr = rotate_img_with_bound(img_bgr, angle)
         # show_img_bgr(out_img_bgr)
