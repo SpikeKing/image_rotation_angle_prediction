@@ -175,7 +175,7 @@ class ImgPredictor(object):
         data_lines = read_file(in_file)
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
-        random.seed(47)
+        random.seed(20)
         random.shuffle(data_lines)  # shuffle
 
         res_list = []
@@ -198,7 +198,7 @@ class ImgPredictor(object):
             # show_img_bgr(img_bgr_p)
 
             print('-' * 10)
-            if (idx+1) == 200:
+            if (idx+1) == 300:
                 break
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]
@@ -210,7 +210,6 @@ class ImgPredictor(object):
 def main():
     ip = ImgPredictor()
     ip.process()
-
 
 
 if __name__ == '__main__':
