@@ -70,7 +70,7 @@ final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 # create the new model
 model = Model(inputs=base_model.input, outputs=final_output)
 
-model.summary()
+# model.summary()
 
 # model compilation
 model.compile(loss='categorical_crossentropy',
@@ -90,6 +90,7 @@ nb_epoch = 200
 output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
+print('[Info] 模型文件夹: {}'.format(output_folder))
 
 # callbacks
 monitor = 'val_angle_error'
