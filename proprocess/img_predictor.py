@@ -168,7 +168,7 @@ class ImgPredictor(object):
         """
         处理全部数据
         """
-        in_file = os.path.join(DATA_DIR, '2020_11_12_out.9979.txt')
+        in_file = os.path.join(DATA_DIR, 'test.500.out.txt')
         out_file_format = os.path.join(DATA_DIR, 'out_file.{}.{}.xlsx')
         out_dir = os.path.join(DATA_DIR, 'out_imgs_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
@@ -199,8 +199,9 @@ class ImgPredictor(object):
             # show_img_bgr(img_bgr_p)
 
             print('-' * 10)
-            if (idx+1) == 320:
-                break
+            # if (idx+1) == 320:
+            #     break
+            print('[Info] {}'.format(idx+1))
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]
         out_file = out_file_format.format(len(res_list), get_current_time_str())
