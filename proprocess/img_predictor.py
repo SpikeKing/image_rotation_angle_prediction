@@ -67,7 +67,8 @@ class ImgPredictor(object):
         加载模型
         """
         # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5')
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.2741-20201117.hdf5')
+        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.2741-20201117.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.0.8663-20201118.hdf5')
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         # sess = K.get_session()
