@@ -173,3 +173,5 @@ data/
 .idea/
 train/models/
 train/logs/
+
+scripts/
