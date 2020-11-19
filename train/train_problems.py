@@ -66,7 +66,7 @@ base_model = ResNet50(weights='imagenet', include_top=False,
 x1 = base_model.output
 x1 = Flatten()(x1)
 
-input_ratio = Input(shape=(1, 1), name='ratio')
+input_ratio = Input(shape=(1, ), name='ratio')
 x2 = Dense(1, activation='relu', name='ratio')(input_ratio)
 
 # append classification layer
