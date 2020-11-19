@@ -90,8 +90,8 @@ nb_epoch = 200
 
 # 加载已有模型
 # model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.100w-1.5339.20201115.hdf5')
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.200w-1.7241-20201116.hdf5')
-# model.load_weights(model_path)
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.7339-20201119.hdf5')
+model.load_weights(model_path)
 # print('[Info] 加载模型的路径: {}'.format(model_path))
 
 output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
@@ -102,9 +102,10 @@ print('[Info] 模型文件夹: {}'.format(output_folder))
 # callbacks
 monitor = 'val_angle_error'
 checkpointer = ModelCheckpoint(
-    filepath=os.path.join(output_folder, model_name + '.hdf5'),
-    monitor=monitor
-    # save_best_only=True
+    # filepath=os.path.join(output_folder, model_name + '.hdf5'),
+    filepath=output_folder,
+    monitor=monitor,
+    save_best_only=True
 )
 reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
 early_stopping = EarlyStopping(monitor=monitor, patience=5)
