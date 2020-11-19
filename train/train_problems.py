@@ -67,7 +67,7 @@ x1 = base_model.output
 x1 = Flatten()(x1)
 
 input_ratio = Input(shape=(1, ), name='ratio')
-x2 = Dense(100, activation='relu', name='ratio')(input_ratio)
+x2 = Dense(100, activation='relu')(input_ratio)
 
 # append classification layer
 x = concatenate([x1, x2])
