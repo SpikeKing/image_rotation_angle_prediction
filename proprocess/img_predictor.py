@@ -67,8 +67,9 @@ class ImgPredictor(object):
         加载模型
         """
         # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5')
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.2741-20201117.hdf5')
+        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.2741-20201117.hdf5')
         # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.0.8663-20201118.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.0.7782-20201119.hdf5')
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         # sess = K.get_session()
@@ -133,8 +134,6 @@ class ImgPredictor(object):
 
         return angle
 
-
-
     def process_item(self, data_dict, out_dir):
         """
         处理单个数据
@@ -168,7 +167,7 @@ class ImgPredictor(object):
         """
         处理全部数据
         """
-        in_file = os.path.join(DATA_DIR, 'test.500.out.txt')
+        in_file = os.path.join(DATA_DIR, 'test.500.out.x.txt')
         out_file_format = os.path.join(DATA_DIR, 'out_file.{}.{}.xlsx')
         out_dir = os.path.join(DATA_DIR, 'out_imgs_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
