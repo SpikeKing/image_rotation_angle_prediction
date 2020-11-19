@@ -32,90 +32,66 @@ class ImgPredictor(object):
     def __init__(self):
         self.model = self.load_model()
 
-    @staticmethod
-    def freeze_session(session, keep_var_names=None, output_names=None, clear_devices=True):
-        """
-        Freezes the state of a session into a pruned computation graph.
+    def save_pb_model(self, model):
+        # Convert Keras model to ConcreteFunction
+        full_model = tf.function(lambda x: model(x))
+        full_model = full_model.get_concrete_function(
+            tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
+        # Get frozen ConcreteFunction
+        frozen_func = convert_variables_to_constants_v2(full_model)
+        frozen_func.graph.as_graph_def()
+        layers = [op.name for op in frozen_func.graph.get_operations()]
+        print("-" * 60)
+        print("[Info] Frozen model layers: ")
+        for layer in layers:
+            print(layer)
+        print("-" * 60)
+        print("[Info] Frozen model inputs: ")
+        print(frozen_func.inputs)
+        print("[Info] Frozen model outputs: ")
+        print(frozen_func.outputs)
 
-        Creates a new computation graph where variable nodes are replaced by
-        constants taking their current value in the session. The new graph will be
-        pruned so subgraphs that are not necessary to compute the requested
-        outputs are removed.
-        @param session The TensorFlow session to be frozen.
-        @param keep_var_names A list of variable names that should not be frozen,
-                              or None to freeze all the variables in the graph.
-        @param output_names Names of the relevant graph outputs.
-        @param clear_devices Remove the device directives from the graph for better portability.
-        @return The frozen graph definition.
-        """
-        graph = session.graph
-        with graph.as_default():
-            freeze_var_names = list(set(v.op.name for v in tf.compat.v1.global_variables()).difference(keep_var_names or []))
-            output_names = output_names or []
-            output_names += [v.op.name for v in tf.compat.v1.global_variables()]
-            input_graph_def = graph.as_graph_def()
-            if clear_devices:
-                for node in input_graph_def.node:
-                    node.device = ""
-            frozen_graph = tf.compat.v1.graph_util.convert_variables_to_constants(
-                session, input_graph_def, output_names, freeze_var_names)
-            return frozen_graph
+        # path of the directory where you want to save your model
+        frozen_out_path = os.path.join(DATA_DIR, 'pb_models')
+        # name of the .pb file
+        frozen_graph_filename = "frozen_graph_{}".format(get_current_time_str())
 
+        # Save frozen graph to disk
+        tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+                          logdir=frozen_out_path,
+                          name=f"{frozen_graph_filename}.pb",
+                          as_text=False)
+        # Save its text representation
+        tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+                          logdir=frozen_out_path,
+                          name=f"{frozen_graph_filename}.pbtxt",
+                          as_text=True)
+        print('[Info] 存储PB模型完成!')
 
     def load_model(self):
         """
         加载模型
         """
-        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.1177.20201115.hdf5')
-        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.2741-20201117.hdf5')
-        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.0.8663-20201118.hdf5')
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.0.7782-20201119.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.best.v1.hdf5')
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
-        # sess = K.get_session()
-        # frozen_graph = self.freeze_session(sess)
-        # input_tensors = ['input_1:0']
-        # output_tensors = ['fc360/Identity:0']
-
-        # model.save('saved_model-1', save_format="tf")
-        # print('[Info] model_location: {}'.format(model_location))
-        # model = load_model(model_location, custom_objects={'angle_error': angle_error})
-
-        # # Convert Keras model to ConcreteFunction
-        # full_model = tf.function(lambda x: model(x))
-        # full_model = full_model.get_concrete_function(
-        #     tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
-        # # Get frozen ConcreteFunction
-        # frozen_func = convert_variables_to_constants_v2(full_model)
-        # frozen_func.graph.as_graph_def()
-        # layers = [op.name for op in frozen_func.graph.get_operations()]
-        # print("-" * 60)
-        # print("Frozen model layers: ")
-        # for layer in layers:
-        #     print(layer)
-        # print("-" * 60)
-        # print("Frozen model inputs: ")
-        # print(frozen_func.inputs)
-        # print("Frozen model outputs: ")
-        # print(frozen_func.outputs)
-        #
-        # # path of the directory where you want to save your model
-        # frozen_out_path = ''
-        # # name of the .pb file
-        # frozen_graph_filename = "frozen_graph"
-        #
-        # # Save frozen graph to disk
-        # tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
-        #                   logdir=frozen_out_path,
-        #                   name=f"{frozen_graph_filename}.pb",
-        #                   as_text=False)
-        # # Save its text representation
-        # tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
-        #                   logdir=frozen_out_path,
-        #                   name=f"{frozen_graph_filename}.pbtxt",
-        #                   as_text=True)
+        # self.save_pb_model(model)  # 存储pb模型
 
         return model
+
+    def format_angle(self, angle):
+        """
+        格式化角度
+        """
+        if angle <= 45 or angle >= 325:
+            r_angle = 0
+        elif 45 < angle <= 135:
+            r_angle = 90
+        elif 135 < angle <= 225:
+            r_angle = 180
+        else:
+            r_angle = 270
+        return r_angle
 
     def predict_img(self, test_img_bgr):
         """

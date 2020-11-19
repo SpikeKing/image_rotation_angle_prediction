@@ -10,6 +10,8 @@ from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.optimizers import SGD
+from tensorflow_core.python.keras import Input
+from tensorflow_core.python.keras.layers import Conv1D, MaxPool1D, concatenate
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import angle_error, RotNetDataGenerator
@@ -61,14 +63,19 @@ input_shape = (224, 224, 3)
 # load base model
 base_model = ResNet50(weights='imagenet', include_top=False,
                       input_shape=input_shape)
+x1 = base_model.output
+x1 = Flatten()(x1)
+
+input_ratio = Input(shape=(1, 1), name='ratio')
+x2 = Dense(1, activation='relu', name='ratio')(input_ratio)
 
 # append classification layer
-x = base_model.output
-x = Flatten()(x)
+x = concatenate([x1, x2])
+
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
 # create the new model
-model = Model(inputs=base_model.input, outputs=final_output)
+model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 
 # model.summary()
 

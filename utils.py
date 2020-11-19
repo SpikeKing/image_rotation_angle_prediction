@@ -300,6 +300,7 @@ class RotNetDataGenerator(Iterator):
         # create array to hold the labels
         batch_y = np.zeros(len(index_array), dtype='float32')
 
+        ratio_list = []
         # iterate through the current batch
         for i, j in enumerate(index_array):
             if self.filenames is None:
@@ -311,10 +312,11 @@ class RotNetDataGenerator(Iterator):
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 if random_prob(0.5):
                     h, w, _ = image.shape
-                    if random_prob(0.5):
-                        out_h = int(h // 2)
-                    else:
-                        out_h = int(h // 3)
+                    # if random_prob(0.5):
+                    #     out_h = int(h // 2)
+                    # else:
+                    #     out_h = int(h // 3)
+                    out_h = int(h // 2)
                     image = random_crop(image, out_h, w)
 
             rotated_image, rotation_angle = self.process_img(image)
@@ -322,6 +324,10 @@ class RotNetDataGenerator(Iterator):
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
                 rotated_image = np.expand_dims(rotated_image, axis=2)
+
+            h, w, _ = rotated_image.shape
+            ratio_hw = float(h) / float(w)
+            ratio_list.append(ratio_hw)
 
             # store the image and label in their corresponding batches
             batch_x[i] = rotated_image
@@ -333,11 +339,13 @@ class RotNetDataGenerator(Iterator):
         else:
             batch_y /= 360
 
+        ratio_arr = np.array(ratio_list)  # 度数arr
+
         # preprocess input images
         if self.preprocess_func:
             batch_x = self.preprocess_func(batch_x)
 
-        return batch_x, batch_y
+        return [batch_x, ratio_arr], batch_y
 
     def next(self):
         with self.lock:
