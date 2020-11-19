@@ -122,6 +122,7 @@ class ImgPredictor(object):
         print('[Info] url: {}'.format(url))
         print('[Info] angle: {}'.format(angle))
         is_ok, img_bgr = download_url_img(url)
+        h, w, _ = img_bgr.shape
         s_time = time.time()
         p_angle = self.predict_img(img_bgr)
         print('[Info] p_angle: {}'.format(p_angle))
