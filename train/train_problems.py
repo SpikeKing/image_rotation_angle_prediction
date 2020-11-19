@@ -103,8 +103,8 @@ print('[Info] 模型文件夹: {}'.format(output_folder))
 monitor = 'val_angle_error'
 checkpointer = ModelCheckpoint(
     filepath=os.path.join(output_folder, model_name + '.hdf5'),
-    monitor=monitor,
-    save_best_only=True
+    monitor=monitor
+    # save_best_only=True
 )
 reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
 early_stopping = EarlyStopping(monitor=monitor, patience=5)
