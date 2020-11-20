@@ -28,7 +28,7 @@ from myutils.project_utils import get_current_time_str
 data1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_12w')
 print('[Info] data1_path: {}'.format(data1_path))
 train1_filenames, test1_filenames = get_problems_data(data1_path)
-train1_filenames = (train1_filenames + test1_filenames) * 15
+train1_filenames = (train1_filenames + test1_filenames) * 10
 random.shuffle(train1_filenames)
 test1_filenames = test1_filenames * 5
 test1_filenames = test1_filenames[:20000]
@@ -63,7 +63,7 @@ model_name = 'problem_rotnet_resnet50'
 # number of classes
 nb_classes = 360
 # input image shape
-input_shape = (448, 448, 3)
+input_shape = (336, 336, 3)
 
 # load base model
 # base_model = ResNet50(weights='imagenet', include_top=False,
