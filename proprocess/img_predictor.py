@@ -83,12 +83,12 @@ class ImgPredictor(object):
         # loader_impl.parse_saved_model(model_location)
         # model = saved_model_load.load(model_location, custom_objects={"angle_error": angle_error})
 
+        dependencies = {
+            "angle_error": angle_error
+        }
+
         model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
-        model = load_model(model_location, custom_objects={"angle_error": angle_error}, compile=False)
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=SGD(lr=0.001, momentum=0.9),
-                      metrics=[angle_error])
-        model = load_model(model_location, custom_objects={"angle_error": angle_error})
+        model = load_model(model_location, custom_objects=dependencies)
 
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
