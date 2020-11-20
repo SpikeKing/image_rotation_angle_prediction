@@ -97,8 +97,8 @@ nb_epoch = 200
 
 # 加载已有模型
 # model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.100w-1.5339.20201115.hdf5')
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.7339-20201119.hdf5')
-model.load_weights(model_path)
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.7339-20201119.hdf5')
+# model.load_weights(model_path)
 # print('[Info] 加载模型的路径: {}'.format(model_path))
 
 output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
