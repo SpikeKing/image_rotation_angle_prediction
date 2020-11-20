@@ -63,13 +63,12 @@ model_name = 'problem_rotnet_resnet50'
 # number of classes
 nb_classes = 360
 # input image shape
-# input_shape = (336, 336, 3)
-input_shape = (224, 224, 3)
+input_shape = (336, 336, 3)
+# input_shape = (224, 224, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
-# base_model = ResNet50(weights='imagenet', include_top=False,
-#                       input_shape=input_shape)
+# base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
 base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
 
 x1 = base_model.output
