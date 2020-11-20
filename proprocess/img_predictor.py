@@ -73,8 +73,10 @@ class ImgPredictor(object):
         加载模型
         """
         # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.best.v1.hdf5')
+        # model = load_model(model_location, custom_objects={'angle_error': angle_error})
+
         model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
-        model = load_model(model_location, custom_objects={'angle_error': angle_error})
+        model = load_model(model_location)
 
         # self.save_pb_model(model)  # 存储pb模型
 
