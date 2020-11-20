@@ -4,9 +4,13 @@ import os
 import sys
 import random
 
-from tensorflow.keras.applications.nasnet import NASNetMobile
+
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
+
 from tensorflow.keras.applications.resnet50 import ResNet50
+from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
+from tensorflow.keras.applications.nasnet import NASNetMobile
+
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Flatten
@@ -64,7 +68,7 @@ input_shape = (448, 448, 3)
 # load base model
 # base_model = ResNet50(weights='imagenet', include_top=False,
 #                       input_shape=input_shape)
-base_model = NASNetMobile(weights='imagenet', include_top=False, input_shape=input_shape)
+base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
 
 x1 = base_model.output
 x1 = Flatten()(x1)
