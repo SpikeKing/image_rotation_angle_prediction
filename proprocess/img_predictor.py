@@ -75,8 +75,17 @@ class ImgPredictor(object):
         # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.best.v1.hdf5')
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
+        # from tensorflow.python.saved_model import loader_impl
+        # from tensorflow.python.keras.saving.saved_model import load as saved_model_load
+        #
+        # model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
+        # loader_impl.parse_saved_model(model_location)
+        # model = saved_model_load.load(model_location, custom_objects={"angle_error": angle_error})
+
         model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
-        model = load_model(model_location, custom_objects={'angle_error': angle_error})
+        model = load_model(model_location, custom_objects={"angle_error": angle_error}, compile=False)
+
+        # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         # self.save_pb_model(model)  # 存储pb模型
 
