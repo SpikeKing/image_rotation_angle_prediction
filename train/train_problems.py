@@ -28,18 +28,16 @@ from myutils.project_utils import get_current_time_str
 data1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_12w')
 print('[Info] data1_path: {}'.format(data1_path))
 train1_filenames, test1_filenames = get_problems_data(data1_path)
-train1_filenames = (train1_filenames + test1_filenames) * 10
+train1_filenames = (train1_filenames + test1_filenames)
 random.shuffle(train1_filenames)
-test1_filenames = test1_filenames * 5
-test1_filenames = test1_filenames[:20000]
 print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1_filenames)))
 
-# data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'imgs-formatted_512_51w')
-# print('[Info] data2_path: {}'.format(data2_path))
-# train2_filenames, test2_filenames = get_problems_data(data2_path)
-# random.shuffle(train2_filenames)
-# test2_filenames = test2_filenames[:10000]
-# print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
+data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'biaozhu_csv_out')
+print('[Info] data2_path: {}'.format(data2_path))
+train2_filenames, test2_filenames = get_problems_data(data2_path)
+train2_filenames = (train2_filenames + test2_filenames)
+random.shuffle(train2_filenames)
+print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
 
 # data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'application_3499_1024_358w')
 # print('[Info] data3_path: {}'.format(data3_path))
@@ -52,8 +50,10 @@ print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1
 # train_filenames = train1_filenames + train2_filenames + train3_filenames
 # test_filenames = test1_filenames + test2_filenames + test3_filenames
 
-train_filenames = train1_filenames
-test_filenames = test1_filenames
+train_filenames = train1_filenames + train2_filenames
+test_filenames = test1_filenames + test2_filenames
+
+train_filenames = train_filenames * 5
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -63,7 +63,9 @@ model_name = 'problem_rotnet_resnet50'
 # number of classes
 nb_classes = 360
 # input image shape
-input_shape = (336, 336, 3)
+# input_shape = (336, 336, 3)
+input_shape = (224, 224, 3)
+print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
 # base_model = ResNet50(weights='imagenet', include_top=False,
