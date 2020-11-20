@@ -67,7 +67,7 @@ class DataLabeling(object):
         out_dir = os.path.join(DATA_DIR, '2020_11_20_out')
         mkdir_if_not_exist(out_dir)
 
-        pool = Pool(processes=40)
+        pool = Pool(processes=80)
         paths_list, names_list = traverse_dir_files(img_dir)
         for path, name in zip(paths_list, names_list):
             # DataLabeling.process_file(path, name, out_dir)
