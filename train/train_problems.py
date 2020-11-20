@@ -64,7 +64,8 @@ input_shape = (448, 448, 3)
 # load base model
 # base_model = ResNet50(weights='imagenet', include_top=False,
 #                       input_shape=input_shape)
-base_model = NASNetMobile(weights='imagenet', include_top=False, input_shape=input_shape)
+base_model = NASNetMobile(weights='imagenet', include_top=False, input_shape=input_shape,
+                          image_data_format="channels_last")
 x1 = base_model.output
 x1 = Flatten()(x1)
 
