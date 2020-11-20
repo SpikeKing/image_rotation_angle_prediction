@@ -76,7 +76,7 @@ class ImgPredictor(object):
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
-        model = load_model(model_location)
+        model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         # self.save_pb_model(model)  # 存储pb模型
 
