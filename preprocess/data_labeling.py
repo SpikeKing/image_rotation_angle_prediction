@@ -6,6 +6,11 @@ Created by C. L. Wang on 20.11.20
 """
 
 import os
+import sys
+
+p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if p not in sys.path:
+    sys.path.append(p)
 
 from root_dir import DATA_DIR
 from myutils.project_utils import traverse_dir_files, read_file, download_url_img, mkdir_if_not_exist, write_line
@@ -67,7 +72,7 @@ class DataLabeling(object):
         for path, name in zip(paths_list, names_list):
             # DataLabeling.process_file(path, name, out_dir)
             pool.apply_async(DataLabeling.process_file, (path, name, out_dir))
-            
+
         pool.close()
         pool.join()
 
