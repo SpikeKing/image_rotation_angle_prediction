@@ -92,7 +92,7 @@ model.compile(loss='categorical_crossentropy',
               metrics=[angle_error])
 
 # training parameters
-batch_size = 128
+batch_size = 64
 nb_epoch = 200
 
 # 加载已有模型
