@@ -4,6 +4,7 @@ import os
 import sys
 import random
 
+from keras_applications.nasnet import NASNetMobile
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
@@ -58,16 +59,17 @@ model_name = 'problem_rotnet_resnet50'
 # number of classes
 nb_classes = 360
 # input image shape
-input_shape = (224, 224, 3)
+input_shape = (448, 448, 3)
 
 # load base model
-base_model = ResNet50(weights='imagenet', include_top=False,
-                      input_shape=input_shape)
+# base_model = ResNet50(weights='imagenet', include_top=False,
+#                       input_shape=input_shape)
+base_model = NASNetMobile(weights='imagenet', include_top=False, input_shape=input_shape)
 x1 = base_model.output
 x1 = Flatten()(x1)
 
 input_ratio = Input(shape=(1, ), name='ratio')
-x2 = Dense(100, activation='relu')(input_ratio)
+x2 = Dense(10, activation='relu')(input_ratio)
 
 # append classification layer
 x = concatenate([x1, x2])
