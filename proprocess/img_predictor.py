@@ -88,7 +88,7 @@ class ImgPredictor(object):
         }
 
         model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
-        model = load_model(model_location, custom_objects=dependencies)
+        model = tf.keras.models.load_model(model_location, custom_objects=dependencies)
 
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
