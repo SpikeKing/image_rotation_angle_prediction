@@ -4,7 +4,7 @@ import os
 import sys
 import random
 
-from keras_applications.nasnet import NASNetMobile
+from tensorflow.keras.applications.nasnet import NASNetMobile
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
