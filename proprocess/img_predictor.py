@@ -87,7 +87,7 @@ class ImgPredictor(object):
             "angle_error": angle_error
         }
 
-        model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
+        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.5092-20201120.hdf5')
         model = tf.keras.models.load_model(model_location, custom_objects=dependencies, compile=False)
 
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
