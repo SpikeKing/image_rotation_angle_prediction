@@ -102,8 +102,7 @@ print('[Info] 模型文件夹: {}'.format(output_folder))
 # callbacks
 monitor = 'val_angle_error'
 checkpointer = ModelCheckpoint(
-    # filepath=os.path.join(output_folder, model_name + '.hdf5'),
-    filepath=output_folder,
+    filepath=os.path.join(output_folder, model_name + '.hdf5'),
     monitor=monitor,
     save_best_only=True
 )

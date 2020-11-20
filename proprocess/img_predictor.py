@@ -72,7 +72,8 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.best.v1.hdf5')
+        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.best.v1.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
         model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
         # self.save_pb_model(model)  # 存储pb模型
@@ -98,12 +99,18 @@ class ImgPredictor(object):
         预测角度
         """
         # show_img_bgr(img_bgr)
-        test_img_rgb = cv2.cvtColor(test_img_bgr, cv2.COLOR_BGR2RGB)
-        test_img_rgb = cv2.resize(test_img_rgb, (224, 224))
-        test_img_bgr_b = np.expand_dims(test_img_rgb, axis=0)
-        prediction = self.model.predict(test_img_bgr_b)
-        # angle = int(K.argmax(prediction[0])) * 90
+        test_img_bgr = cv2.cvtColor(test_img_bgr, cv2.COLOR_BGR2RGB)
+        img_rgb_224 = cv2.resize(test_img_bgr, (224, 224))
+        img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
+
+        h, w, _ = test_img_bgr.shape
+        ratio = float(h) / float(w)
+        ratio_arr = np.array(ratio)
+        ratio_b = np.expand_dims(ratio_arr, axis=0)
+
+        prediction = self.model.predict([img_bgr_b, ratio_b])
         angle = int(K.argmax(prediction[0])) % 360
+
         # print('[Info] angle: {}'.format(angle))
         # out_img_bgr = rotate_img_with_bound(img_bgr, angle)
         # show_img_bgr(out_img_bgr)
@@ -175,8 +182,6 @@ class ImgPredictor(object):
             # show_img_bgr(img_bgr_p)
 
             print('-' * 10)
-            # if (idx+1) == 320:
-            #     break
             print('[Info] {}'.format(idx+1))
 
         titles = ["img_id", "url", "angle", "p_angle", "abs_angle", "elapsed_time"]
