@@ -16,6 +16,7 @@ import tensorflow_core
 from tensorflow import keras
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 from tensorflow_core.python.keras.models import load_model
+from tensorflow_core.python.keras.optimizers import SGD
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
@@ -84,6 +85,10 @@ class ImgPredictor(object):
 
         model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
         model = load_model(model_location, custom_objects={"angle_error": angle_error}, compile=False)
+        model.compile(loss='categorical_crossentropy',
+                      optimizer=SGD(lr=0.001, momentum=0.9),
+                      metrics=[angle_error])
+        model = load_model(model_location, custom_objects={"angle_error": angle_error})
 
         # model = load_model(model_location, custom_objects={'angle_error': angle_error})
 
