@@ -31,13 +31,16 @@ from utils import angle_error
 
 class ImgPredictor(object):
     def __init__(self):
+        self.model_name = 'problem_rotnet_mobilenetv2_20w_20201121.hdf5'
         self.model = self.load_model()
+        pass
 
     def save_pb_model(self, model):
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
         full_model = full_model.get_concrete_function(
-            tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
+            [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype),
+             tf.TensorSpec(model.inputs[1].shape, model.inputs[1].dtype)])
         # Get frozen ConcreteFunction
         frozen_func = convert_variables_to_constants_v2(full_model)
         frozen_func.graph.as_graph_def()
@@ -73,26 +76,14 @@ class ImgPredictor(object):
         """
         加载模型
         """
-        # model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.best.v1.hdf5')
-        # model = load_model(model_location, custom_objects={'angle_error': angle_error})
-
-        # from tensorflow.python.saved_model import loader_impl
-        # from tensorflow.python.keras.saving.saved_model import load as saved_model_load
-        #
-        # model_location = os.path.join(DATA_DIR, 'models', 'saved_model_20201120')
-        # loader_impl.parse_saved_model(model_location)
-        # model = saved_model_load.load(model_location, custom_objects={"angle_error": angle_error})
-
         dependencies = {
             "angle_error": angle_error
         }
 
-        model_location = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.1.5092-20201120.hdf5')
+        model_location = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_location, custom_objects=dependencies, compile=False)
 
-        # model = load_model(model_location, custom_objects={'angle_error': angle_error})
-
-        # self.save_pb_model(model)  # 存储pb模型
+        self.save_pb_model(model)  # 存储pb模型
 
         return model
 
@@ -163,11 +154,33 @@ class ImgPredictor(object):
 
         return [img_id, url, angle, p_angle, abs_angle, elapsed_time]
 
+    def process_item_v2(self, url):
+        is_ok, img_bgr = download_url_img(url)
+        h, w, _ = img_bgr.shape
+
+        img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        img_rgb_resized = cv2.resize(img_bgr, (336, 336))
+        # img_rgb_resized = cv2.resize(img_bgr, (224, 224))
+        img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
+
+        h, w, _ = img_bgr.shape
+        ratio = float(h) / float(w)
+        ratio_arr = np.array(ratio)
+        ratio_b = np.expand_dims(ratio_arr, axis=0)
+
+        prediction = self.model.predict([img_bgr_b, ratio_b])
+
+        angle = int(K.argmax(prediction[0])) % 360
+
+        angle = self.format_angle(angle)
+
+        return angle
+
     def process(self):
         """
         处理全部数据
         """
-        in_file = os.path.join(DATA_DIR, 'test.500.out.x.txt')
+        in_file = os.path.join(DATA_DIR, 'test.500.out.txt')
         out_file_format = os.path.join(DATA_DIR, 'out_file.{}.{}.xlsx')
         out_dir = os.path.join(DATA_DIR, 'out_imgs_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
@@ -184,19 +197,6 @@ class ImgPredictor(object):
             item_list = self.process_item(data_dict, out_dir)
             res_list.append(item_list)
 
-            # img_bgr_d = rotate_img_with_bound(img_bgr, angle)
-            # img_bgr_p = rotate_img_with_bound(img_bgr, p_angle)
-
-            # img_bgr_d = resize_img_fixed(img_bgr_d, 512)
-            # img_bgr_p = resize_img_fixed(img_bgr_p, 512)
-            # draw_text(img_bgr_d, str(angle), org=(10, 50))
-            # draw_text(img_bgr_p, str(p_angle), org=(10, 50))
-
-            # show_img_bgr(img_merged)
-
-            # show_img_bgr(img_bgr_d)
-            # show_img_bgr(img_bgr_p)
-
             print('-' * 10)
             print('[Info] {}'.format(idx+1))
 
@@ -205,10 +205,49 @@ class ImgPredictor(object):
         write_list_to_excel(out_file, titles, res_list)
         print('[Info] 写入文件完成! {}'.format(out_file))
 
+    def process_v2(self):
+        """
+        处理数据v2
+        """
+        in_file = os.path.join(DATA_DIR, 'check_angel_result_1120.csv')
+        data_lines = read_file(in_file)
+        out_list = []
+        n_old_right = 0
+        n_right = 0
+        n_all = 0
+        for idx, data_line in enumerate(data_lines):
+            if idx == 0:
+                continue
+            url, x1_angle, r_angle, x1_is_ok = data_line.split(',')
+            x1_angle = int(x1_angle)
+            r_angle = int(r_angle)
+            x1_is_ok = int(x1_is_ok)
+            x_angle = self.process_item_v2(url)
+            x_is_ok = 1 if x_angle == r_angle else 0
+            if x1_is_ok == 1:
+                n_old_right += 1
+            if x_angle == r_angle:
+                print('[Info] 预测正确 {} - {}! {}'.format(x_angle, r_angle, url))
+                n_right += 1
+            else:
+                print('[Info] 预测错误 {} - {}! {}'.format(x_angle, r_angle, url))
+            n_all += 1
+
+            out_list.append([url, x1_angle, r_angle, x1_is_ok, x_angle, x_is_ok])
+            # if idx == 10:
+            #     break
+
+        print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
+        print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
+
+        out_file = os.path.join(DATA_DIR, 'check_{}_{}.csv'.format(self.model_name, safe_div(n_right, n_all)))
+        write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
+
 
 def main():
     ip = ImgPredictor()
-    ip.process()
+    # ip.process()
+    # ip.process_v2()
 
 
 if __name__ == '__main__':

@@ -53,7 +53,7 @@ print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2
 train_filenames = train1_filenames + train2_filenames
 test_filenames = test1_filenames + test2_filenames
 
-train_filenames = train_filenames * 5
+train_filenames = train_filenames * 10
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -63,7 +63,7 @@ model_name = 'problem_rotnet_resnet50'
 # number of classes
 nb_classes = 360
 # input image shape
-input_shape = (336, 336, 3)
+input_shape = (224, 224, 3)
 # input_shape = (224, 224, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
@@ -74,16 +74,18 @@ base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=inpu
 x1 = base_model.output
 x1 = Flatten()(x1)
 
-input_ratio = Input(shape=(1, ), name='ratio')
-x2 = Dense(10, activation='relu')(input_ratio)
+# input_ratio = Input(shape=(1, ), name='ratio')
+# x2 = Dense(10, activation='relu')(input_ratio)
 
 # append classification layer
-x = concatenate([x1, x2])
+# x = concatenate([x1, x2])
+x = concatenate(x1)
 
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
 # create the new model
-model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
+# model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
+model = Model(inputs=base_model.input, outputs=final_output)
 
 # model.summary()
 
