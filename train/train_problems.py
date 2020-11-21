@@ -74,18 +74,18 @@ base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=inpu
 x1 = base_model.output
 x1 = Flatten()(x1)
 
-# input_ratio = Input(shape=(1, ), name='ratio')
-# x2 = Dense(10, activation='relu')(input_ratio)
+input_ratio = Input(shape=(1, ), name='ratio')
+x2 = Dense(10, activation='relu')(input_ratio)
 
 # append classification layer
-# x = concatenate([x1, x2])
-x = x1
+x = concatenate([x1, x2])
+# x = x1
 
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
 # create the new model
-# model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
-model = Model(inputs=base_model.input, outputs=final_output)
+model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
+# model = Model(inputs=base_model.input, outputs=final_output)
 
 # model.summary()
 
