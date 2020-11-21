@@ -79,7 +79,7 @@ x1 = Flatten()(x1)
 
 # append classification layer
 # x = concatenate([x1, x2])
-x = concatenate(x1)
+x = x1
 
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
