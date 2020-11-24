@@ -53,7 +53,7 @@ print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2
 train_filenames = train1_filenames + train2_filenames
 test_filenames = test1_filenames + test2_filenames
 
-train_filenames = train_filenames * 10
+train_filenames = train_filenames * 5
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')

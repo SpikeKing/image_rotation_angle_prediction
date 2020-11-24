@@ -31,7 +31,7 @@ from utils import angle_error
 
 class ImgPredictor(object):
     def __init__(self):
-        self.model_name = 'problem_rotnet_mobilenetv2_20w_20201121.hdf5'
+        self.model_name = 'problem_rotnet_mobilenetv2_x_ratio_20201123.hdf5'
         self.model = self.load_model()
         pass
 
@@ -83,7 +83,7 @@ class ImgPredictor(object):
         model_location = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_location, custom_objects=dependencies, compile=False)
 
-        self.save_pb_model(model)  # 存储pb模型
+        # self.save_pb_model(model)  # 存储pb模型
 
         return model
 
@@ -159,8 +159,8 @@ class ImgPredictor(object):
         h, w, _ = img_bgr.shape
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-        img_rgb_resized = cv2.resize(img_bgr, (336, 336))
-        # img_rgb_resized = cv2.resize(img_bgr, (224, 224))
+        # img_rgb_resized = cv2.resize(img_bgr, (336, 336))
+        img_rgb_resized = cv2.resize(img_bgr, (224, 224))
         img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
 
         h, w, _ = img_bgr.shape
@@ -227,10 +227,10 @@ class ImgPredictor(object):
             if x1_is_ok == 1:
                 n_old_right += 1
             if x_angle == r_angle:
-                print('[Info] 预测正确 {} - {}! {}'.format(x_angle, r_angle, url))
+                print('[Info] {} 预测正确 {} - {}! {}'.format(idx, x_angle, r_angle, url))
                 n_right += 1
             else:
-                print('[Info] 预测错误 {} - {}! {}'.format(x_angle, r_angle, url))
+                print('[Info] {} 预测错误 {} - {}! {}'.format(idx, x_angle, r_angle, url))
             n_all += 1
 
             out_list.append([url, x1_angle, r_angle, x1_is_ok, x_angle, x_is_ok])
@@ -247,7 +247,7 @@ class ImgPredictor(object):
 def main():
     ip = ImgPredictor()
     # ip.process()
-    # ip.process_v2()
+    ip.process_v2()
 
 
 if __name__ == '__main__':
