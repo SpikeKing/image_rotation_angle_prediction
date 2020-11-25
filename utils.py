@@ -291,8 +291,8 @@ class RotNetDataGenerator(Iterator):
             offset_angle = random.randint(-10, 10)
             # offset_angle = random.randint(-15, 15)
 
-            # rotation_angle = random_pick([0, 90, 180, 270], [0.22, 0.05, 0.03, 0.70])
-            rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
+            rotation_angle = random_pick([0, 90, 180, 270], [0.22, 0.05, 0.03, 0.70])
+            # rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
 
             rotation_angle = (rotation_angle + offset_angle) % 360
         else:
@@ -327,9 +327,19 @@ class RotNetDataGenerator(Iterator):
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 if random_prob(0.5):
                     h, w, _ = image.shape
-                    out_h = h
+
                     if random_prob(0.5):
-                        out_h = int(h // 2)
+                        # mode 1
+                        # out_h = int(h // 2)
+
+                        # mode 2
+                        if random_prob(0.6):
+                            out_h = int(h // 2)
+                        else:
+                            out_h = int(h // 3)
+                    else:
+                        out_h = h
+
                     image = random_crop(image, out_h, w)
 
             rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
