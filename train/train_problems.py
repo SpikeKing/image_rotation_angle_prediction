@@ -46,15 +46,23 @@ train3_filenames = (train3_filenames + test3_filenames)
 random.shuffle(train3_filenames)
 print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
 
-train_filenames = train1_filenames + train2_filenames + train3_filenames
-test_filenames = test1_filenames + test2_filenames + test3_filenames
+data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
+print('[Info] data4_path: {}'.format(data4_path))
+train4_filenames, test4_filenames = get_problems_data(data4_path)
+train4_filenames = (train4_filenames + test4_filenames)
+train4_filenames = train4_filenames * 20
+random.shuffle(train4_filenames)
+print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
+
+train_filenames = train1_filenames + train2_filenames + train3_filenames + train4_filenames
+test_filenames = test1_filenames + test2_filenames + test3_filenames + test4_filenames
 
 train_filenames = train_filenames * 5
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
-model_name = 'problem_rotnet_resnet50'
+model_name = 'problem_rotnet_mobilenetv2'
 
 # number of classes
 nb_classes = 360
@@ -70,18 +78,18 @@ base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=inpu
 x1 = base_model.output
 x1 = Flatten()(x1)
 
-# input_ratio = Input(shape=(1, ), name='ratio')
-# x2 = Dense(10, activation='relu')(input_ratio)
+input_ratio = Input(shape=(1, ), name='ratio')
+x2 = Dense(10, activation='relu')(input_ratio)
 
 # append classification layer
-# x = concatenate([x1, x2])
-x = x1
+x = concatenate([x1, x2])
+# x = x1
 
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
 # create the new model
-# model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
-model = Model(inputs=base_model.input, outputs=final_output)
+model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
+# model = Model(inputs=base_model.input, outputs=final_output)
 
 # model.summary()
 
@@ -96,9 +104,9 @@ batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
-# model.load_weights(model_path)
-# print('[Info] 加载模型的路径: {}'.format(model_path))
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
+model.load_weights(model_path)
+print('[Info] 加载模型的路径: {}'.format(model_path))
 
 output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
 if not os.path.exists(output_folder):

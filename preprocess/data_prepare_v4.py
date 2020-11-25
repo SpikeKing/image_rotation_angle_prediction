@@ -52,7 +52,7 @@ class DataPrepareV4(object):
 
         # print('[Info] angle: {}'.format(angle))
         angle = DataPrepareV4.format_angle(angle)
-        img_out = rotate_img_with_bound(img_bgr, angle)
+        img_out = rotate_img_with_bound(img_bgr, -angle)
         cv2.imwrite(out_path, img_out)
         print('[Info] 存储完成: {}'.format(out_path))
 
@@ -63,8 +63,8 @@ class DataPrepareV4(object):
             # print('[Info] url: {}'.format(data_line))
             out_path = os.path.join(self.out_dir, '{}.jpg'.format(idx))
 
-            pool.apply_async(DataPrepareV4.process_url, (data_line, out_path))
-            # DataPrepareV4.process_url(data_line, out_path)
+            # pool.apply_async(DataPrepareV4.process_url, (data_line, out_path))
+            DataPrepareV4.process_url(data_line, out_path)
             if idx % 100 == 0:
                 print('[Info] idx: {}'.format(idx))
 
