@@ -70,18 +70,18 @@ base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=inpu
 x1 = base_model.output
 x1 = Flatten()(x1)
 
-input_ratio = Input(shape=(1, ), name='ratio')
-x2 = Dense(10, activation='relu')(input_ratio)
+# input_ratio = Input(shape=(1, ), name='ratio')
+# x2 = Dense(10, activation='relu')(input_ratio)
 
 # append classification layer
-x = concatenate([x1, x2])
-# x = x1
+# x = concatenate([x1, x2])
+x = x1
 
 final_output = Dense(nb_classes, activation='softmax', name='fc360')(x)
 
 # create the new model
-model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
-# model = Model(inputs=base_model.input, outputs=final_output)
+# model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
+model = Model(inputs=base_model.input, outputs=final_output)
 
 # model.summary()
 
@@ -96,9 +96,9 @@ batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
-model.load_weights(model_path)
-print('[Info] 加载模型的路径: {}'.format(model_path))
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
+# model.load_weights(model_path)
+# print('[Info] 加载模型的路径: {}'.format(model_path))
 
 output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
 if not os.path.exists(output_folder):

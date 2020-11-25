@@ -329,14 +329,13 @@ class RotNetDataGenerator(Iterator):
                     h, w, _ = image.shape
 
                     if random_prob(0.5):
-                        # mode 1
-                        # out_h = int(h // 2)
+                        out_h = int(h // 2)  # mode 1
 
                         # mode 2
-                        if random_prob(0.6):
-                            out_h = int(h // 2)
-                        else:
-                            out_h = int(h // 3)
+                        # if random_prob(0.6):
+                        #     out_h = int(h // 2)
+                        # else:
+                        #     out_h = int(h // 3)
                     else:
                         out_h = h
 
@@ -366,8 +365,8 @@ class RotNetDataGenerator(Iterator):
         if self.preprocess_func:
             batch_x = self.preprocess_func(batch_x)
 
-        return [batch_x, ratio_arr], batch_y
-        # return batch_x, batch_y
+        # return [batch_x, ratio_arr], batch_y
+        return batch_x, batch_y
 
     def next(self):
         with self.lock:
