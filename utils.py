@@ -261,7 +261,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image, rotated_ratio, angle = get_format_img(size)
 
-    if rotated_ratio > 10 or rotated_ratio < 0.2:
+    if rotated_ratio > 10 or rotated_ratio < 0.1:
         image, rotated_ratio, angle = get_format_img(size)
 
     angle = format_angle(angle)  # 输出固定的度数
