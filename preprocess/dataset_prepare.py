@@ -28,6 +28,7 @@ class DatasetPrepare(object):
         print('[Info] path: {}'.format(path))
         data_lines = read_file(path)
         out_file = os.path.join(out_dir, '{}_out.txt'.format(name))
+        create_file(out_file)
 
         out_list = []
         for data_line in data_lines:
