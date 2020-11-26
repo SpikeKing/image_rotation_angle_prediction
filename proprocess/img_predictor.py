@@ -22,7 +22,7 @@ p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
 
-from myutils.cv_utils import show_img_bgr, rotate_img_with_bound, merge_two_imgs, draw_text, resize_img_fixed
+from myutils.cv_utils import *
 from myutils.project_utils import *
 
 from root_dir import DATA_DIR
@@ -33,9 +33,10 @@ class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_a12_20201126.2.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_s3_20201126.3.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.3.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -116,7 +117,10 @@ class ImgPredictor(object):
         ratio_b = np.expand_dims(ratio_arr, axis=0)
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-        img_rgb_224 = cv2.resize(img_bgr, (224, 224))
+
+        # img_rgb_224 = cv2.resize(img_bgr, (224, 224))  # resize
+        img_rgb_224 = resize_image_with_padding(img_bgr, 224)  # pad
+
         img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
 
         prediction = self.model.predict([img_bgr_b, ratio_b])
@@ -308,10 +312,10 @@ def demo_of_img_path():
 
 
 def main():
-    # ip = ImgPredictor()
+    ip = ImgPredictor()
     # ip.process()
-    # ip.process_v2()
-    demo_of_img_path()
+    ip.process_v2()
+    # demo_of_img_path()
 
 
 if __name__ == '__main__':
