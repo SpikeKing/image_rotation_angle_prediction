@@ -312,10 +312,10 @@ def demo_of_img_path():
 
 
 def main():
-    # ip = ImgPredictor()
+    ip = ImgPredictor()
     # ip.process()
-    # ip.process_v2()
-    demo_of_img_path()
+    ip.process_v2()
+    # demo_of_img_path()
 
 
 if __name__ == '__main__':
