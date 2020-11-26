@@ -288,8 +288,8 @@ class RotNetDataGenerator(Iterator):
     def process_img(self, image):
         if self.rotate:
             # get a random angle
-            offset_angle = random.randint(-10, 10)
-            # offset_angle = random.randint(-15, 15)
+            # offset_angle = random.randint(-10, 10)
+            offset_angle = random.randint(-12, 12)
 
             rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
 
