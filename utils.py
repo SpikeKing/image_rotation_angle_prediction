@@ -323,6 +323,8 @@ class RotNetDataGenerator(Iterator):
         )
 
         rotation_angle = self.format_angle(rotation_angle)  # 输出固定的度数
+        print('[Info] rotated_image: {}, rotation_angle: {}, rotated_ratio: {}'
+              .format(rotated_image.shape, rotation_angle, rotated_ratio))
 
         return rotated_image, rotation_angle, rotated_ratio
 
