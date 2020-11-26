@@ -242,7 +242,52 @@ class ImgPredictor(object):
         print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
         print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
 
-        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.csv'.format(self.model_name, safe_div(n_right, n_all), n_error))
+        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.csv'.format(self.model_name, safe_div(n_right, n_all),
+                                                                       n_error))
+        write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
+
+    def process_v3(self):
+        """
+        处理数据v3
+        """
+        in_file = os.path.join(DATA_DIR, 'test_1000_out_4a.txt')
+        data_lines = read_file(in_file)
+        out_list = []
+        n_old_right = 0
+        n_right = 0
+        n_all = 0
+        n_error = 0
+        for idx, data_line in enumerate(data_lines):
+            if idx == 0:
+                continue
+            url, r_angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
+
+            x1_angle = int(uc_angle)
+            x1_is_ok = int(is_uc)
+
+            r_angle = int(r_angle)
+
+            x_angle = self.process_item_v2(url)
+            x_is_ok = 1 if x_angle == r_angle else 0
+            if x1_is_ok == 1:
+                n_old_right += 1
+            if x_angle == r_angle:
+                print('[Info] {} 预测正确 {} - {}! {}'.format(idx, x_angle, r_angle, url))
+                n_right += 1
+            else:
+                print('[Info] {} 预测错误 {} - {}! {}'.format(idx, x_angle, r_angle, url))
+                n_error += 1
+            n_all += 1
+
+            out_list.append([url, x1_angle, r_angle, x1_is_ok, x_angle, x_is_ok])
+            # if idx == 10:
+            #     break
+
+        print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
+        print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
+
+        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.csv'.format(self.model_name, safe_div(n_right, n_all),
+                                                                       n_error))
         write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
 
 
