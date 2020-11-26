@@ -264,7 +264,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
 
-    if rotated_ratio > 10 or rotated_ratio < 0.1:
+    if rotated_ratio > 12 or rotated_ratio < 0.08:
         image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
 
