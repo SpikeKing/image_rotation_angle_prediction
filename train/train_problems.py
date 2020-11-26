@@ -105,7 +105,8 @@ lr_schedule = ExponentialDecay(
     decay_rate=0.9
 )
 model.compile(loss='categorical_crossentropy',
-              optimizer=Adam(learning_rate=lr_schedule))
+              optimizer=Adam(learning_rate=lr_schedule),
+              metrics=[angle_error])
 
 # training parameters
 # batch_size = 128
