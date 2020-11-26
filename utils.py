@@ -199,6 +199,30 @@ def crop_largest_rectangle(image, angle, height, width):
     )
 
 
+def format_angle(angle):
+    """
+    格式化角度
+    """
+    angle = int(angle)
+    if angle <= 45 or angle >= 325:
+        r_angle = 0
+    elif 45 < angle <= 135:
+        r_angle = 90
+    elif 135 < angle <= 225:
+        r_angle = 180
+    else:
+        r_angle = 270
+    return r_angle
+
+
+def get_format_img(size):
+    image = np.ones((size[1], size[0], 3)) * 255
+    image = image.astype(np.uint8)
+    rh, rw, _ = image.shape
+    rotated_ratio = float(rh) / float(rw)
+    angle = 270
+    return image, rotated_ratio, angle
+
 def generate_rotated_image(image, angle, size=None, crop_center=False,
                            crop_largest_rect=False):
     """
@@ -235,11 +259,14 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     except Exception as e:
         # print('[Info] error: {}'.format(e))
         # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
-        image = np.ones((size[1], size[0], 3)) * 255
-        image = image.astype(np.uint8)
-        rh, rw, _ = image.shape
-        rotated_ratio = float(rh) / float(rw)
-        angle = 270
+        image, rotated_ratio, angle = get_format_img(size)
+
+    if rotated_ratio > 10 or rotated_ratio < 0.2:
+        image, rotated_ratio, angle = get_format_img(size)
+
+    angle = format_angle(angle)  # 输出固定的度数
+    print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}'
+          .format(image.shape, angle, rotated_ratio))
 
     return image, angle, rotated_ratio
 
@@ -285,22 +312,6 @@ class RotNetDataGenerator(Iterator):
 
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
-    @staticmethod
-    def format_angle(angle):
-        """
-        格式化角度
-        """
-        angle = int(angle)
-        if angle <= 45 or angle >= 325:
-            r_angle = 0
-        elif 45 < angle <= 135:
-            r_angle = 90
-        elif 135 < angle <= 225:
-            r_angle = 180
-        else:
-            r_angle = 270
-        return r_angle
-
     def process_img(self, image):
         if self.rotate:
             # get a random angle
@@ -321,10 +332,6 @@ class RotNetDataGenerator(Iterator):
             crop_center=self.crop_center,
             crop_largest_rect=self.crop_largest_rect
         )
-
-        rotation_angle = self.format_angle(rotation_angle)  # 输出固定的度数
-        print('[Info] rotated_image: {}, rotation_angle: {}, rotated_ratio: {}'
-              .format(rotated_image.shape, rotation_angle, rotated_ratio))
 
         return rotated_image, rotation_angle, rotated_ratio
 
