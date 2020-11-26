@@ -32,10 +32,10 @@ from utils import angle_error
 class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_nor_20201126.5.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.6.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_all_20201126.7.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_all_20201126.7.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -120,7 +120,7 @@ class ImgPredictor(object):
         img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
 
         prediction = self.model.predict([img_bgr_b, ratio_b])
-        # prediction = self.model.predict(img_bgr_b)  # 不包含角度
+        # prediction = self.model.predict([img_bgr_b, np.zeros((1,))])  # 不包含角度
 
         angle = int(K.argmax(prediction[0])) % 360
 
@@ -206,19 +206,23 @@ class ImgPredictor(object):
         """
         处理数据v2
         """
-        in_file = os.path.join(DATA_DIR, 'check_angel_result_1120.csv')
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.e25.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
         n_right = 0
         n_all = 0
+        n_error = 0
         for idx, data_line in enumerate(data_lines):
             if idx == 0:
                 continue
-            url, x1_angle, r_angle, x1_is_ok = data_line.split(',')
-            x1_angle = int(x1_angle)
+            url, r_angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
+
+            x1_angle = int(uc_angle)
+            x1_is_ok = int(is_uc)
+
             r_angle = int(r_angle)
-            x1_is_ok = int(x1_is_ok)
+
             x_angle = self.process_item_v2(url)
             x_is_ok = 1 if x_angle == r_angle else 0
             if x1_is_ok == 1:
@@ -228,6 +232,7 @@ class ImgPredictor(object):
                 n_right += 1
             else:
                 print('[Info] {} 预测错误 {} - {}! {}'.format(idx, x_angle, r_angle, url))
+                n_error += 1
             n_all += 1
 
             out_list.append([url, x1_angle, r_angle, x1_is_ok, x_angle, x_is_ok])
@@ -237,14 +242,24 @@ class ImgPredictor(object):
         print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
         print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
 
-        out_file = os.path.join(DATA_DIR, 'check_{}_{}.csv'.format(self.model_name, safe_div(n_right, n_all)))
+        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.csv'.format(self.model_name, safe_div(n_right, n_all), n_error))
         write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
 
 
 def demo_of_img_path():
-    img_path = os.path.join(DATA_DIR, 'errors', 'error_1.jpg')
+    error_dir = os.path.join(DATA_DIR, 'error_imgs')
     ip = ImgPredictor()
-    ip.predict_img_path(img_path)
+    paths_list, names_list = traverse_dir_files(error_dir)
+    n_path = len(paths_list)
+    n_right = 0
+    for path, name in zip(paths_list, names_list):
+        r_angle = int(name.split('.')[1])
+        p_angle = ip.predict_img_path(path)
+        if r_angle == p_angle:
+            n_right += 1
+        print('[Info] r_angle: {}, p_angle: {}, is_equal: {}'.format(r_angle, p_angle, r_angle == p_angle))
+    ratio = safe_div(n_right, n_path)
+    print('[Info] 正确率: {}'.format(ratio))
 
 
 def main():

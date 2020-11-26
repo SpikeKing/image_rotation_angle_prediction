@@ -285,6 +285,22 @@ class RotNetDataGenerator(Iterator):
 
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
+    @staticmethod
+    def format_angle(angle):
+        """
+        格式化角度
+        """
+        angle = int(angle)
+        if angle <= 45 or angle >= 325:
+            r_angle = 0
+        elif 45 < angle <= 135:
+            r_angle = 90
+        elif 135 < angle <= 225:
+            r_angle = 180
+        else:
+            r_angle = 270
+        return r_angle
+
     def process_img(self, image):
         if self.rotate:
             # get a random angle
@@ -305,6 +321,8 @@ class RotNetDataGenerator(Iterator):
             crop_center=self.crop_center,
             crop_largest_rect=self.crop_largest_rect
         )
+
+        rotation_angle = self.format_angle(rotation_angle)  # 输出固定的度数
 
         return rotated_image, rotation_angle, rotated_ratio
 

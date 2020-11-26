@@ -16,7 +16,7 @@ from root_dir import DATA_DIR
 from myutils.project_utils import traverse_dir_files, read_file, download_url_img, mkdir_if_not_exist, write_line
 from myutils.cv_utils import rotate_img_with_bound, show_img_bgr, resize_img_fixed
 from x_utils.oss_utils import save_img_2_oss
-from x_utils.vpf_utils import get_problem_rotation_vpf_service
+from x_utils.vpf_utils import get_uc_rotation_vpf_service
 from multiprocessing.pool import Pool
 
 
@@ -48,7 +48,7 @@ class DataLabeling(object):
         for idx, data in enumerate(data_lines):
             try:
                 img_id, img_url, _ = data.split('<sep>')
-                data_dict = get_problem_rotation_vpf_service(img_url)
+                data_dict = get_uc_rotation_vpf_service(img_url)
                 is_success = data_dict['success']
                 img_oss_name = "{}_{}.jpg".format(name, idx)
                 if is_success:

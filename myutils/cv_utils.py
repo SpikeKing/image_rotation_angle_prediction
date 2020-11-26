@@ -605,6 +605,22 @@ def random_crop(img, height, width, sh=0, sw=0):
     return img
 
 
+def format_angle(angle):
+    """
+    格式化角度
+    """
+    angle = int(angle)
+    if angle <= 45 or angle >= 325:
+        r_angle = 0
+    elif 45 < angle <= 135:
+        r_angle = 90
+    elif 135 < angle <= 225:
+        r_angle = 180
+    else:
+        r_angle = 270
+    return r_angle
+
+
 def main():
     labels = [u'大型', u'中型', u'小型', u'微型']  # 定义标签
     sizes = [46, 253, 321, 66]  # 每块值

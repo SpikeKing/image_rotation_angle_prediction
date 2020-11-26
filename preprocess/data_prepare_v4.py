@@ -17,7 +17,7 @@ if p not in sys.path:
 from root_dir import DATA_DIR
 from myutils.project_utils import read_file, download_url_img, mkdir_if_not_exist
 from myutils.cv_utils import rotate_img_with_bound
-from x_utils.vpf_utils import get_problem_rotation_vpf_service
+from x_utils.vpf_utils import get_uc_rotation_vpf_service
 
 
 class DataPrepareV4(object):
@@ -45,7 +45,7 @@ class DataPrepareV4(object):
     @staticmethod
     def process_url(img_url, out_path):
         is_ok, img_bgr = download_url_img(img_url)
-        res_dict = get_problem_rotation_vpf_service(img_url)
+        res_dict = get_uc_rotation_vpf_service(img_url)
         # print('[Info] res: {}'.format(res_dict))
         angle = res_dict['data']['angle']
         # image_oss_url = res_dict['data']['image_oss_url']
