@@ -44,7 +44,7 @@ class DatasetPrepare(object):
             angle = format_angle(angle)
             out_items = [img_url, str(angle)]
             # print('[Info] out_items: {}'.format(out_items))
-            out_line = ",".format(out_items)
+            out_line = ",".join(out_items)
             out_list.append(out_line)
         write_list_to_file(out_file, out_list)
         print('[Info] 处理完成: {}'.format(out_file))
@@ -57,8 +57,8 @@ class DatasetPrepare(object):
         pool = Pool(processes=40)
 
         for path, name in zip(paths_list, names_list):
-            pool.apply_async(DatasetPrepare.process_file, (path, name, out_dir))
-            # DatasetPrepare.process_file(path, name, out_dir)
+            # pool.apply_async(DatasetPrepare.process_file, (path, name, out_dir))
+            DatasetPrepare.process_file(path, name, out_dir)
 
         pool.close()
         pool.join()
