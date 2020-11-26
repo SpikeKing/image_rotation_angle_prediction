@@ -69,8 +69,8 @@ model_name = 'problem_rotnet_mobilenetv2'
 # number of classes
 nb_classes = 360
 # input image shape
-input_shape = (224, 224, 3)
 # input_shape = (224, 224, 3)
+input_shape = (448, 448, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
@@ -109,8 +109,8 @@ model.compile(loss='categorical_crossentropy',
               metrics=[angle_error])
 
 # training parameters
-# batch_size = 128
-batch_size = 192
+batch_size = 48
+# batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
