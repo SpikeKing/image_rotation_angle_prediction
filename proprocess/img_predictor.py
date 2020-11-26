@@ -36,7 +36,7 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_a12_20201126.2.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_s3_20201126.3.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.1.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_base_20201127.3.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -118,8 +118,8 @@ class ImgPredictor(object):
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-        # img_rgb_224 = cv2.resize(img_bgr, (224, 224))  # resize
-        img_rgb_224 = resize_image_with_padding(img_bgr, 224)  # pad
+        img_rgb_224 = cv2.resize(img_bgr, (224, 224))  # resize
+        # img_rgb_224 = resize_image_with_padding(img_bgr, 224)  # pad
 
         img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
 
