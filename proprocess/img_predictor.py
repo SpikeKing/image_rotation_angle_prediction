@@ -36,7 +36,7 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_a12_20201126.2.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_s3_20201126.3.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.3.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -312,10 +312,10 @@ def demo_of_img_path():
 
 
 def main():
-    ip = ImgPredictor()
+    # ip = ImgPredictor()
     # ip.process()
-    ip.process_v2()
-    # demo_of_img_path()
+    # ip.process_v2()
+    demo_of_img_path()
 
 
 if __name__ == '__main__':
