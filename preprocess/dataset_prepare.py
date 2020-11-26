@@ -10,12 +10,11 @@ import json
 import sys
 from multiprocessing.pool import Pool
 
-from x_utils.vpf_utils import get_uc_rotation_vpf_service
-
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
 
+from x_utils.vpf_utils import get_uc_rotation_vpf_service
 from myutils.project_utils import *
 from myutils.cv_utils import *
 from root_dir import ROOT_DIR, DATA_DIR
