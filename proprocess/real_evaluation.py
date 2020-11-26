@@ -160,8 +160,8 @@ class RealEvaluation(object):
             print('[Info] {} out_items: {}'.format(idx, out_items))
             out_line = ",".join(out_items)
             out_list.append(out_line)
-            if idx == 10:
-                break
+            # if idx == 10:
+            #     break
 
         write_list_to_file(out_file, out_list)
         print('[Info] 处理完成: {}'.format(out_file))
