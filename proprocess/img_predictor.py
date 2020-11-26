@@ -31,7 +31,12 @@ from utils import angle_error
 
 class ImgPredictor(object):
     def __init__(self):
-        self.model_name = "problem_rotnet_mobilenetv2_123_20201125.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_nor_20201126.5.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.6.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_all_20201126.7.hdf5"
+        print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
 
@@ -101,27 +106,36 @@ class ImgPredictor(object):
             r_angle = 270
         return r_angle
 
-    def predict_img(self, test_img_bgr):
+    def predict_img_bgr(self, img_bgr):
         """
         预测角度
         """
-        # show_img_bgr(img_bgr)
-        test_img_bgr = cv2.cvtColor(test_img_bgr, cv2.COLOR_BGR2RGB)
-        img_rgb_224 = cv2.resize(test_img_bgr, (224, 224))
-        img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
-
-        h, w, _ = test_img_bgr.shape
+        h, w, _ = img_bgr.shape
         ratio = float(h) / float(w)
         ratio_arr = np.array(ratio)
         ratio_b = np.expand_dims(ratio_arr, axis=0)
 
+        img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        img_rgb_224 = cv2.resize(img_bgr, (224, 224))
+        img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
+
         prediction = self.model.predict([img_bgr_b, ratio_b])
+        # prediction = self.model.predict(img_bgr_b)  # 不包含角度
+
         angle = int(K.argmax(prediction[0])) % 360
 
-        # print('[Info] angle: {}'.format(angle))
-        # out_img_bgr = rotate_img_with_bound(img_bgr, angle)
-        # show_img_bgr(out_img_bgr)
+        angle = self.format_angle(angle)
 
+        return angle
+
+    def predict_img_path(self, img_path):
+        """
+        预测图像路径
+        """
+        print('[Info] img_path: {}'.format(img_path))
+        img_bgr = cv2.imread(img_path)
+        angle = self.predict_img_bgr(img_bgr)
+        print('[Info] 预测角度: {}'.format(angle))
         return angle
 
     def process_item(self, data_dict, out_dir):
@@ -138,7 +152,7 @@ class ImgPredictor(object):
         is_ok, img_bgr = download_url_img(url)
         h, w, _ = img_bgr.shape
         s_time = time.time()
-        p_angle = self.predict_img(img_bgr)
+        p_angle = self.predict_img_bgr(img_bgr)
         print('[Info] p_angle: {}'.format(p_angle))
 
         elapsed_time = time.time() - s_time
@@ -156,24 +170,7 @@ class ImgPredictor(object):
 
     def process_item_v2(self, url):
         is_ok, img_bgr = download_url_img(url)
-        h, w, _ = img_bgr.shape
-
-        img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-        # img_rgb_resized = cv2.resize(img_bgr, (336, 336))
-        img_rgb_resized = cv2.resize(img_bgr, (224, 224))
-        img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
-
-        h, w, _ = img_bgr.shape
-        ratio = float(h) / float(w)
-        ratio_arr = np.array(ratio)
-        ratio_b = np.expand_dims(ratio_arr, axis=0)
-
-        prediction = self.model.predict([img_bgr_b, ratio_b])
-
-        angle = int(K.argmax(prediction[0])) % 360
-
-        angle = self.format_angle(angle)
-
+        angle = self.predict_img_bgr(img_bgr)
         return angle
 
     def process(self):
@@ -244,10 +241,17 @@ class ImgPredictor(object):
         write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
 
 
+def demo_of_img_path():
+    img_path = os.path.join(DATA_DIR, 'errors', 'error_1.jpg')
+    ip = ImgPredictor()
+    ip.predict_img_path(img_path)
+
+
 def main():
     ip = ImgPredictor()
     # ip.process()
     ip.process_v2()
+    # demo_of_img_path()
 
 
 if __name__ == '__main__':

@@ -50,7 +50,7 @@ data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
 print('[Info] data4_path: {}'.format(data4_path))
 train4_filenames, test4_filenames = get_problems_data(data4_path)
 train4_filenames = (train4_filenames + test4_filenames)
-train4_filenames = train4_filenames * 20
+train4_filenames = train4_filenames * 10
 random.shuffle(train4_filenames)
 print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
 
@@ -104,7 +104,7 @@ batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_even_20201126.3.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
