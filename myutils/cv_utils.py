@@ -621,6 +621,29 @@ def format_angle(angle):
     return r_angle
 
 
+def resize_image_with_padding(img_bgr, desired_size=224):
+    import cv2
+
+    old_size = img_bgr.shape[:2]  # old_size is in (height, width) format
+
+    ratio = float(desired_size) / max(old_size)
+    new_size = tuple([int(x * ratio) for x in old_size])
+
+    # new_size should be in (width, height) format
+
+    img_bgr = cv2.resize(img_bgr, (new_size[1], new_size[0]))
+
+    delta_w = desired_size - new_size[1]
+    delta_h = desired_size - new_size[0]
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
+
+    color = [255, 255, 255]
+    new_im = cv2.copyMakeBorder(img_bgr, top, bottom, left, right, cv2.BORDER_CONSTANT,
+                                value=color)
+    return new_im
+
+
 def main():
     labels = [u'大型', u'中型', u'小型', u'微型']  # 定义标签
     sizes = [46, 253, 321, 66]  # 每块值
