@@ -98,7 +98,7 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 # model compilation
 lr_schedule = ExponentialDecay(
     initial_learning_rate=0.001,
-    decay_steps=10000,
+    decay_steps=20000,
     decay_rate=0.9
 )
 # model.compile(loss='categorical_crossentropy',
