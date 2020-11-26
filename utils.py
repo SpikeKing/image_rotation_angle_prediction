@@ -360,12 +360,11 @@ class RotNetDataGenerator(Iterator):
                     h, w, _ = image.shape
 
                     if random_prob(0.5):
-                        # out_h = int(h // 2)  # mode 1
-
-                        if random_prob(0.7):  # mode 2
-                            out_h = int(h // 2)
-                        else:
-                            out_h = int(h // 3)
+                        out_h = int(h // 2)  # mode 1
+                        # if random_prob(0.7):  # mode 2
+                        #     out_h = int(h // 2)
+                        # else:
+                        #     out_h = int(h // 3)
                     else:
                         out_h = h
 
@@ -390,16 +389,14 @@ class RotNetDataGenerator(Iterator):
             batch_x[n_i] = img_list[n_i % n_real]
             batch_x_2[n_i] = ratio_list[n_i % n_real]
             batch_y[n_i] = angle_list[n_i % n_real]
-            print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}'
-                  .format(img_list[n_i % n_real].shape, angle_list[n_i % n_real], ratio_list[n_i % n_real]))
+            # print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}'
+            #       .format(img_list[n_i % n_real].shape, angle_list[n_i % n_real], ratio_list[n_i % n_real]))
 
         if self.one_hot:
             # convert the numerical labels to binary labels
             batch_y = to_categorical(batch_y, 360)
         else:
             batch_y /= 360
-
-        # ratio_arr = np.array(ratio_list)  # 度数arr
 
         # preprocess input images
         if self.preprocess_func:
