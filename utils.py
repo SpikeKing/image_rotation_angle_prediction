@@ -220,7 +220,7 @@ def get_format_img(size):
     image = image.astype(np.uint8)
     rh, rw, _ = image.shape
     rotated_ratio = float(rh) / float(rw)
-    angle = 270
+    angle = 0
     return image, rotated_ratio, angle
 
 
@@ -382,6 +382,13 @@ class RotNetDataGenerator(Iterator):
             img_list.append(rotated_image)
             ratio_list.append(rotated_ratio)
             angle_list.append(rotation_angle)
+
+        if not img_list:  # 容错
+            rotated_image, rotated_ratio, rotation_angle = get_format_img(size=self.input_shape[:2])
+            img_list.append(rotated_image)
+            ratio_list.append(rotated_ratio)
+            angle_list.append(rotation_angle)
+            print('[Error] batch empty!!!!')
 
         n_index = len(index_array)
         n_real = len(img_list)
