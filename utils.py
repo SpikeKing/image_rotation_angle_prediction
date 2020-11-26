@@ -390,6 +390,8 @@ class RotNetDataGenerator(Iterator):
             batch_x[n_i] = img_list[n_i % n_real]
             batch_x_2[n_i] = ratio_list[n_i % n_real]
             batch_y[n_i] = angle_list[n_i % n_real]
+            print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}'
+                  .format(img_list[n_i % n_real].shape, angle_list[n_i % n_real], ratio_list[n_i % n_real]))
 
         if self.one_hot:
             # convert the numerical labels to binary labels
