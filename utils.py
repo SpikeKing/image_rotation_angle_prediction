@@ -223,6 +223,7 @@ def get_format_img(size):
     angle = 270
     return image, rotated_ratio, angle
 
+
 def generate_rotated_image(image, angle, size=None, crop_center=False,
                            crop_largest_rect=False):
     """
@@ -232,6 +233,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     crop_largest_rect option. To resize the final image, use the size
     option.
     """
+    is_ok = True
     height, width = image.shape[:2]
     if crop_center:
         if width < height:
@@ -260,15 +262,17 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         # print('[Info] error: {}'.format(e))
         # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
         image, rotated_ratio, angle = get_format_img(size)
+        is_ok = False
 
     if rotated_ratio > 10 or rotated_ratio < 0.1:
         image, rotated_ratio, angle = get_format_img(size)
+        is_ok = False
 
     angle = format_angle(angle)  # 输出固定的度数
-    print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}'
-          .format(image.shape, angle, rotated_ratio))
+    print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}, is_ok: {}'
+          .format(image.shape, angle, rotated_ratio, is_ok))
 
-    return image, angle, rotated_ratio
+    return image, angle, rotated_ratio, is_ok
 
 
 class RotNetDataGenerator(Iterator):
@@ -325,7 +329,7 @@ class RotNetDataGenerator(Iterator):
             rotation_angle = 0
 
         # generate the rotated image
-        rotated_image, rotation_angle, rotated_ratio = generate_rotated_image(
+        rotated_image, rotation_angle, rotated_ratio, is_ok = generate_rotated_image(
             image,
             rotation_angle,
             size=self.input_shape[:2],
@@ -333,15 +337,16 @@ class RotNetDataGenerator(Iterator):
             crop_largest_rect=self.crop_largest_rect
         )
 
-        return rotated_image, rotation_angle, rotated_ratio
+        return rotated_image, rotation_angle, rotated_ratio, is_ok
 
     def _get_batches_of_transformed_samples(self, index_array):
         # create array to hold the images
         batch_x = np.zeros((len(index_array),) + self.input_shape, dtype='float32')
+        batch_x_2 = np.zeros(len(index_array), dtype='float32')
         # create array to hold the labels
         batch_y = np.zeros(len(index_array), dtype='float32')
 
-        ratio_list = []
+        img_list, ratio_list, angle_list = [], [], []  # 图像, 比例, 角度
         # iterate through the current batch
         for i, j in enumerate(index_array):
             if self.filenames is None:
@@ -366,17 +371,25 @@ class RotNetDataGenerator(Iterator):
 
                     image = random_crop(image, out_h, w)
 
-            rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
+            rotated_image, rotation_angle, rotated_ratio, is_ok = self.process_img(image)
+            if not is_ok:
+                continue
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
                 rotated_image = np.expand_dims(rotated_image, axis=2)
 
-            ratio_list.append(rotated_ratio)
-
             # store the image and label in their corresponding batches
-            batch_x[i] = rotated_image
-            batch_y[i] = rotation_angle
+            img_list.append(rotated_image)
+            ratio_list.append(rotated_ratio)
+            angle_list.append(rotation_angle)
+
+        n_index = len(index_array)
+        n_real = len(img_list)
+        for n_i in range(n_index):
+            batch_x[n_i] = img_list[n_i % n_real]
+            batch_x_2[n_i] = ratio_list[n_i % n_real]
+            batch_y[n_i] = angle_list[n_i % n_real]
 
         if self.one_hot:
             # convert the numerical labels to binary labels
@@ -384,13 +397,13 @@ class RotNetDataGenerator(Iterator):
         else:
             batch_y /= 360
 
-        ratio_arr = np.array(ratio_list)  # 度数arr
+        # ratio_arr = np.array(ratio_list)  # 度数arr
 
         # preprocess input images
         if self.preprocess_func:
             batch_x = self.preprocess_func(batch_x)
 
-        return [batch_x, ratio_arr], batch_y
+        return [batch_x, batch_x_2], batch_y
         # return batch_x, batch_y
 
     def next(self):
