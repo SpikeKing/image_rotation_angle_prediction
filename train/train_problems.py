@@ -63,8 +63,8 @@ train_filenames = train_filenames * 5
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
-model_name = 'problem_rotnet_resnet50'
-# model_name = 'problem_rotnet_mobilenetv2'
+# model_name = 'problem_rotnet_resnet50'
+model_name = 'problem_rotnet_mobilenetv2'
 
 # number of classes
 nb_classes = 360
@@ -74,8 +74,8 @@ input_shape = (224, 224, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
-base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
-# base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
+# base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
 
 x1 = base_model.output
 x1 = Flatten()(x1)
@@ -96,16 +96,16 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 # model.summary()
 
 # model compilation
-# model.compile(loss='categorical_crossentropy',
-#               optimizer=SGD(lr=0.001, momentum=0.9),
-#               metrics=[angle_error])
 lr_schedule = ExponentialDecay(
     initial_learning_rate=0.001,
     decay_steps=10000,
     decay_rate=0.9
 )
+# model.compile(loss='categorical_crossentropy',
+#               optimizer=Adam(learning_rate=lr_schedule),
+#               metrics=[angle_error])
 model.compile(loss='categorical_crossentropy',
-              optimizer=Adam(learning_rate=lr_schedule),
+              optimizer=SGD(lr=0.001, momentum=0.9),
               metrics=[angle_error])
 
 # training parameters
