@@ -42,7 +42,7 @@ class DatasetPrepare(object):
             angle = (360 - angle) % 360
             angle = format_angle(angle)
             out_items = [img_url, str(angle)]
-            print('[Info] out_items: {}'.format(out_items))
+            # print('[Info] out_items: {}'.format(out_items))
             out_line = ",".format(out_items)
             out_list.append(out_line)
         write_list_to_file(out_file, out_list)
