@@ -258,7 +258,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         if size:
             # image = cv2.resize(image, size)
             from myutils.cv_utils import resize_image_with_padding
-            image = resize_image_with_padding(image, desired_size=224)
+            image = resize_image_with_padding(image, desired_size=size[0])
 
     except Exception as e:
         # print('[Info] error: {}'.format(e))
