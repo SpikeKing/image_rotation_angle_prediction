@@ -17,6 +17,8 @@ from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.optimizers import SGD
 from tensorflow_core.python.keras import Input
 from tensorflow_core.python.keras.layers import Conv1D, MaxPool1D, concatenate
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
+from tensorflow.keras.optimizers import Adam
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import angle_error, RotNetDataGenerator
@@ -94,9 +96,16 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 # model.summary()
 
 # model compilation
+# model.compile(loss='categorical_crossentropy',
+#               optimizer=SGD(lr=0.001, momentum=0.9),
+#               metrics=[angle_error])
+lr_schedule = ExponentialDecay(
+    initial_learning_rate=0.001,
+    decay_steps=10000,
+    decay_rate=0.9
+)
 model.compile(loss='categorical_crossentropy',
-              optimizer=SGD(lr=0.001, momentum=0.9),
-              metrics=[angle_error])
+              optimizer=Adam(learning_rate=lr_schedule))
 
 # training parameters
 # batch_size = 128
