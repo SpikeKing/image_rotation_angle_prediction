@@ -58,7 +58,7 @@ test_filenames = test1_filenames + test2_filenames + test3_filenames + test4_fil
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
-train_filenames = train_filenames * 3
+train_filenames = train_filenames
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
