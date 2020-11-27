@@ -152,13 +152,46 @@ class DatasetPrepare(object):
         pool.join()
         print('[Info] 全部处理完成: {}'.format(vpf_path))
 
+    def generate_right_angle(self):
+        urls_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_out')
+        diff_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_vpf.txt')
+        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_same.txt')
+        data_lines = read_file(diff_urls_file)
+        diff_urls = []
+        for data_line in data_lines:
+            items = data_line.split(',')
+            url = items[0]
+            diff_urls.append(url)
+        print('[Info] diff_urls: {}'.format(len(diff_urls)))
+        print('[Info] diff_urls sample: {}'.format(diff_urls[0]))
+
+        all_out_list = []
+        paths_list, names_list = traverse_dir_files(urls_dir)
+        for path, name in zip(paths_list, names_list):
+            data_lines = read_file(path)
+            out_list = []
+            for data_line in data_lines:
+                items = data_line.split(',')
+                url = items[0]
+                angle = items[1]
+                if url in diff_urls:
+                    continue
+                out_line = "{},{}".format(url, angle)
+                out_list.append(out_line)
+            print('[Info] items: {}, same: {}'.format(len(data_lines), len(out_list)))
+            all_out_list += out_list
+
+        print('[Info] all same: {}'.format(len(all_out_list)))
+        write_list_to_file(same_urls_file, all_out_list)
+        print('[Info] 处理完成: {}'.format(same_urls_file))
 
 
 def main():
     dp = DatasetPrepare()
     # dp.process_vpf_data()
     # dp.merge_vpf_data()
-    dp.generate_labeled_data()
+    # dp.generate_labeled_data()
+    dp.generate_right_angle()
 
 
 if __name__ == '__main__':
