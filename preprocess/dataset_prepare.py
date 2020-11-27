@@ -15,7 +15,7 @@ p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
 
-from x_utils.vpf_utils import get_uc_rotation_vpf_service
+from x_utils.vpf_utils import get_uc_rotation_vpf_service, get_dmy_rotation_vpf_service
 from x_utils.oss_utils import save_img_2_oss
 from myutils.project_utils import *
 from myutils.cv_utils import *
@@ -219,6 +219,30 @@ class DatasetPrepare(object):
         pool.join()
         print('[Info] 处理完成: {}'.format(out_dir))
 
+    def filter_diff_file(self):
+        diff_path = os.path.join(DATA_DIR, '2020_11_26_vpf.txt')
+        diff_right_path = os.path.join(DATA_DIR, '2020_11_26_vpf.right.txt')
+        diff_error_path = os.path.join(DATA_DIR, '2020_11_26_vpf.error.txt')
+        data_lines = read_file(diff_path)
+
+        right_count, error_count = 0, 0
+        for idx, data_line in enumerate(data_lines):
+            img_url, old_dmy_angle, uc_angle = data_line.split(',')
+            old_dmy_angle = int(old_dmy_angle)
+            uc_angle = int(uc_angle)
+            dmy_dict = get_dmy_rotation_vpf_service(img_url)
+            dmy_angle = int(dmy_dict['data']['angel'])
+            dmy_angle = format_angle(dmy_angle)
+            if dmy_angle == old_dmy_angle or dmy_angle == uc_angle:
+                out_line = "{},{}".format(img_url, dmy_angle)
+                write_line(diff_right_path, out_line)
+                right_count += 1
+            else:
+                out_line = "{},{}".format(img_url, uc_angle, old_dmy_angle, uc_angle)
+                write_line(diff_error_path, out_line)
+                error_count += 1
+            print('[Info] {} right: {}, error: {}'.format(img_url, right_count, error_count))
+
 
 def main():
     dp = DatasetPrepare()
@@ -226,7 +250,8 @@ def main():
     # dp.merge_vpf_data()
     # dp.generate_labeled_data()
     # dp.generate_right_angle()
-    dp.download_right_angle()
+    # dp.download_right_angle()
+    dp.filter_diff_file()
 
 
 if __name__ == '__main__':
