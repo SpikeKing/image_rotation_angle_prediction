@@ -186,24 +186,38 @@ class DatasetPrepare(object):
         write_list_to_file(same_urls_file, all_out_list)
         print('[Info] 处理完成: {}'.format(same_urls_file))
 
-    def check_right_angle(self):
+    @staticmethod
+    def process_img_angle(idx, url, angle, out_dir):
+        try:
+            angle = int(angle)
+            is_ok, img_bgr = download_url_img(url)
+            img_out = rotate_img_for_4angle(img_bgr, angle)
+            out_path = os.path.join(out_dir, "{}.jpg".format(idx))
+            cv2.imwrite(out_path, img_out)
+        except Exception as e:
+            print('[Error] {} 错误'.format(idx))
+            return
+        print('[Info] {} {} 完成'.format(idx, out_path))
+
+    def download_right_angle(self):
         same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_same.txt')
-        check_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_check_dir')
-        mkdir_if_not_exist(check_dir)
+        out_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_imgs_dir')
+        mkdir_if_not_exist(out_dir)
 
         data_lines = read_file(same_urls_file)
         random.shuffle(data_lines)
+
+        pool = Pool(processes=80)
         for idx, data_line in enumerate(data_lines):
             if idx == 200:
                 break
             url, angle = data_line.split(',')
-            angle = int(angle)
-            is_ok, img_bgr = download_url_img(url)
-            img_out = rotate_img_for_4angle(img_bgr, angle)
-            out_path = os.path.join(check_dir, "{}.check.jpg".format(idx))
-            cv2.imwrite(out_path, img_out)
+            # DatasetPrepare.process_img_angle(idx, url, angle, out_dir)
+            pool.apply_async(DatasetPrepare.process_img_angle, (idx, url, angle, out_dir))
 
-        print('[Info] 处理完成: {}'.format(check_dir))
+        pool.close()
+        pool.join()
+        print('[Info] 处理完成: {}'.format(out_dir))
 
 
 def main():
@@ -212,7 +226,7 @@ def main():
     # dp.merge_vpf_data()
     # dp.generate_labeled_data()
     # dp.generate_right_angle()
-    dp.check_right_angle()
+    dp.download_right_angle()
 
 
 if __name__ == '__main__':
