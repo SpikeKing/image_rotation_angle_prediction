@@ -4,7 +4,6 @@ import os
 import sys
 import random
 
-
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
 
 from tensorflow.keras.applications.resnet50 import ResNet50
@@ -26,34 +25,31 @@ from train.data_utils import get_problems_data
 from root_dir import ROOT_DIR, DATA_DIR
 from myutils.project_utils import get_current_time_str
 
-
-data1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v1_123974')
-print('[Info] data1_path: {}'.format(data1_path))
-train1_filenames, test1_filenames = get_problems_data(data1_path)
-# train1_filenames = (train1_filenames + test1_filenames)
-print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1_filenames)))
-
-data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v2_111311')
-print('[Info] data2_path: {}'.format(data2_path))
-train2_filenames, test2_filenames = get_problems_data(data2_path)
-# train2_filenames = (train2_filenames + test2_filenames)
-print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
-
-data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-print('[Info] data3_path: {}'.format(data3_path))
-train3_filenames, test3_filenames = get_problems_data(data3_path)
-# train3_filenames = (train3_filenames + test3_filenames)
-print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
+# data1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v1_123974')
+# print('[Info] data1_path: {}'.format(data1_path))
+# train1_filenames, test1_filenames = get_problems_data(data1_path)
+# print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1_filenames)))
+#
+# data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v2_111311')
+# print('[Info] data2_path: {}'.format(data2_path))
+# train2_filenames, test2_filenames = get_problems_data(data2_path)
+# print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
+#
+# data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+# print('[Info] data3_path: {}'.format(data3_path))
+# train3_filenames, test3_filenames = get_problems_data(data3_path)
+# print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
 
 data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
 print('[Info] data4_path: {}'.format(data4_path))
 train4_filenames, test4_filenames = get_problems_data(data4_path)
-# train4_filenames = (train4_filenames + test4_filenames)
-train4_filenames = train4_filenames * 10
 print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
 
-train_filenames = train1_filenames + train2_filenames + train3_filenames + train4_filenames
-test_filenames = test1_filenames + test2_filenames + test3_filenames + test4_filenames
+# train_filenames = train1_filenames + train2_filenames + train3_filenames + train4_filenames
+# test_filenames = test1_filenames + test2_filenames + test3_filenames + test4_filenames
+
+train_filenames = train4_filenames
+test_filenames = test4_filenames
 
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
@@ -63,25 +59,25 @@ train_filenames = train_filenames
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
-# model_name = 'problem_rotnet_resnet50'
-model_name = 'problem_rotnet_mobilenetv2'
+model_name = 'problem_rotnet_resnet50'
+# model_name = 'problem_rotnet_mobilenetv2'
 
 # number of classes
 nb_classes = 360
 # input image shape
-# input_shape = (224, 224, 3)
-input_shape = (448, 448, 3)
+input_shape = (224, 224, 3)
+# input_shape = (448, 448, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
-# base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
-base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
+base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+# base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
 
 x1 = base_model.output
 x1 = Flatten()(x1)
 
-input_ratio = Input(shape=(1, ), name='ratio')
-x2 = Dense(10, activation='relu')(input_ratio)
+input_ratio = Input(shape=(1,), name='ratio')
+x2 = Dense(5, activation='relu')(input_ratio)
 
 # append classification layer
 x = concatenate([x1, x2])
@@ -109,8 +105,8 @@ model.compile(loss='categorical_crossentropy',
               metrics=[angle_error])
 
 # training parameters
-batch_size = 48
-# batch_size = 192
+# batch_size = 48
+batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
@@ -130,8 +126,8 @@ checkpointer = ModelCheckpoint(
     monitor=monitor,
     save_best_only=True
 )
-reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
-early_stopping = EarlyStopping(monitor=monitor, patience=5)
+reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=5)
+# early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
 # training loop
