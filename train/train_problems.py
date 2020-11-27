@@ -64,6 +64,7 @@ model_name = 'problem_rotnet_resnet50'
 
 # number of classes
 nb_classes = 360
+
 # input image shape
 input_shape = (224, 224, 3)
 # input_shape = (448, 448, 3)
@@ -77,7 +78,7 @@ x1 = base_model.output
 x1 = Flatten()(x1)
 
 input_ratio = Input(shape=(1,), name='ratio')
-x2 = Dense(5, activation='relu')(input_ratio)
+x2 = Dense(10, activation='relu')(input_ratio)
 
 # append classification layer
 x = concatenate([x1, x2])
@@ -92,11 +93,11 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 # model.summary()
 
 # model compilation
-lr_schedule = ExponentialDecay(
-    initial_learning_rate=0.001,
-    decay_steps=20000,
-    decay_rate=0.9
-)
+# lr_schedule = ExponentialDecay(
+#     initial_learning_rate=0.001,
+#     decay_steps=20000,
+#     decay_rate=0.9
+# )
 # model.compile(loss='categorical_crossentropy',
 #               optimizer=Adam(learning_rate=lr_schedule),
 #               metrics=[angle_error])
@@ -126,7 +127,7 @@ checkpointer = ModelCheckpoint(
     monitor=monitor,
     save_best_only=True
 )
-# reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=5)
+reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=5)
 # early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
@@ -153,7 +154,7 @@ model.fit(
     ),
     validation_steps=len(test_filenames) / batch_size,
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
-    # callbacks=[checkpointer, reduce_lr, tensorboard],
-    callbacks=[checkpointer, tensorboard],
-    workers=20
+    callbacks=[checkpointer, reduce_lr, tensorboard],
+    # callbacks=[checkpointer, tensorboard],
+    # workers=20
 )
