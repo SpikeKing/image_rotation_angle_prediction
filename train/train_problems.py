@@ -110,9 +110,9 @@ batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_a12_20201126.2.hdf5')  # 最好模型
-# model.load_weights(model_path)
-# print('[Info] 加载模型的路径: {}'.format(model_path))
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_resnet50.base2500.20201127.hdf5')  # 最好模型
+model.load_weights(model_path)
+print('[Info] 加载模型的路径: {}'.format(model_path))
 
 output_folder = 'models_{}_{}'.format(len(train_filenames), get_current_time_str())
 if not os.path.exists(output_folder):
