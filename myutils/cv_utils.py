@@ -5,7 +5,6 @@ Copyright (c) 2019. All rights reserved.
 Created by C. L. Wang on 2020/3/13
 """
 
-
 def draw_line_len(img_bgr, start_p, v_length, v_arrow, is_new=True, is_show=False, save_name=None):
     """
     绘制直线
@@ -622,6 +621,9 @@ def format_angle(angle):
 
 
 def resize_image_with_padding(img_bgr, desired_size=224):
+    """
+    padding resize 方法
+    """
     import cv2
 
     old_size = img_bgr.shape[:2]  # old_size is in (height, width) format
@@ -644,12 +646,34 @@ def resize_image_with_padding(img_bgr, desired_size=224):
     return new_im
 
 
+def rotate_img_for_4angle(img_bgr, angle):
+    """
+    旋转4个角度
+    """
+    # print('[Info] angle: {}'.format(angle))
+    angle = int(angle)
+    if angle not in [0, 90, 180, 270]:
+        raise Exception('[Exception] angle not in [0, 90, 180, 270]')
+    import cv2
+    if angle == 90:
+        img_rotated = cv2.rotate(img_bgr, cv2.ROTATE_90_CLOCKWISE)
+    elif angle == 180:
+        img_rotated = cv2.rotate(img_bgr, cv2.ROTATE_180)
+    elif angle == 270:
+        img_rotated = cv2.rotate(img_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    else:
+        img_rotated = img_bgr
+    return img_rotated
+
+
 def main():
-    labels = [u'大型', u'中型', u'小型', u'微型']  # 定义标签
-    sizes = [46, 253, 321, 66]  # 每块值
-    labels = [u"多题", u"单题", u"图题", u"异常", u"科目错误"]
-    sizes = [26, 8, 5, 2, 9]
-    draw_pie(labels, sizes)
+    import os
+    import cv2
+    from root_dir import DATA_DIR
+    img_path = os.path.join(DATA_DIR, 'error_imgs', 'error1_20201127.270.jpg')
+    img_bgr = cv2.imread(img_path)
+    img_bgr = resize_image_with_padding(img_bgr, 224)
+    show_img_bgr(img_bgr)
 
 
 if __name__ == '__main__':

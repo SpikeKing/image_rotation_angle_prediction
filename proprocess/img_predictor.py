@@ -211,7 +211,7 @@ class ImgPredictor(object):
         """
         处理数据v2
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.e25.csv')
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.e25.old.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0

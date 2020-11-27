@@ -15,6 +15,7 @@ if p not in sys.path:
     sys.path.append(p)
 
 from x_utils.vpf_utils import get_uc_rotation_vpf_service
+from x_utils.oss_utils import save_img_2_oss
 from myutils.project_utils import *
 from myutils.cv_utils import *
 from root_dir import ROOT_DIR, DATA_DIR
@@ -111,9 +112,49 @@ class DatasetPrepare(object):
 
         print('[Info] 全部处理完成: {}'.format(out_dir))
 
+    def merge_vpf_data(self):
+        vpf_dir = os.path.join(DATA_DIR, '2020_11_26_vpf')
+        vpf_path = os.path.join(DATA_DIR, '2020_11_26_vpf.txt')
+        paths_list, names_list = traverse_dir_files(vpf_dir)
+        out_list = []
+        for path, name in zip(paths_list, names_list):
+            data_lines = read_file(path)
+            out_list += data_lines
+        write_list_to_file(vpf_path, out_list)
+        print('[Info] {} 行 写入文件: {}'.format(len(out_list), vpf_path))
+
+    @staticmethod
+    def process_data_line(data_line, idx):
+        img_url, dmy_angle, uc_angle = data_line.split(',')
+        # print('[Info] img_url: {}, uc_angle: {}, dmy_angle: {}'.format(img_url, uc_angle, dmy_angle))
+        is_ok, img_bgr = download_url_img(img_url)
+        show_img_bgr(img_bgr)
+        out_uc_name = "{}_uc.jpg".format(idx)
+        uc_img = rotate_img_for_4angle(img_bgr, uc_angle)
+        save_img_2_oss(uc_img, out_uc_name, "zhengsheng.wcl/problems_rotation/datasets/prelabeled_diff_20201127/")
+        out_dmy_name = "{}_dmy.jpg".format(idx)
+        dmy_img = rotate_img_for_4angle(img_bgr, dmy_angle)
+        save_img_2_oss(dmy_img, out_dmy_name, "zhengsheng.wcl/problems_rotation/datasets/prelabeled_diff_20201127/")
+        print('[Info] 处理完成: {}'.format(idx))
+
+    def generate_labeled_data(self):
+        vpf_path = os.path.join(DATA_DIR, '2020_11_26_vpf.txt')
+        data_lines = read_file(vpf_path)
+        pool = Pool(processes=80)
+        for idx, data_line in enumerate(data_lines):
+            # DatasetPrepare.process_data_line(data_line, idx)
+            pool.apply_async(DatasetPrepare.process_data_line, (data_line, idx))
+        pool.close()
+        pool.join()
+        print('[Info] 全部处理完成: {}'.format(vpf_path))
+
+
+
 def main():
     dp = DatasetPrepare()
-    dp.process_vpf_data()
+    # dp.process_vpf_data()
+    # dp.merge_vpf_data()
+    dp.generate_labeled_data()
 
 
 if __name__ == '__main__':

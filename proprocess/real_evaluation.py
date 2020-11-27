@@ -71,7 +71,6 @@ class RealEvaluation(object):
                 dmy_dict = get_dmy_rotation_vpf_service(img_url)
                 dmy_angle = int(dmy_dict['data']['angel'])
                 dmy_angle = format_angle(dmy_angle)
-                dmy_angle = (360 - dmy_angle) % 360
             except Exception as e:
                 dmy_angle = -1
             print('[Info] dmy_angle: {}'.format(dmy_angle))
@@ -151,7 +150,6 @@ class RealEvaluation(object):
                 dmy_dict = get_dmy_rotation_vpf_service(img_url)
                 dmy_angle = int(dmy_dict['data']['angel'])
                 dmy_angle = format_angle(dmy_angle)
-                dmy_angle = (360 - dmy_angle) % 360
             except Exception as e:
                 dmy_angle = -1
 
@@ -166,12 +164,27 @@ class RealEvaluation(object):
         write_list_to_file(out_file, out_list)
         print('[Info] 处理完成: {}'.format(out_file))
 
+    def modify_data(self):
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.20201127101607.txt')
+        out_file = os.path.join(DATA_DIR, 'test_1000_res.right.txt')
+        data_lines = read_file(in_file)
+        for idx, data_line in enumerate(data_lines):
+            img_url, angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
+            angle = int(angle)
+            dmy_angle = (360 - int(dmy_angle)) % 360
+            is_dmy = 1 if dmy_angle == angle else 0
+            out_items = [img_url, str(angle), str(dmy_angle), str(is_dmy), str(uc_angle), str(is_uc)]
+            print('[Info] out_items: {}'.format(out_items))
+            out_line = ",".join(out_items)
+            write_line(out_file, out_line)
+            print('[Info] idx: {}'.format(idx))
+        print('[Info] 处理完成! {}'.format(out_file))
 
 def main():
     reo = RealEvaluation()
-    # reo.process()
+    reo.modify_data()
     # reo.generate_angle_imgs()
-    reo.generate_4a_dmy()
+    # reo.generate_4a_dmy()
 
 
 if __name__ == '__main__':
