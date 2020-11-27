@@ -230,15 +230,23 @@ class DatasetPrepare(object):
             img_url, old_dmy_angle, uc_angle = data_line.split(',')
             old_dmy_angle = int(old_dmy_angle)
             uc_angle = int(uc_angle)
-            dmy_dict = get_dmy_rotation_vpf_service(img_url)
-            dmy_angle = int(dmy_dict['data']['angel'])
-            dmy_angle = format_angle(dmy_angle)
+
+            try:
+                dmy_dict = get_dmy_rotation_vpf_service(img_url)
+                dmy_angle = int(dmy_dict['data']['angel'])
+                dmy_angle = format_angle(dmy_angle)
+            except Exception as e:
+                out_line = "{},{},{},{}".format(img_url, uc_angle, old_dmy_angle, -1)
+                write_line(diff_error_path, out_line)
+                error_count += 1
+                print('[Info] error: {}'.format(data_line))
+                continue
             if dmy_angle == old_dmy_angle or dmy_angle == uc_angle:
                 out_line = "{},{}".format(img_url, dmy_angle)
                 write_line(diff_right_path, out_line)
                 right_count += 1
             else:
-                out_line = "{},{}".format(img_url, uc_angle, old_dmy_angle, uc_angle)
+                out_line = "{},{},{},{}".format(img_url, uc_angle, old_dmy_angle, dmy_angle)
                 write_line(diff_error_path, out_line)
                 error_count += 1
             print('[Info] {} right: {}, error: {}'.format(img_url, right_count, error_count))
