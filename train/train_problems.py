@@ -34,22 +34,25 @@ from myutils.project_utils import get_current_time_str
 # print('[Info] data2_path: {}'.format(data2_path))
 # train2_filenames, test2_filenames = get_problems_data(data2_path)
 # print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
-#
-# data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-# print('[Info] data3_path: {}'.format(data3_path))
-# train3_filenames, test3_filenames = get_problems_data(data3_path)
-# print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
 
-data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
+data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+print('[Info] data3_path: {}'.format(data3_path))
+train3_filenames, test3_filenames = get_problems_data(data3_path)
+print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
+
+data4_path = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_imgs_dir')
 print('[Info] data4_path: {}'.format(data4_path))
 train4_filenames, test4_filenames = get_problems_data(data4_path)
 print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
 
-# train_filenames = train1_filenames + train2_filenames + train3_filenames + train4_filenames
-# test_filenames = test1_filenames + test2_filenames + test3_filenames + test4_filenames
+data5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
+print('[Info] data5_path: {}'.format(data5_path))
+train5_filenames, test5_filenames = get_problems_data(data5_path)
+print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5_filenames)))
 
-train_filenames = train4_filenames
-test_filenames = test4_filenames
+
+train_filenames = train3_filenames + train4_filenames + train5_filenames
+test_filenames = test3_filenames + test4_filenames + test5_filenames
 
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
@@ -127,7 +130,7 @@ checkpointer = ModelCheckpoint(
     monitor=monitor,
     save_best_only=True
 )
-reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=5)
+reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
 # early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
@@ -156,6 +159,5 @@ model.fit(
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
     callbacks=[checkpointer, reduce_lr, tensorboard],
     # callbacks=[checkpointer, tensorboard],
-    workers=5,
-    use_multiprocessing=True
+    workers=20,
 )
