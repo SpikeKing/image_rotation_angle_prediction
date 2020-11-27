@@ -98,16 +98,16 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 # model.summary()
 
 # model compilation
-lr_schedule = ExponentialDecay(
-    initial_learning_rate=0.001,
-    decay_steps=10000,
-    decay_rate=0.9
-)
+# lr_schedule = ExponentialDecay(
+#     initial_learning_rate=0.001,
+#     decay_steps=10000,
+#     decay_rate=0.9
+# )
 # model.compile(loss='categorical_crossentropy',
 #               optimizer=Adam(learning_rate=lr_schedule),
 #               metrics=[angle_error])
 model.compile(loss='categorical_crossentropy',
-              optimizer=SGD(lr=lr_schedule, momentum=0.9),
+              optimizer=SGD(lr=0.001, momentum=0.9),
               metrics=[angle_error])
 
 # training parameters
@@ -134,7 +134,7 @@ checkpointer = ModelCheckpoint(
     monitor=monitor,
     save_best_only=True
 )
-# reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
+reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
 # early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
@@ -161,7 +161,7 @@ model.fit(
     ),
     validation_steps=len(test_filenames) / batch_size,
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
-    # callbacks=[checkpointer, reduce_lr, tensorboard],
-    callbacks=[checkpointer, tensorboard],
+    callbacks=[checkpointer, reduce_lr, tensorboard],
+    # callbacks=[checkpointer, tensorboard],
     workers=5,
 )
