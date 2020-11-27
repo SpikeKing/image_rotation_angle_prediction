@@ -161,5 +161,5 @@ model.fit(
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
     callbacks=[checkpointer, reduce_lr, tensorboard],
     # callbacks=[checkpointer, tensorboard],
-    workers=10,
+    # workers=10,
 )
