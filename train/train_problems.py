@@ -35,10 +35,10 @@ from myutils.project_utils import get_current_time_str
 # train2_filenames, test2_filenames = get_problems_data(data2_path)
 # print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
 
-data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-print('[Info] data3_path: {}'.format(data3_path))
-train3_filenames, test3_filenames = get_problems_data(data3_path)
-print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
+# data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+# print('[Info] data3_path: {}'.format(data3_path))
+# train3_filenames, test3_filenames = get_problems_data(data3_path)
+# print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
 
 data4_path = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_imgs_dir')
 print('[Info] data4_path: {}'.format(data4_path))
@@ -50,9 +50,11 @@ print('[Info] data5_path: {}'.format(data5_path))
 train5_filenames, test5_filenames = get_problems_data(data5_path)
 print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5_filenames)))
 
+# train_filenames = train3_filenames + train4_filenames + train5_filenames
+# test_filenames = test3_filenames + test4_filenames + test5_filenames
 
-train_filenames = train3_filenames + train4_filenames + train5_filenames
-test_filenames = test3_filenames + test4_filenames + test5_filenames
+train_filenames = train4_filenames + train5_filenames
+test_filenames = test4_filenames + test5_filenames
 
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
