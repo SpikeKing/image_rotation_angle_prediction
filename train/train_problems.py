@@ -71,8 +71,8 @@ model_name = 'problem_rotnet_mobilenetv2'
 nb_classes = 360
 
 # input image shape
-# input_shape = (224, 224, 3)
-input_shape = (448, 448, 3)
+input_shape = (224, 224, 3)
+# input_shape = (448, 448, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
@@ -98,27 +98,27 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 # model.summary()
 
 # model compilation
-# lr_schedule = ExponentialDecay(
-#     initial_learning_rate=0.001,
-#     decay_steps=20000,
-#     decay_rate=0.9
-# )
+lr_schedule = ExponentialDecay(
+    initial_learning_rate=0.001,
+    decay_steps=10000,
+    decay_rate=0.9
+)
 # model.compile(loss='categorical_crossentropy',
 #               optimizer=Adam(learning_rate=lr_schedule),
 #               metrics=[angle_error])
 model.compile(loss='categorical_crossentropy',
-              optimizer=SGD(lr=0.001, momentum=0.9),
+              optimizer=SGD(lr=lr_schedule, momentum=0.9),
               metrics=[angle_error])
 
 # training parameters
-batch_size = 36
-# batch_size = 192
+# batch_size = 36
+batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_base_20201127.3.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_base_20201127.3.hdf5')  # 最好模型
 # model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_20201127.1.hdf5')  # 最好模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_448_20201127.hdf5')  # 最好模型
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_448_20201127.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
@@ -134,7 +134,7 @@ checkpointer = ModelCheckpoint(
     monitor=monitor,
     save_best_only=True
 )
-reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
+# reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
 # early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
@@ -161,7 +161,7 @@ model.fit(
     ),
     validation_steps=len(test_filenames) / batch_size,
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
-    callbacks=[checkpointer, reduce_lr, tensorboard],
-    # callbacks=[checkpointer, tensorboard],
+    # callbacks=[checkpointer, reduce_lr, tensorboard],
+    callbacks=[checkpointer, tensorboard],
     workers=5,
 )
