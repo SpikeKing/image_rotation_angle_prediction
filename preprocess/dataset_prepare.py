@@ -6,6 +6,7 @@ Created by C. L. Wang on 26.11.20
 """
 
 import os
+import cv2
 import json
 import sys
 from multiprocessing.pool import Pool
@@ -178,12 +179,31 @@ class DatasetPrepare(object):
                     continue
                 out_line = "{},{}".format(url, angle)
                 out_list.append(out_line)
-            print('[Info] items: {}, same: {}'.format(len(data_lines), len(out_list)))
+            print('[Info] {} items: {}, same: {}'.format(name, len(data_lines), len(out_list)))
             all_out_list += out_list
 
         print('[Info] all same: {}'.format(len(all_out_list)))
         write_list_to_file(same_urls_file, all_out_list)
         print('[Info] 处理完成: {}'.format(same_urls_file))
+
+    def check_right_angle(self):
+        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_same.txt')
+        check_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_check_dir')
+        mkdir_if_not_exist(check_dir)
+
+        data_lines = read_file(same_urls_file)
+        random.shuffle(data_lines)
+        for idx, data_line in enumerate(data_lines):
+            if idx == 200:
+                break
+            url, angle = data_line.split(',')
+            angle = int(angle)
+            is_ok, img_bgr = download_url_img(url)
+            img_out = rotate_img_for_4angle(img_bgr, angle)
+            out_path = os.path.join(check_dir, "{}.check.jpg".format(idx))
+            cv2.imwrite(out_path, img_out)
+
+        print('[Info] 处理完成: {}'.format(check_dir))
 
 
 def main():
@@ -191,7 +211,8 @@ def main():
     # dp.process_vpf_data()
     # dp.merge_vpf_data()
     # dp.generate_labeled_data()
-    dp.generate_right_angle()
+    # dp.generate_right_angle()
+    dp.check_right_angle()
 
 
 if __name__ == '__main__':
