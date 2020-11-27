@@ -62,8 +62,8 @@ train_filenames = train_filenames
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
 
-model_name = 'problem_rotnet_resnet50'
-# model_name = 'problem_rotnet_mobilenetv2'
+# model_name = 'problem_rotnet_resnet50'
+model_name = 'problem_rotnet_mobilenetv2'
 
 # number of classes
 nb_classes = 360
@@ -74,8 +74,8 @@ input_shape = (224, 224, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
-base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
-# base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
+# base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
+base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=input_shape)
 
 x1 = base_model.output
 x1 = Flatten()(x1)
