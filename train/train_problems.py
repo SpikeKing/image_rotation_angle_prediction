@@ -111,7 +111,7 @@ model.compile(loss='categorical_crossentropy',
               metrics=[angle_error])
 
 # training parameters
-batch_size = 48
+batch_size = 36
 # batch_size = 192
 nb_epoch = 200
 
@@ -163,5 +163,5 @@ model.fit(
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
     callbacks=[checkpointer, reduce_lr, tensorboard],
     # callbacks=[checkpointer, tensorboard],
-    workers=20,
+    workers=5,
 )
