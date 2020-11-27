@@ -126,13 +126,13 @@ checkpointer = ModelCheckpoint(
     monitor=monitor,
     save_best_only=True
 )
-reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=5)
+# reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=5)
 # early_stopping = EarlyStopping(monitor=monitor, patience=5)
 tensorboard = TensorBoard()
 
 # training loop
 model.fit_generator(
-    RotNetDataGenerator(
+    generator=RotNetDataGenerator(
         train_filenames,
         input_shape=input_shape,
         batch_size=batch_size,
@@ -153,6 +153,7 @@ model.fit_generator(
     ),
     validation_steps=len(test_filenames) / batch_size,
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
-    callbacks=[checkpointer, reduce_lr, tensorboard],
-    workers=10
+    # callbacks=[checkpointer, reduce_lr, tensorboard],
+    callbacks=[checkpointer, tensorboard],
+    workers=20
 )
