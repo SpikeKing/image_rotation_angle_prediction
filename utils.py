@@ -260,14 +260,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
 
             # from myutils.cv_utils import resize_image_with_padding
             # image = resize_image_with_padding(image, desired_size=size[0])
-
     except Exception as e:
-        # print('[Info] error: {}'.format(e))
-        # print('[Info] image: {}, angle: {}, size: {}'.format(image.shape, angle, size))
-        image, rotated_ratio, angle = get_format_img(size)
-        is_ok = False
-
-    if rotated_ratio > 12 or rotated_ratio < 0.08:
         image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
 
@@ -322,8 +315,9 @@ class RotNetDataGenerator(Iterator):
     def process_img(self, image):
         if self.rotate:
             # get a random angle
+            offset_angle = random.randint(-5, 5)
             # offset_angle = random.randint(-10, 10)
-            offset_angle = random.randint(-12, 12)
+            # offset_angle = random.randint(-12, 12)
 
             rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
 
@@ -359,22 +353,22 @@ class RotNetDataGenerator(Iterator):
                 image = cv2.imread(self.filenames[j], is_color)
                 if is_color:
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                if random_prob(0.5):
-                    h, w, _ = image.shape
 
-                    if random_prob(0.5):
-                        out_h = int(h // 2)  # mode 1
+                # if random_prob(0.5):
+                #     h, w, _ = image.shape
+                #     if random_prob(0.5):
+                #         out_h = int(h // 2)  # mode 1
                         # if random_prob(0.7):  # mode 2
                         #     out_h = int(h // 2)
                         # else:
                         #     out_h = int(h // 3)
-                    else:
-                        out_h = h
-
-                    image = random_crop(image, out_h, w)
+                    # else:
+                    #     out_h = h
+                    # image = random_crop(image, out_h, w)
 
             rotated_image, rotation_angle, rotated_ratio, is_ok = self.process_img(image)
             if not is_ok:
+                print('[Error] error image: {}'.format(self.filenames[j]))
                 continue
 
             # add dimension to account for the channels if the image is greyscale

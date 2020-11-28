@@ -59,7 +59,7 @@ test_filenames = test4_filenames + test5_filenames
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
-train_filenames = train_filenames
+train_filenames = train_filenames * 4
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -116,9 +116,7 @@ batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_base_20201127.3.hdf5')  # 最好模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_20201127.1.hdf5')  # 最好模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_448_20201127.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_v4_20201128.2.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
