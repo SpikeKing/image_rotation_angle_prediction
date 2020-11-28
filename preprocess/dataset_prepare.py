@@ -119,14 +119,20 @@ class DatasetPrepare(object):
 
     def merge_vpf_data(self):
         vpf_dir = os.path.join(DATA_DIR, '2020_11_26_vpf')
-        vpf_path = os.path.join(DATA_DIR, '2020_11_26_vpf.txt')
+        vpf_right_path = os.path.join(DATA_DIR, '2020_11_26_right.txt')
+        vpf_diff_path = os.path.join(DATA_DIR, '2020_11_26_diff.txt')
         paths_list, names_list = traverse_dir_files(vpf_dir)
-        out_list = []
+        out_right_list, out_diff_list = [], []
         for path, name in zip(paths_list, names_list):
             data_lines = read_file(path)
-            out_list += data_lines
-        write_list_to_file(vpf_path, out_list)
-        print('[Info] {} 行 写入文件: {}'.format(len(out_list), vpf_path))
+            if name.endswith('_right.txt'):
+                out_right_list += data_lines
+            elif name.endswith('_diff.txt'):
+                out_diff_list += data_lines
+        write_list_to_file(vpf_right_path, out_right_list)
+        write_list_to_file(vpf_diff_path, out_diff_list)
+        print('[Info] 正确 {} 行 写入文件: {}'.format(len(out_right_list), vpf_right_path))
+        print('[Info] Diff {} 行 写入文件: {}'.format(len(out_diff_list), vpf_diff_path))
 
     @staticmethod
     def process_data_line(data_line, idx):
