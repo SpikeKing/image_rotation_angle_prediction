@@ -38,7 +38,9 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_s3_20201126.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_base_20201127.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.1.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_v4_pad_20201128.3.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_v34_20201128.1.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_v4_pad_20201128.3.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_base_20201128_1.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -109,10 +111,7 @@ class ImgPredictor(object):
             r_angle = 270
         return r_angle
 
-    def predict_img_bgr(self, img_bgr):
-        """
-        预测角度
-        """
+    def predict_img_bgr_prob(self, img_bgr):
         h, w, _ = img_bgr.shape
         ratio = float(h) / float(w)
         ratio_arr = np.array(ratio)
@@ -120,16 +119,74 @@ class ImgPredictor(object):
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-        # img_rgb_224 = cv2.resize(img_bgr, (224, 224))  # resize
-        img_rgb_224 = resize_image_with_padding(img_bgr, 224)  # pad
+        img_rgb_224 = cv2.resize(img_bgr, (224, 224))  # resize
+        # img_rgb_224 = resize_image_with_padding(img_bgr, 224)  # pad
 
         img_bgr_b = np.expand_dims(img_rgb_224, axis=0)
 
         prediction = self.model.predict([img_bgr_b, ratio_b])
-        # prediction = self.model.predict([img_bgr_b, np.zeros((1,))])  # 不包含角度
+        probs = prediction[0]
 
-        angle = int(K.argmax(prediction[0])) % 360
+        # sorted_idx = probs.argsort()[-4:][::-1]
+        # sorted_probs = [probs[x] for x in sorted_idx]
+        # sorted_idx, sorted_4_probs = sort_two_list(list(sorted_idx), list(sorted_probs))
 
+        return probs
+
+    def predict_img_bgr_core(self, img_bgr):
+        probs_0 = self.predict_img_bgr_prob(img_bgr)
+        # print(probs_0)
+        # show_img_bgr(img_bgr)
+        if max(probs_0) > 0.999:
+            res = probs_0
+            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+            return np.array(res)
+
+        img_bgr_180 = rotate_img_for_4angle(img_bgr, 180)
+        probs_180 = self.predict_img_bgr_prob(img_bgr_180)
+        # print(probs_180)
+        # show_img_bgr(img_bgr_180)
+        if max(probs_180) > 0.999:
+            res = [probs_180[2], probs_180[3], probs_180[0], probs_180[1]]
+            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+            return np.array(res)
+
+        img_bgr_90 = rotate_img_for_4angle(img_bgr, 90)
+        probs_90 = self.predict_img_bgr_prob(img_bgr_90)
+        # print(probs_90)
+        # show_img_bgr(img_bgr_90)
+        if max(probs_90) > 0.999:
+            res = [probs_90[3], probs_90[0], probs_90[1], probs_90[2]]
+            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+            return np.array(res)
+
+        img_bgr_270 = rotate_img_for_4angle(img_bgr, 270)
+        probs_270 = self.predict_img_bgr_prob(img_bgr_270)
+        # print(probs_270)
+        # show_img_bgr(img_bgr_270)
+        if max(probs_270) > 0.999:
+            res = [probs_270[1], probs_270[2], probs_270[3], probs_270[0]]
+            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+            return np.array(res)
+
+        p0 = (probs_0[0] + probs_90[3] + probs_180[2] + probs_270[1]) / 4
+        p1 = (probs_0[1] + probs_90[0] + probs_180[3] + probs_270[2]) / 4
+        p2 = (probs_0[2] + probs_90[1] + probs_180[0] + probs_270[3]) / 4
+        p3 = (probs_0[3] + probs_90[2] + probs_180[1] + probs_270[0]) / 4
+
+        res = np.array([p0, p1, p2, p3])
+        # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+        return res
+
+    def predict_img_bgr(self, img_bgr):
+        """
+        预测角度
+        """
+        probs = self.predict_img_bgr_prob(img_bgr)
+        # n_p = np.argmax(probs)
+        # res_angle = n_p * 90
+
+        angle = int(K.argmax(probs)) % 360
         angle = self.format_angle(angle)
 
         return angle
@@ -302,7 +359,7 @@ class ImgPredictor(object):
 
 
 def demo_of_img_path():
-    error_dir = os.path.join(DATA_DIR, 'error_imgs')
+    error_dir = os.path.join(DATA_DIR, 'cases')
     ip = ImgPredictor()
     paths_list, names_list = traverse_dir_files(error_dir)
     n_path = len(paths_list)
@@ -318,11 +375,21 @@ def demo_of_img_path():
     print('[Info] 正确率: {}'.format(ratio))
 
 
+def demo_of_one_img():
+    name = '2.270.jpg'
+    img_path = os.path.join(DATA_DIR, 'cases', name)
+    r_angle = int(name.split('.')[1])
+    ip = ImgPredictor()
+    p_angle = ip.predict_img_path(img_path)
+    print('[Info] r_angle: {}, p_angle: {}, is_equal: {}'.format(r_angle, p_angle, r_angle == p_angle))
+
+
 def main():
     ip = ImgPredictor()
     # ip.process()
     ip.process_v2()
     # demo_of_img_path()
+    # demo_of_one_img()
 
 
 if __name__ == '__main__':
