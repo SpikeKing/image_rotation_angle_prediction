@@ -264,7 +264,6 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
 
-    angle = format_angle(angle)  # 输出固定的度数
     # print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}, is_ok: {}'
     #       .format(image.shape, angle, rotated_ratio, is_ok))
 
@@ -332,6 +331,8 @@ class RotNetDataGenerator(Iterator):
             crop_center=self.crop_center,
             crop_largest_rect=self.crop_largest_rect
         )
+
+        # rotation_angle = format_angle(rotation_angle)  # 输出固定的度数
 
         return rotated_image, rotation_angle, rotated_ratio, is_ok
 
