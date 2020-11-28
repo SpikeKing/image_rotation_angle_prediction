@@ -103,7 +103,7 @@ class DatasetPrepare(object):
 
     def process_vpf_data(self):
         paths_list, names_list = traverse_dir_files(self.vpf_dir)
-        out_dir = os.path.join(DATA_DIR, '2020_11_26_vpf')
+        out_dir = os.path.join(DATA_DIR, '2020_11_28_vpf')
         mkdir_if_not_exist(out_dir)
 
         pool = Pool(processes=40)
@@ -258,8 +258,8 @@ class DatasetPrepare(object):
 
 def main():
     dp = DatasetPrepare()
-    dp.process_raw_data()
-    # dp.process_vpf_data()
+    # dp.process_raw_data()
+    dp.process_vpf_data()
     # dp.merge_vpf_data()
     # dp.generate_labeled_data()
     # dp.generate_right_angle()
