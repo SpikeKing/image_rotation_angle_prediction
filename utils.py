@@ -256,10 +256,10 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         rotated_ratio = float(rh) / float(rw)
 
         if size:
-            image = cv2.resize(image, size)  # 普通的Resize
+            # image = cv2.resize(image, size)  # 普通的Resize
+            from myutils.cv_utils import resize_image_with_padding
+            image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
 
-            # from myutils.cv_utils import resize_image_with_padding
-            # image = resize_image_with_padding(image, desired_size=size[0]) # Padding Resize
     except Exception as e:
         image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
@@ -332,7 +332,7 @@ class RotNetDataGenerator(Iterator):
             crop_largest_rect=self.crop_largest_rect
         )
 
-        # rotation_angle = format_angle(rotation_angle)  # 输出固定的度数
+        rotation_angle = format_angle(rotation_angle)  # 输出固定的度数
 
         return rotated_image, rotation_angle, rotated_ratio, is_ok
 
