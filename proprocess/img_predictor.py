@@ -31,13 +31,14 @@ from utils import angle_error
 
 class ImgPredictor(object):
     def __init__(self):
-        self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_a12_20201126.2.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_s3_20201126.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_base_20201127.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.1.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_v34_20201128.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -211,7 +212,7 @@ class ImgPredictor(object):
         """
         处理数据v2
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.e25.old.csv')
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -223,14 +224,14 @@ class ImgPredictor(object):
                 continue
             url, r_angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
 
-            x1_angle = int(uc_angle)
-            x1_is_ok = int(is_uc)
+            uc_angle = int(uc_angle)
+            uc_is_ok = int(is_uc)
 
             r_angle = int(r_angle)
 
             x_angle = self.process_item_v2(url)
             x_is_ok = 1 if x_angle == r_angle else 0
-            if x1_is_ok == 1:
+            if uc_is_ok == 1:
                 n_old_right += 1
             if x_angle == r_angle:
                 print('[Info] {} 预测正确 {} - {}! {}'.format(idx, x_angle, r_angle, url))
@@ -240,7 +241,7 @@ class ImgPredictor(object):
                 n_error += 1
             n_all += 1
 
-            out_list.append([url, x1_angle, r_angle, x1_is_ok, x_angle, x_is_ok])
+            out_list.append([url, r_angle, dmy_angle, is_dmy, uc_angle, uc_is_ok, x_angle, x_is_ok])
             # if idx == 10:
             #     break
 
@@ -249,7 +250,11 @@ class ImgPredictor(object):
 
         out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.csv'.format(self.model_name, safe_div(n_right, n_all),
                                                                        n_error))
-        write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
+        write_list_to_excel(
+            out_file,
+            ["url", "r_angle", "dmy_angle", "is_dmy", "uc_angle", "uc_is_ok", "x_angle", "x_is_ok"],
+            out_list
+        )
 
     def process_v3(self):
         """
