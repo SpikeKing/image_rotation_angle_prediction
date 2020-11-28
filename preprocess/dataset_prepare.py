@@ -24,8 +24,8 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class DatasetPrepare(object):
     def __init__(self):
-        self.file_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26')
-        self.vpf_dir = os.path.join(DATA_DIR, '2020_11_26_out')
+        self.file_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28')
+        self.vpf_dir = os.path.join(DATA_DIR, '2020_11_28_out')
 
     @staticmethod
     def process_raw_file(path, name, out_dir):
@@ -38,9 +38,9 @@ class DatasetPrepare(object):
         for data_line in data_lines:
             try:
                 items = data_line.split('<sep>')
-                img_id = items[0]
-                img_url = items[1].split('?')[0]
-                dmy_dict = json.loads(items[3])
+                # img_id = items[0]
+                img_url = items[0].split('?')[0]
+                dmy_dict = json.loads(items[1])
                 angle = int(dmy_dict["call_result"]["angle"])
             except Exception as e:
                 continue
@@ -55,7 +55,7 @@ class DatasetPrepare(object):
 
     def process_raw_data(self):
         paths_list, names_list = traverse_dir_files(self.file_dir)
-        out_dir = os.path.join(DATA_DIR, '2020_11_26_out')
+        out_dir = self.vpf_dir
         mkdir_if_not_exist(out_dir)
 
         pool = Pool(processes=40)
@@ -254,12 +254,13 @@ class DatasetPrepare(object):
 
 def main():
     dp = DatasetPrepare()
+    dp.process_raw_data()
     # dp.process_vpf_data()
     # dp.merge_vpf_data()
     # dp.generate_labeled_data()
     # dp.generate_right_angle()
     # dp.download_right_angle()
-    dp.filter_diff_file()
+    # dp.filter_diff_file()
 
 
 if __name__ == '__main__':
