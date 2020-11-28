@@ -118,9 +118,9 @@ class DatasetPrepare(object):
         print('[Info] 全部处理完成: {}'.format(out_dir))
 
     def merge_vpf_data(self):
-        vpf_dir = os.path.join(DATA_DIR, '2020_11_26_vpf')
-        vpf_right_path = os.path.join(DATA_DIR, '2020_11_26_right.txt')
-        vpf_diff_path = os.path.join(DATA_DIR, '2020_11_26_diff.txt')
+        vpf_dir = os.path.join(DATA_DIR, '2020_11_28_vpf')
+        vpf_right_path = os.path.join(DATA_DIR, '2020_11_28_right.txt')
+        vpf_diff_path = os.path.join(DATA_DIR, '2020_11_28_diff.txt')
         paths_list, names_list = traverse_dir_files(vpf_dir)
         out_right_list, out_diff_list = [], []
         for path, name in zip(paths_list, names_list):
