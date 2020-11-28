@@ -73,10 +73,12 @@ class DatasetPrepare(object):
         print('[Info] path: {}'.format(path))
         data_lines = read_file(path)
         name_x = name.split('.')[0]
-        out_file = os.path.join(out_dir, '{}_vpf.txt'.format(name_x))
-        create_file(out_file)
+        out_right_file = os.path.join(out_dir, '{}_right.txt'.format(name_x))
+        out_diff_file = os.path.join(out_dir, '{}_diff.txt'.format(name_x))
+        create_file(out_right_file)
+        create_file(out_diff_file)
 
-        out_list = []
+        out_right_list, out_diff_list = [], []
         for idx, data_line in enumerate(data_lines):
             # if idx == 100:
             #     break
@@ -87,15 +89,17 @@ class DatasetPrepare(object):
                 uc_angle = int(uc_dict['data']['angle'])
             except Exception as e:
                 uc_angle = -1
-            if dmy_angle != uc_angle:
-                out_items = [img_url, str(dmy_angle), str(uc_angle)]
-                print('[Info] {} out_items: {}'.format(idx, out_items))
-            else:
-                continue
+            out_items = [img_url, str(dmy_angle), str(uc_angle)]
+            print('[Info] {} out_items: {}'.format(idx, out_items))
             out_line = ",".join(out_items)
-            out_list.append(out_line)
-        write_list_to_file(out_file, out_list)
-        print('[Info] 处理完成: {}'.format(out_file))
+            if dmy_angle != uc_angle:
+                out_diff_list.append(out_line)
+            else:
+                out_right_list.append(out_line)
+
+        write_list_to_file(out_right_file, out_right_list)
+        write_list_to_file(out_diff_file, out_diff_list)
+        print('[Info] 处理完成: {} {}'.format(out_right_file, out_diff_file))
 
     def process_vpf_data(self):
         paths_list, names_list = traverse_dir_files(self.vpf_dir)
