@@ -265,8 +265,8 @@ class DatasetPrepare(object):
 def main():
     dp = DatasetPrepare()
     # dp.process_raw_data()
-    # dp.process_vpf_data()
-    dp.merge_vpf_data()
+    dp.process_vpf_data()
+    # dp.merge_vpf_data()
     # dp.generate_labeled_data()
     # dp.generate_right_angle()
     # dp.download_right_angle()
