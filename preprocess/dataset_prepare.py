@@ -103,7 +103,7 @@ class DatasetPrepare(object):
 
     def process_vpf_data(self):
         paths_list, names_list = traverse_dir_files(self.vpf_dir)
-        out_dir = os.path.join(DATA_DIR, '2020_11_28_vpf')
+        out_dir = os.path.join(DATA_DIR, '2020_11_28_vpf_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
 
         pool = Pool(processes=40)
