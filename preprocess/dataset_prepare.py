@@ -210,7 +210,8 @@ class DatasetPrepare(object):
         print('[Info] {} {} 完成'.format(idx, out_path))
 
     def download_right_angle(self):
-        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28_right.txt')
+        # same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28_right.txt')
+        same_urls_file = os.path.join(DATA_DIR, '2020_11_28_right.txt')
         out_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28_imgs_dir')
         mkdir_if_not_exist(out_dir)
 
