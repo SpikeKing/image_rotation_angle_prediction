@@ -200,9 +200,10 @@ class DatasetPrepare(object):
     def process_img_angle(idx, url, angle, out_dir):
         try:
             angle = int(angle)
+            name = url.split('/')[-1]
             is_ok, img_bgr = download_url_img(url)
             img_out = rotate_img_for_4angle(img_bgr, angle)
-            out_path = os.path.join(out_dir, "{}.jpg".format(idx))
+            out_path = os.path.join(out_dir, "{}.jpg".format(name))
             cv2.imwrite(out_path, img_out)
         except Exception as e:
             print('[Error] {} 错误'.format(idx))
@@ -212,7 +213,7 @@ class DatasetPrepare(object):
     def download_right_angle(self):
         # same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28_right.txt')
         # same_urls_file = os.path.join(DATA_DIR, '2020_11_28_right.txt')
-        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_4_new', 'modified_20201126.txt')
+        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_4_new', 'checked_20201126.txt')
         out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4', 'checked')
         mkdir_if_not_exist(out_dir)
 
@@ -223,8 +224,8 @@ class DatasetPrepare(object):
         for idx, data_line in enumerate(data_lines):
             # if idx == 200:
             #     break
-            # url, angle = data_line.split(',')
-            url, angle = data_line, 0
+            url, angle = data_line.split(',')
+            # url, angle = data_line, 0
             # DatasetPrepare.process_img_angle(idx, url, angle, out_dir)
             pool.apply_async(DatasetPrepare.process_img_angle, (idx, url, angle, out_dir))
 
