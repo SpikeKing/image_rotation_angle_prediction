@@ -59,7 +59,7 @@ test_filenames = test4_filenames + test5_filenames
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
-train_filenames = train_filenames
+train_filenames = train_filenames * 2
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -161,5 +161,5 @@ model.fit(
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
     callbacks=[checkpointer, reduce_lr, tensorboard],
     # callbacks=[checkpointer, tensorboard],
-    workers=5,
+    workers=10,
 )

@@ -315,8 +315,8 @@ class RotNetDataGenerator(Iterator):
         if self.rotate:
             # get a random angle
             # offset_angle = 0
-            offset_angle = random.randint(-5, 5)
-            # offset_angle = random.randint(-10, 10)
+            # offset_angle = random.randint(-5, 5)
+            offset_angle = random.randint(-8, 8)
             # offset_angle = random.randint(-12, 12)
 
             rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
