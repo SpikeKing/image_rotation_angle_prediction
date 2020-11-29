@@ -215,9 +215,10 @@ class DatasetPrepare(object):
     def download_right_angle(self):
         # same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28_right.txt')
         # same_urls_file = os.path.join(DATA_DIR, '2020_11_28_right.txt')
-        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_4_new', 'checked_20201126.txt')
+        # same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_4_new', 'checked_20201126.txt')
         # same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_4_new', 'modified_20201126.txt')
-        out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4', 'checked')
+        same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_vpf.right.txt')  # 输入
+        out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4', 'raw_2')  # 输出
         mkdir_if_not_exist(out_dir)
 
         data_lines = read_file(same_urls_file)
