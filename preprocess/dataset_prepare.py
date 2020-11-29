@@ -223,8 +223,8 @@ class DatasetPrepare(object):
         for idx, data_line in enumerate(data_lines):
             # if idx == 200:
             #     break
-            url = data_line.split(',')
-            angle = 0
+            # url, angle = data_line.split(',')
+            url, angle = data_line, 0
             # DatasetPrepare.process_img_angle(idx, url, angle, out_dir)
             pool.apply_async(DatasetPrepare.process_img_angle, (idx, url, angle, out_dir))
 
