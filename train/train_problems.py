@@ -59,7 +59,8 @@ test_filenames = test4_filenames + test5_filenames
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
-train_filenames = train_filenames * 2
+train_filenames = train_filenames
+# train_filenames = train_filenames * 2
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -111,13 +112,14 @@ model.compile(loss='categorical_crossentropy',
               metrics=[angle_error])
 
 # training parameters
-# batch_size = 48
-batch_size = 192
+batch_size = 48
+# batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
 # model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_base_20201129.1.hdf5')  # 最好模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_20201129.3.hdf5')  # 最好模型
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad_20201129.3.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_448_20201129.4.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
