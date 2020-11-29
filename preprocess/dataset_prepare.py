@@ -203,12 +203,14 @@ class DatasetPrepare(object):
             name = url.split('/')[-1]
             is_ok, img_bgr = download_url_img(url)
             img_out = rotate_img_for_4angle(img_bgr, angle)
-            out_path = os.path.join(out_dir, "{}.jpg".format(name))
+            out_path = os.path.join(out_dir, "{}".format(name))
             cv2.imwrite(out_path, img_out)
         except Exception as e:
             print('[Error] {} 错误'.format(idx))
             return
         print('[Info] {} {} 完成'.format(idx, out_path))
+        if idx == 998:
+            print('[Warning] url:{}, angle: {}'.format(url, angle))
 
     def download_right_angle(self):
         # same_urls_file = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_28_right.txt')
