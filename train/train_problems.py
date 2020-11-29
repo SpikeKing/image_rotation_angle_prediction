@@ -72,8 +72,8 @@ model_name = 'problem_rotnet_mobilenetv2'
 nb_classes = 360
 
 # input image shape
-input_shape = (224, 224, 3)
-# input_shape = (448, 448, 3)
+# input_shape = (224, 224, 3)
+input_shape = (448, 448, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
