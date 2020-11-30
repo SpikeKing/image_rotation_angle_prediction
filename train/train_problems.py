@@ -63,7 +63,9 @@ test_val_filenames = train_val_filenames + test_val_filenames
 print('[Info] data val test: {}'.format(len(test_val_filenames)))
 test_val_filenames = test_val_filenames
 
-train_filenames = train3_filenames + train4_filenames + train5_filenames
+random.shuffle(train3_filenames)
+
+train_filenames = train3_filenames[:len(train3_filenames)//2] + train4_filenames + train5_filenames
 test_filenames = test5_filenames + test_val_filenames
 
 random.shuffle(train_filenames)
