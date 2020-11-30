@@ -53,6 +53,7 @@ print('[Info] data5_path: {}'.format(data5_path))
 train5_filenames, test5_filenames = get_problems_data(data5_path)
 print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5_filenames)))
 train5_filenames = train5_filenames * 5
+test5_filenames = test5_filenames * 5
 
 train_filenames = train3_filenames + train4_filenames + train5_filenames
 test_filenames = test3_filenames + test4_filenames + test5_filenames
