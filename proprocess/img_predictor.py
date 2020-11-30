@@ -40,7 +40,8 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_v34_20201128.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_v4_pad_20201128.3.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_base_20201128_1.1.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_base_20201128_1.1.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_base_20201130.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
