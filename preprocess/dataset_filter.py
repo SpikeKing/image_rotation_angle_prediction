@@ -48,7 +48,6 @@ class DatasetFilter(object):
             return
         print('[Info] {} {} 完成'.format(idx, out_path))
 
-
     def download_right_angle(self):
         files_dir = os.path.join(ROOT_DIR, '..', 'datasets', '2020_11_26_vpf_right')
         paths_list, names_list = traverse_dir_files(files_dir)
