@@ -8,6 +8,7 @@ Created by C. L. Wang on 30.11.20
 import os
 import sys
 import cv2
+import pandas as pd
 from multiprocessing.pool import Pool
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -88,11 +89,40 @@ class DatasetFilter(object):
         pool.join()
         print('[Info] 处理完成: {}'.format(out_dir))
 
+    def read_labeled_data(self):
+        labeled_path = os.path.join(DATA_DIR, 'labeled_20201130_v1.csv')
+        out_dir = os.path.join(DATA_DIR, 'labeled_20201130_v1')
+        mkdir_if_not_exist(out_dir)
+
+        pd_head = pd.read_csv(labeled_path, encoding="gb2312", header=0)
+        for idx, row in enumerate(pd_head.iterrows()):
+            items = row[1]
+            # print('[Info] items: {}'.format(items))
+            question_content = items["question_content"]
+            url = json.loads(question_content)[1]
+            # print('[Info] url: {}'.format(url))
+            radio_1 = items["radio_1"]
+            # print('[Info] radio_1: {}'.format(radio_1))
+            prob = re.findall(r'[\[](.*?)[\]]', radio_1)[0]  # 获取概率
+            label = re.findall(r'(.*?)[\[]', radio_1)[0]  # 获取标签
+            # print('[Info] prob: {}'.format(prob))
+            # print('[Info] label: {}'.format(label))
+            if label == "0" and prob == "1.0":
+                out_path = os.path.join(out_dir, 'data_{}_{}.txt'.format(label, prob))
+                write_line(out_path, url)
+            elif label == "0" and prob == "0.6666666666666666":
+                out_path = os.path.join(out_dir, 'data_{}_{}.txt'.format(label, prob))
+                write_line(out_path, url)
+
+            if idx % 1000 == 0:
+                print('[Info] idx: {}'.format(idx))
+
 
 def main():
     df = DatasetFilter()
     # df.filter()
     df.download_right_angle_v2()
+    # df.read_labeled_data()
 
 
 if __name__ == '__main__':

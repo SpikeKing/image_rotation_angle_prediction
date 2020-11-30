@@ -278,7 +278,7 @@ class RotNetDataGenerator(Iterator):
 
     def __init__(self, input, input_shape=None, color_mode='rgb', batch_size=64,
                  one_hot=True, preprocess_func=None, rotate=True, crop_center=False,
-                 crop_largest_rect=False, shuffle=False, seed=None):
+                 crop_largest_rect=False, shuffle=False, seed=None, is_swing=True):
 
         self.images = None
         self.filenames = None
@@ -291,6 +291,8 @@ class RotNetDataGenerator(Iterator):
         self.crop_center = crop_center
         self.crop_largest_rect = crop_largest_rect
         self.shuffle = shuffle
+
+        self.is_swing = is_swing  # 是否增强摆动数据
 
         if self.color_mode not in {'rgb', 'grayscale'}:
             raise ValueError('Invalid color mode:', self.color_mode,
@@ -316,7 +318,10 @@ class RotNetDataGenerator(Iterator):
             # get a random angle
             # offset_angle = 0
             # offset_angle = random.randint(-5, 5)
-            offset_angle = random.randint(-8, 8)
+            if self.is_swing:
+                offset_angle = random.randint(-8, 8)
+            else:
+                offset_angle = 0
             # offset_angle = random.randint(-12, 12)
 
             rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])

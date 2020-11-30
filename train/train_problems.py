@@ -168,7 +168,8 @@ model.fit(
         batch_size=batch_size,
         preprocess_func=preprocess_input,
         crop_center=False,
-        crop_largest_rect=True
+        crop_largest_rect=True,
+        is_swing=False
     ),
     validation_steps=len(test_filenames) / batch_size,
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
