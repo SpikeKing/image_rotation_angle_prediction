@@ -55,14 +55,24 @@ print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5
 train5_filenames = train5_filenames * 5
 test5_filenames = test5_filenames * 5
 
+# 无黑边验证数据 少量
+data_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
+print('[Info] data_val_path: {}'.format(data_val_path))
+train_val_filenames, test_val_filenames = get_problems_data(data_val_path)
+test_val_filenames = train_val_filenames + test_val_filenames
+print('[Info] data val test: {}'.format(len(test_val_filenames)))
+test_val_filenames = test_val_filenames * 5
+
+
 train_filenames = train3_filenames + train4_filenames + train5_filenames
-test_filenames = test3_filenames + test4_filenames + test5_filenames
+test_filenames = test5_filenames + test_val_filenames
 
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
 # train_filenames = train_filenames
 train_filenames = train_filenames * 2
+test_filenames = test_filenames
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
