@@ -31,7 +31,7 @@ from utils import angle_error
 
 class ImgPredictor(object):
     def __init__(self):
-        # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_a12_20201126.2.hdf5"
@@ -43,7 +43,7 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_base_20201128_1.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_base_20201130.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_pad448_20201130.3.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_basex_20201130.4.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_basex_20201130.4.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
