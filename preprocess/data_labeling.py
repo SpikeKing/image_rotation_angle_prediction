@@ -13,8 +13,8 @@ if p not in sys.path:
     sys.path.append(p)
 
 from root_dir import DATA_DIR
-from myutils.project_utils import traverse_dir_files, read_file, download_url_img, mkdir_if_not_exist, write_line
-from myutils.cv_utils import rotate_img_with_bound, show_img_bgr, resize_img_fixed
+from myutils.project_utils import *
+from myutils.cv_utils import *
 from x_utils.oss_utils import save_img_2_oss
 from x_utils.vpf_utils import get_uc_rotation_vpf_service
 from multiprocessing.pool import Pool
@@ -62,7 +62,7 @@ class DataLabeling(object):
             #     break
         print('[Info] 处理完成! {}'.format(path))
 
-    def process(self):
+    def process_old(self):
         img_dir = os.path.join(DATA_DIR, '2020_11_20')
         out_dir = os.path.join(DATA_DIR, '2020_11_20_out')
         mkdir_if_not_exist(out_dir)
@@ -75,6 +75,47 @@ class DataLabeling(object):
 
         pool.close()
         pool.join()
+
+    @staticmethod
+    def process_labeled(idx, data_line, out_dir):
+        oss_root_dir = "zhengsheng.wcl/problems_rotation/datasets/prelabeled_diff_20201130"
+        url, angle = data_line.split(',')
+        is_ok, img_bgr = download_url_img(url)
+        if not is_ok:
+            return
+
+        img_bgr = rotate_img_for_4angle(img_bgr, int(angle))
+        h, w, _ = img_bgr.shape
+        ratio = safe_div(h, w)
+        if ratio >= 1.0:
+            url_1 = save_img_2_oss(img_bgr, "{}_v.jpg".format(idx), oss_root_dir)
+            img_bgr = rotate_img_for_4angle(img_bgr, 270)
+            url_2 = save_img_2_oss(img_bgr, "{}_vx.jpg".format(idx), oss_root_dir)
+        else:
+            url_1 = save_img_2_oss(img_bgr, "{}_h.jpg".format(idx), oss_root_dir)
+            img_bgr = rotate_img_for_4angle(img_bgr, 180)
+            url_2 = save_img_2_oss(img_bgr, "{}_hx.jpg".format(idx), oss_root_dir)
+
+        out_path = os.path.join(out_dir, 'data_{}.txt'.format(angle))
+        write_line(out_path, url_1)
+        write_line(out_path, url_2)
+        print('[Info] idx: {}'.format(idx))
+
+    def process(self):
+        in_path = os.path.join(DATA_DIR, '2020_11_26_same.txt')
+        out_dir = os.path.join(DATA_DIR, '2020_11_26_same_labeled')
+        mkdir_if_not_exist(out_dir)
+        data_lines = read_file(in_path)
+        pool = Pool(processes=30)
+
+        for idx, data_line in enumerate(data_lines):
+            # DataLabeling.process_labeled(idx, data_line, out_dir)
+            pool.apply_async(DataLabeling.process_labeled, (idx, data_line, out_dir))
+
+        pool.close()
+        pool.join()
+
+        print('[Info] 处理完成: {}'.format(out_dir))
 
 
 def main():
