@@ -53,7 +53,7 @@ print('[Info] data5_path: {}'.format(data5_path))
 train5_filenames, test5_filenames = get_problems_data(data5_path)
 print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5_filenames)))
 train5_filenames = train5_filenames * 5
-test5_filenames = test5_filenames * 5
+test5_filenames = test5_filenames
 
 # 无黑边验证数据 少量
 data_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
@@ -61,8 +61,7 @@ print('[Info] data_val_path: {}'.format(data_val_path))
 train_val_filenames, test_val_filenames = get_problems_data(data_val_path)
 test_val_filenames = train_val_filenames + test_val_filenames
 print('[Info] data val test: {}'.format(len(test_val_filenames)))
-test_val_filenames = test_val_filenames * 5
-
+test_val_filenames = test_val_filenames
 
 train_filenames = train3_filenames + train4_filenames + train5_filenames
 test_filenames = test5_filenames + test_val_filenames
@@ -71,8 +70,8 @@ random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
 # train_filenames = train_filenames
-train_filenames = train_filenames * 2
-test_filenames = test_filenames
+train_filenames = train_filenames
+test_filenames = test_filenames * 5
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -84,8 +83,8 @@ model_name = 'problem_rotnet_mobilenetv2'
 nb_classes = 360
 
 # input image shape
-input_shape = (224, 224, 3)
-# input_shape = (448, 448, 3)
+# input_shape = (224, 224, 3)
+input_shape = (448, 448, 3)
 print('[Info] input_shape: {}'.format(input_shape))
 
 # load base model
@@ -124,12 +123,13 @@ model.compile(loss='categorical_crossentropy',
               metrics=["acc", angle_error])
 
 # training parameters
-# batch_size = 48
-batch_size = 192
+batch_size = 48
+# batch_size = 192
 nb_epoch = 200
 
 # 加载已有模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad448_20201130.3.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 

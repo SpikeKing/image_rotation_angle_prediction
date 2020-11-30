@@ -445,13 +445,13 @@ def read_file(data_file, mode='more'):
         return list()
 
 
-def read_file_utf8(data_file, mode='more'):
+def read_file_utf8(data_file, mode='more', encoding='utf8'):
     """
     读文件, 原文件和数据文件
     :return: 单行或数组
     """
     try:
-        with open(data_file, 'r', encoding='utf8') as f:
+        with open(data_file, 'r', encoding=encoding) as f:
             if mode == 'one':
                 output = f.read()
                 return output
