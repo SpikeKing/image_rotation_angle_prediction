@@ -69,11 +69,30 @@ class DatasetFilter(object):
         pool.join()
         print('[Info] 处理完成: {}'.format(files_dir))
 
+    def download_right_angle_v2(self):
+        urls_file = os.path.join(DATA_DIR, 'test_1000_res.right.csv')  # 输入
+        out_dir = os.path.join(DATA_DIR, 'test_1000_res_right')  # 输出
+        mkdir_if_not_exist(out_dir)
+        data_lines = read_file(urls_file)
+
+        pool = Pool(processes=80)
+        for idx, data_line in enumerate(data_lines):
+            if idx == 0:
+                continue
+            items = data_line.split(',')
+            url = items[0]
+            angle = items[1]
+            pool.apply_async(DatasetFilter.process_img_angle, (idx, url, angle, out_dir))
+
+        pool.close()
+        pool.join()
+        print('[Info] 处理完成: {}'.format(out_dir))
+
 
 def main():
     df = DatasetFilter()
     # df.filter()
-    df.download_right_angle()
+    df.download_right_angle_v2()
 
 
 if __name__ == '__main__':
