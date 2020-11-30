@@ -32,7 +32,7 @@ class DatasetFilter(object):
         for data_line in data_lines:
             url, angle = data_line.split(',')
             out_path = os.path.join(out_dir, 'angle_{}.txt'.format(angle))
-            write_line(out_path, url)
+            write_line(out_path, data_line)
 
     @staticmethod
     def process_img_angle(idx, url, angle, out_dir):
@@ -73,7 +73,8 @@ class DatasetFilter(object):
 
 def main():
     df = DatasetFilter()
-    df.download_right_angle()
+    df.filter()
+    # df.download_right_angle()
 
 
 if __name__ == '__main__':
