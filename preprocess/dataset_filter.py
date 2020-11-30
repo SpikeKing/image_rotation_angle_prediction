@@ -72,8 +72,8 @@ class DatasetFilter(object):
 
 def main():
     df = DatasetFilter()
-    df.filter()
-    # df.download_right_angle()
+    # df.filter()
+    df.download_right_angle()
 
 
 if __name__ == '__main__':
