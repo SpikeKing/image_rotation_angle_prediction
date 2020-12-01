@@ -264,9 +264,6 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
 
-    # print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}, is_ok: {}'
-    #       .format(image.shape, angle, rotated_ratio, is_ok))
-
     return image, angle, rotated_ratio, is_ok
 
 
@@ -299,7 +296,7 @@ class RotNetDataGenerator(Iterator):
                              '; expected "rgb" or "grayscale".')
 
         # check whether the input is a NumPy array or a list of paths
-        if isinstance(input, (np.ndarray)):
+        if isinstance(input, np.ndarray):
             self.images = input
             N = self.images.shape[0]
             if not self.input_shape:
@@ -315,14 +312,10 @@ class RotNetDataGenerator(Iterator):
 
     def process_img(self, image):
         if self.rotate:
-            # get a random angle
-            # offset_angle = 0
-            # offset_angle = random.randint(-5, 5)
             if self.is_train:
                 offset_angle = random.randint(-8, 8)
             else:
                 offset_angle = 0
-            # offset_angle = random.randint(-12, 12)
 
             rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
             rotation_angle = (rotation_angle + offset_angle) % 360
@@ -356,6 +349,7 @@ class RotNetDataGenerator(Iterator):
         # create array to hold the images
         batch_x = np.zeros((len(index_array),) + self.input_shape, dtype='float32')
         batch_x_2 = np.zeros(len(index_array), dtype='float32')
+
         # create array to hold the labels
         batch_y = np.zeros(len(index_array), dtype='float32')
 
@@ -550,17 +544,7 @@ def display_examples(model, input, num_images=5, size=None, crop_center=False,
 
 
 def demo_of_generate_rotated_image():
-    import os
-    from myutils.cv_utils import show_img_bgr
-    from root_dir import DATA_DIR
-    img_path = os.path.join(DATA_DIR, '3.jpg')
-    img_bgr = cv2.imread(img_path)
-    angle = 90
-    img_out, angle, rotated_ratio = generate_rotated_image(
-        img_bgr, angle, size=(224, 224, 3)[:2], crop_center=False, crop_largest_rect=True)
-    print('[Info] img_out: {}, angle: {}, rotated_ratio: {}'.format(img_out.shape, angle, rotated_ratio))
-    show_img_bgr(img_out)
-
+    pass
 
 def main():
     demo_of_generate_rotated_image()

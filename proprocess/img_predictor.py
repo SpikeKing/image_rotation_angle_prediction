@@ -25,9 +25,10 @@ if p not in sys.path:
 
 from myutils.cv_utils import *
 from myutils.project_utils import *
+from x_utils.vpf_utils import get_uc_rotation_vpf_service
 
 from root_dir import DATA_DIR
-from utils import angle_error
+from utils import angle_error, generate_rotated_image, crop_largest_rectangle, rotate
 
 
 class ImgPredictor(object):
@@ -126,9 +127,8 @@ class ImgPredictor(object):
         ratio_b = np.expand_dims(ratio_arr, axis=0)
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-        # img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
+
         img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
-        # img_rgb_resized = resize_image_with_padding(img_bgr, 224)  # pad
         # img_rgb_resized = resize_image_with_padding(img_bgr, 448)  # pad
 
         img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
@@ -139,59 +139,14 @@ class ImgPredictor(object):
 
         return probs
 
-    # def predict_img_bgr_core(self, img_bgr):
-    #     probs_0 = self.predict_img_bgr_prob(img_bgr)
-    #     # print(probs_0)
-    #     # show_img_bgr(img_bgr)
-    #     if max(probs_0) > 0.999:
-    #         res = probs_0
-    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-    #         return np.array(res)
-    #
-    #     img_bgr_180 = rotate_img_for_4angle(img_bgr, 180)
-    #     probs_180 = self.predict_img_bgr_prob(img_bgr_180)
-    #     # print(probs_180)
-    #     # show_img_bgr(img_bgr_180)
-    #     if max(probs_180) > 0.999:
-    #         res = [probs_180[2], probs_180[3], probs_180[0], probs_180[1]]
-    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-    #         return np.array(res)
-    #
-    #     img_bgr_90 = rotate_img_for_4angle(img_bgr, 90)
-    #     probs_90 = self.predict_img_bgr_prob(img_bgr_90)
-    #     # print(probs_90)
-    #     # show_img_bgr(img_bgr_90)
-    #     if max(probs_90) > 0.999:
-    #         res = [probs_90[3], probs_90[0], probs_90[1], probs_90[2]]
-    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-    #         return np.array(res)
-    #
-    #     img_bgr_270 = rotate_img_for_4angle(img_bgr, 270)
-    #     probs_270 = self.predict_img_bgr_prob(img_bgr_270)
-    #     # print(probs_270)
-    #     # show_img_bgr(img_bgr_270)
-    #     if max(probs_270) > 0.999:
-    #         res = [probs_270[1], probs_270[2], probs_270[3], probs_270[0]]
-    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-    #         return np.array(res)
-    #
-    #     p0 = (probs_0[0] + probs_90[3] + probs_180[2] + probs_270[1]) / 4
-    #     p1 = (probs_0[1] + probs_90[0] + probs_180[3] + probs_270[2]) / 4
-    #     p2 = (probs_0[2] + probs_90[1] + probs_180[0] + probs_270[3]) / 4
-    #     p3 = (probs_0[3] + probs_90[2] + probs_180[1] + probs_270[0]) / 4
-    #
-    #     res = np.array([p0, p1, p2, p3])
-    #     # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-    #     return res
-
     def predict_img_bgr(self, img_bgr):
         """
         预测角度
         """
-        probs = self.predict_img_bgr_prob(img_bgr)
-        # n_p = np.argmax(probs)
-        # res_angle = n_p * 90
+        img_bgr = rotate(img_bgr, 90)
+        img_bgr = rotate(img_bgr, -90)
 
+        probs = self.predict_img_bgr_prob(img_bgr)
         angle = int(K.argmax(probs)) % 360
         angle = self.format_angle(angle)
 
@@ -289,10 +244,10 @@ class ImgPredictor(object):
 
             uc_angle = int(uc_angle)
             uc_is_ok = int(is_uc)
-
             r_angle = int(r_angle)
 
             x_angle = self.process_item_v2(url)
+
             x_is_ok = 1 if x_angle == r_angle else 0
             if uc_is_ok == 1:
                 n_old_right += 1
@@ -305,8 +260,6 @@ class ImgPredictor(object):
             n_all += 1
 
             out_list.append([url, r_angle, dmy_angle, is_dmy, uc_angle, uc_is_ok, x_angle, x_is_ok])
-            # if idx == 10:
-            #     break
 
         print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
         print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
@@ -319,11 +272,44 @@ class ImgPredictor(object):
             out_list
         )
 
+    def new_test(self):
+        # img_path = os.path.join(DATA_DIR, 'datasets_val', 'val_1000', 'O1CN01395Jpz1zErXatzlXa_!!6000000006683-0-quark.jpg')
+        # image = cv2.imread(img_path)
+        #
+        # image, angle, rotated_ratio, is_ok = generate_rotated_image(
+        #     image,
+        #     270,
+        #     size=None,
+        #     crop_center=False,
+        #     crop_largest_rect=True
+        # )
+
+        img_path = os.path.join(DATA_DIR, 'datasets_val', 'x2.jpg')
+        image = cv2.imread(img_path)
+        image = rotate(image, 90)
+        image = rotate(image, -90)
+
+        # url = "https://img.alicdn.com/imgextra/i2/6000000006683/O1CN01395Jpz1zErXatzlXa_!!6000000006683-0-quark.jpg"
+        # is_ok, image = download_url_img(url)
+        # show_img_bgr(image)
+
+        show_img_bgr(image)
+
+        x = self.predict_img_bgr(image)
+
+        print(x)
+
+    def process_item_v3(self, url):
+        res_dict = get_uc_rotation_vpf_service(url)
+        angle = res_dict['data']['angle']
+        angle = int(angle)
+        return angle
+
     def process_v3(self):
         """
         处理数据v3
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_out_4a.txt')
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -335,14 +321,13 @@ class ImgPredictor(object):
                 continue
             url, r_angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
 
-            x1_angle = int(uc_angle)
-            x1_is_ok = int(is_uc)
-
+            uc_angle = int(uc_angle)
+            uc_is_ok = int(is_uc)
             r_angle = int(r_angle)
 
-            x_angle = self.process_item_v2(url)
+            x_angle = self.process_item_v3(url)
             x_is_ok = 1 if x_angle == r_angle else 0
-            if x1_is_ok == 1:
+            if uc_is_ok == 1:
                 n_old_right += 1
             if x_angle == r_angle:
                 print('[Info] {} 预测正确 {} - {}! {}'.format(idx, x_angle, r_angle, url))
@@ -352,33 +337,31 @@ class ImgPredictor(object):
                 n_error += 1
             n_all += 1
 
-            out_list.append([url, x1_angle, r_angle, x1_is_ok, x_angle, x_is_ok])
-            # if idx == 10:
-            #     break
+            out_list.append([url, r_angle, dmy_angle, is_dmy, uc_angle, uc_is_ok, x_angle, x_is_ok])
 
         print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
         print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
 
-        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.csv'.format(self.model_name, safe_div(n_right, n_all),
+        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.xlsx'.format(self.model_name, safe_div(n_right, n_all),
                                                                        n_error))
-        write_list_to_excel(out_file, ["url", "x1_angle", "r_angle", "x1_is_ok", "x_angle", "x_is_ok"], out_list)
+        write_list_to_excel(
+            out_file,
+            ["url", "r_angle", "dmy_angle", "is_dmy", "uc_angle", "uc_is_ok", "x_angle", "x_is_ok"],
+            out_list
+        )
 
 
-def demo_of_img_path():
-    error_dir = os.path.join(DATA_DIR, 'cases')
+def demo_of_img_dir():
+    error_dir = os.path.join(DATA_DIR, 'datasets_val', 'important_cases')
     ip = ImgPredictor()
     paths_list, names_list = traverse_dir_files(error_dir)
-    n_path = len(paths_list)
-    n_right = 0
     for path, name in zip(paths_list, names_list):
-        r_angle = int(name.split('.')[1])
-        p_angle = ip.predict_img_path(path)
-        if r_angle == p_angle:
-            n_right += 1
-        print('[Info] r_angle: {}, p_angle: {}, is_equal: {}'.format(r_angle, p_angle, r_angle == p_angle))
+        img_bgr = cv2.imread(path)
+        angle = ip.predict_img_bgr(img_bgr)
+        img_bgr = rotate_img_for_4angle(img_bgr, angle)
+        show_img_bgr(img_bgr)
         print('-' * 50)
-    ratio = safe_div(n_right, n_path)
-    print('[Info] 正确率: {}'.format(ratio))
+    print('[Info] 完成!')
 
 
 def demo_of_one_img():
@@ -394,7 +377,8 @@ def main():
     ip = ImgPredictor()
     # ip.process()
     ip.process_v2()
-    # demo_of_img_path()
+    # ip.process_v3()
+    # demo_of_img_dir()
     # demo_of_one_img()
 
 
