@@ -90,8 +90,8 @@ class DatasetFilter(object):
         print('[Info] 处理完成: {}'.format(out_dir))
 
     def read_labeled_data(self):
-        labeled_path = os.path.join(DATA_DIR, 'labeled_20201201_v1.csv')
-        out_dir = os.path.join(DATA_DIR, 'labeled_20201201_v1')
+        labeled_path = os.path.join(DATA_DIR, 'labeled_20201201_v2.csv')
+        out_dir = os.path.join(DATA_DIR, 'labeled_20201201_v2')
         mkdir_if_not_exist(out_dir)
 
         # pd_head = pd.read_csv(labeled_path, encoding="gb2312", header=0)
