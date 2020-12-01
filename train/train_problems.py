@@ -36,16 +36,18 @@ from myutils.project_utils import get_current_time_str
 # print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
 
 # 包含黑边的数据
+# data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
+# print('[Info] data4_path: {}'.format(data4_path))
+# train4_filenames, test4_filenames = get_problems_data(data4_path)
+# print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
+
+# 包含黑边的数据
 data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
 print('[Info] data3_path: {}'.format(data3_path))
 train3_filenames, test3_filenames = get_problems_data(data3_path)
 print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
-
-# 包含黑边的数据
-data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
-print('[Info] data4_path: {}'.format(data4_path))
-train4_filenames, test4_filenames = get_problems_data(data4_path)
-print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
+random.shuffle(train3_filenames)
+train3_filenames = train3_filenames[:len(train3_filenames)//2]
 
 # 无黑边数据 8.8w数据
 data5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked')
@@ -53,27 +55,19 @@ print('[Info] data5_path: {}'.format(data5_path))
 train5_filenames, test5_filenames = get_problems_data(data5_path)
 print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5_filenames)))
 train5_filenames = train5_filenames * 5
-test5_filenames = test5_filenames
 
 # 无黑边验证数据 少量
 data_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
 print('[Info] data_val_path: {}'.format(data_val_path))
 train_val_filenames, test_val_filenames = get_problems_data(data_val_path)
-test_val_filenames = train_val_filenames + test_val_filenames
+test_val_filenames = train_val_filenames + test_val_filenames  # 全部数据都是验证数据
 print('[Info] data val test: {}'.format(len(test_val_filenames)))
-test_val_filenames = test_val_filenames
 
-random.shuffle(train3_filenames)
-
-train_filenames = train3_filenames[:len(train3_filenames)//2] + train4_filenames + train5_filenames
-test_filenames = test_val_filenames
+train_filenames = train3_filenames + train5_filenames
+test_filenames = test5_filenames + test_val_filenames * 10
 
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
-
-# train_filenames = train_filenames
-train_filenames = train_filenames
-test_filenames = test_filenames * 6
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')
@@ -130,8 +124,8 @@ batch_size = 48
 nb_epoch = 200
 
 # 加载已有模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_20w_20201121.hdf5')  # 最好模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad448_20201130_tmp.3.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_448_20201201.2.hdf5')  # 最好模型
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad448_20201130_tmp.3.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
