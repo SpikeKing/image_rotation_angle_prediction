@@ -49,9 +49,9 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_pad448_base_20201201.4.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_base_20201201.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_448_20201201.2.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_448_20201201_tmp.1.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_448_20201201_tmp.1.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_224_20201201.4.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_base448_20201201.1.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_base448_20201201.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -355,13 +355,18 @@ class ImgPredictor(object):
 
 
 def demo_of_img_dir():
-    error_dir = os.path.join(DATA_DIR, 'datasets_val', 'important_cases')
+    error_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32')
+    error2_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32_out')
+    mkdir_if_not_exist(error2_dir)
     ip = ImgPredictor()
     paths_list, names_list = traverse_dir_files(error_dir)
-    for path, name in zip(paths_list, names_list):
+    for idx, (path, name) in enumerate(zip(paths_list, names_list)):
         img_bgr = cv2.imread(path)
         angle = ip.predict_img_bgr(img_bgr)
         img_bgr = rotate_img_for_4angle(img_bgr, angle)
+        out_path = os.path.join(error2_dir, "{}.jpg".format(idx))
+        print('out_path: {}'.format(out_path))
+        cv2.imwrite(out_path, img_bgr)
         show_img_bgr(img_bgr)
         print('-' * 50)
     print('[Info] 完成!')
@@ -377,11 +382,11 @@ def demo_of_one_img():
 
 
 def main():
-    ip = ImgPredictor()
+    # ip = ImgPredictor()
     # ip.process()
-    ip.process_v2()
+    # ip.process_v2()
     # ip.process_v3()
-    # demo_of_img_dir()
+    demo_of_img_dir()
     # demo_of_one_img()
 
 

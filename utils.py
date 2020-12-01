@@ -10,7 +10,7 @@ from tensorflow.keras.preprocessing.image import Iterator
 from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.backend as K
 
-from myutils.cv_utils import random_crop
+from myutils.cv_utils import random_crop, rotate_img_with_bound
 from myutils.project_utils import random_pick, random_prob
 
 
@@ -245,7 +245,8 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     # show_img_bgr(image)
 
     try:
-        image = rotate(image, angle)
+        # image = rotate(image, angle)
+        image = rotate_img_with_bound(image, angle)
         # show_img_bgr(image)
 
         if crop_largest_rect:
