@@ -45,7 +45,8 @@ class ImgPredictor(object):
         # self.model_name = "problem_rotnet_mobilenetv2_pad448_20201130.3.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_basex_20201130.4.hdf5"
         # self.model_name = "problem_rotnet_mobilenetv2_pad448_base_20201201.4.hdf5"
-        self.model_name = "problem_rotnet_mobilenetv2_base_20201201.1.hdf5"
+        # self.model_name = "problem_rotnet_mobilenetv2_base_20201201.1.hdf5"
+        self.model_name = "problem_rotnet_mobilenetv2_448_20201201.2.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -124,7 +125,8 @@ class ImgPredictor(object):
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-        img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
+        # img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
+        img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
         # img_rgb_resized = resize_image_with_padding(img_bgr, 224)  # pad
         # img_rgb_resized = resize_image_with_padding(img_bgr, 448)  # pad
 
@@ -139,50 +141,50 @@ class ImgPredictor(object):
 
         return probs
 
-    def predict_img_bgr_core(self, img_bgr):
-        probs_0 = self.predict_img_bgr_prob(img_bgr)
-        # print(probs_0)
-        # show_img_bgr(img_bgr)
-        if max(probs_0) > 0.999:
-            res = probs_0
-            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-            return np.array(res)
-
-        img_bgr_180 = rotate_img_for_4angle(img_bgr, 180)
-        probs_180 = self.predict_img_bgr_prob(img_bgr_180)
-        # print(probs_180)
-        # show_img_bgr(img_bgr_180)
-        if max(probs_180) > 0.999:
-            res = [probs_180[2], probs_180[3], probs_180[0], probs_180[1]]
-            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-            return np.array(res)
-
-        img_bgr_90 = rotate_img_for_4angle(img_bgr, 90)
-        probs_90 = self.predict_img_bgr_prob(img_bgr_90)
-        # print(probs_90)
-        # show_img_bgr(img_bgr_90)
-        if max(probs_90) > 0.999:
-            res = [probs_90[3], probs_90[0], probs_90[1], probs_90[2]]
-            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-            return np.array(res)
-
-        img_bgr_270 = rotate_img_for_4angle(img_bgr, 270)
-        probs_270 = self.predict_img_bgr_prob(img_bgr_270)
-        # print(probs_270)
-        # show_img_bgr(img_bgr_270)
-        if max(probs_270) > 0.999:
-            res = [probs_270[1], probs_270[2], probs_270[3], probs_270[0]]
-            # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-            return np.array(res)
-
-        p0 = (probs_0[0] + probs_90[3] + probs_180[2] + probs_270[1]) / 4
-        p1 = (probs_0[1] + probs_90[0] + probs_180[3] + probs_270[2]) / 4
-        p2 = (probs_0[2] + probs_90[1] + probs_180[0] + probs_270[3]) / 4
-        p3 = (probs_0[3] + probs_90[2] + probs_180[1] + probs_270[0]) / 4
-
-        res = np.array([p0, p1, p2, p3])
-        # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
-        return res
+    # def predict_img_bgr_core(self, img_bgr):
+    #     probs_0 = self.predict_img_bgr_prob(img_bgr)
+    #     # print(probs_0)
+    #     # show_img_bgr(img_bgr)
+    #     if max(probs_0) > 0.999:
+    #         res = probs_0
+    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+    #         return np.array(res)
+    #
+    #     img_bgr_180 = rotate_img_for_4angle(img_bgr, 180)
+    #     probs_180 = self.predict_img_bgr_prob(img_bgr_180)
+    #     # print(probs_180)
+    #     # show_img_bgr(img_bgr_180)
+    #     if max(probs_180) > 0.999:
+    #         res = [probs_180[2], probs_180[3], probs_180[0], probs_180[1]]
+    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+    #         return np.array(res)
+    #
+    #     img_bgr_90 = rotate_img_for_4angle(img_bgr, 90)
+    #     probs_90 = self.predict_img_bgr_prob(img_bgr_90)
+    #     # print(probs_90)
+    #     # show_img_bgr(img_bgr_90)
+    #     if max(probs_90) > 0.999:
+    #         res = [probs_90[3], probs_90[0], probs_90[1], probs_90[2]]
+    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+    #         return np.array(res)
+    #
+    #     img_bgr_270 = rotate_img_for_4angle(img_bgr, 270)
+    #     probs_270 = self.predict_img_bgr_prob(img_bgr_270)
+    #     # print(probs_270)
+    #     # show_img_bgr(img_bgr_270)
+    #     if max(probs_270) > 0.999:
+    #         res = [probs_270[1], probs_270[2], probs_270[3], probs_270[0]]
+    #         # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+    #         return np.array(res)
+    #
+    #     p0 = (probs_0[0] + probs_90[3] + probs_180[2] + probs_270[1]) / 4
+    #     p1 = (probs_0[1] + probs_90[0] + probs_180[3] + probs_270[2]) / 4
+    #     p2 = (probs_0[2] + probs_90[1] + probs_180[0] + probs_270[3]) / 4
+    #     p3 = (probs_0[3] + probs_90[2] + probs_180[1] + probs_270[0]) / 4
+    #
+    #     res = np.array([p0, p1, p2, p3])
+    #     # print([round(res[0], 2), round(res[1], 2), round(res[2], 2), round(res[3], 2)])
+    #     return res
 
     def predict_img_bgr(self, img_bgr):
         """
