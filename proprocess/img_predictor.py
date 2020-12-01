@@ -13,6 +13,7 @@ import numpy as np
 import tensorflow.python.keras.backend as K
 import tensorflow as tf
 import tensorflow_core
+from keras_applications.imagenet_utils import preprocess_input
 from tensorflow import keras
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 from tensorflow_core.python.keras.models import load_model
@@ -131,6 +132,7 @@ class ImgPredictor(object):
         # img_rgb_resized = resize_image_with_padding(img_bgr, 448)  # pad
 
         img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
+        img_bgr_b = preprocess_input(img_bgr_b)
 
         prediction = self.model.predict([img_bgr_b, ratio_b])
         probs = prediction[0]
