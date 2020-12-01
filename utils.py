@@ -296,7 +296,7 @@ class RotNetDataGenerator(Iterator):
                              '; expected "rgb" or "grayscale".')
 
         # check whether the input is a NumPy array or a list of paths
-        if isinstance(input, np.ndarray):
+        if isinstance(input, (np.ndarray)):
             self.images = input
             N = self.images.shape[0]
             if not self.input_shape:
