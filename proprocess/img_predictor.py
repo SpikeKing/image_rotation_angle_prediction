@@ -125,7 +125,7 @@ class ImgPredictor(object):
         ratio_arr = np.array(ratio)
         ratio_b = np.expand_dims(ratio_arr, axis=0)
 
-        # img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         # img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
         img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
         # img_rgb_resized = resize_image_with_padding(img_bgr, 224)  # pad
@@ -136,10 +136,6 @@ class ImgPredictor(object):
 
         prediction = self.model.predict([img_bgr_b, ratio_b])
         probs = prediction[0]
-
-        # sorted_idx = probs.argsort()[-4:][::-1]
-        # sorted_probs = [probs[x] for x in sorted_idx]
-        # sorted_idx, sorted_4_probs = sort_two_list(list(sorted_idx), list(sorted_probs))
 
         return probs
 
