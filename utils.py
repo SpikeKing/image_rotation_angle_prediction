@@ -360,9 +360,13 @@ class RotNetDataGenerator(Iterator):
                 image = self.images[j]
             else:
                 is_color = int(self.color_mode == 'rgb')
-                image = cv2.imread(self.filenames[j], is_color)
-                if is_color:
-                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                try:
+                    image = cv2.imread(self.filenames[j], is_color)
+                    if is_color:
+                        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                except Exception as e:
+                    print('[Error] error image: {}'.format(self.filenames[j]))
+                    continue
 
                 # 随机剪裁
                 if self.is_train and random_prob(0.5):
