@@ -13,7 +13,7 @@ import numpy as np
 import tensorflow.python.keras.backend as K
 import tensorflow as tf
 import tensorflow_core
-from keras_applications.imagenet_utils import preprocess_input
+from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow import keras
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 from tensorflow_core.python.keras.models import load_model
