@@ -78,8 +78,9 @@ class DataLabeling(object):
 
     @staticmethod
     def process_labeled(idx, data_line, out_dir):
-        oss_root_dir = "zhengsheng.wcl/problems_rotation/datasets/prelabeled_diff_20201130"
+        oss_root_dir = "zhengsheng.wcl/problems_rotation/datasets/prelabeled_diff_20201201"
         url, angle = data_line.split(',')
+        name_x = url.split("/")[-1].split('.')[0]
         is_ok, img_bgr = download_url_img(url)
         if not is_ok:
             return
@@ -88,13 +89,13 @@ class DataLabeling(object):
         h, w, _ = img_bgr.shape
         ratio = safe_div(h, w)
         if ratio >= 1.0:
-            url_1 = save_img_2_oss(img_bgr, "{}_v.jpg".format(idx), oss_root_dir)
+            url_1 = save_img_2_oss(img_bgr, "{}_v.jpg".format(name_x), oss_root_dir)
             img_bgr = rotate_img_for_4angle(img_bgr, 270)
-            url_2 = save_img_2_oss(img_bgr, "{}_vx.jpg".format(idx), oss_root_dir)
+            url_2 = save_img_2_oss(img_bgr, "{}_vx.jpg".format(name_x), oss_root_dir)
         else:
-            url_1 = save_img_2_oss(img_bgr, "{}_h.jpg".format(idx), oss_root_dir)
+            url_1 = save_img_2_oss(img_bgr, "{}_h.jpg".format(name_x), oss_root_dir)
             img_bgr = rotate_img_for_4angle(img_bgr, 180)
-            url_2 = save_img_2_oss(img_bgr, "{}_hx.jpg".format(idx), oss_root_dir)
+            url_2 = save_img_2_oss(img_bgr, "{}_hx.jpg".format(name_x), oss_root_dir)
 
         out_path = os.path.join(out_dir, 'data_{}.txt'.format(angle))
         write_line(out_path, url_1)

@@ -47,7 +47,7 @@ print('[Info] data4_path: {}'.format(data4_path))
 train4_filenames, test4_filenames = get_problems_data(data4_path)
 print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
 
-# 无黑边数据 2.7w数据
+# 无黑边数据 8.8w数据
 data5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked')
 print('[Info] data5_path: {}'.format(data5_path))
 train5_filenames, test5_filenames = get_problems_data(data5_path)
@@ -66,14 +66,14 @@ test_val_filenames = test_val_filenames
 random.shuffle(train3_filenames)
 
 train_filenames = train3_filenames[:len(train3_filenames)//2] + train4_filenames + train5_filenames
-test_filenames = test5_filenames + test_val_filenames
+test_filenames = test_val_filenames
 
 random.shuffle(train_filenames)
 random.shuffle(test_filenames)
 
 # train_filenames = train_filenames
 train_filenames = train_filenames
-test_filenames = test_filenames * 5
+test_filenames = test_filenames * 6
 
 print(len(train_filenames), 'train samples')
 print(len(test_filenames), 'test samples')

@@ -90,11 +90,12 @@ class DatasetFilter(object):
         print('[Info] 处理完成: {}'.format(out_dir))
 
     def read_labeled_data(self):
-        labeled_path = os.path.join(DATA_DIR, 'labeled_20201130_v1.csv')
-        out_dir = os.path.join(DATA_DIR, 'labeled_20201130_v1')
+        labeled_path = os.path.join(DATA_DIR, 'labeled_20201201_v1.csv')
+        out_dir = os.path.join(DATA_DIR, 'labeled_20201201_v1')
         mkdir_if_not_exist(out_dir)
 
-        pd_head = pd.read_csv(labeled_path, encoding="gb2312", header=0)
+        # pd_head = pd.read_csv(labeled_path, encoding="gb2312", header=0)
+        pd_head = pd.read_csv(labeled_path, header=0)
         for idx, row in enumerate(pd_head.iterrows()):
             items = row[1]
             # print('[Info] items: {}'.format(items))
@@ -121,8 +122,8 @@ class DatasetFilter(object):
 def main():
     df = DatasetFilter()
     # df.filter()
-    df.download_right_angle_v2()
-    # df.read_labeled_data()
+    # df.download_right_angle_v2()
+    df.read_labeled_data()
 
 
 if __name__ == '__main__':
