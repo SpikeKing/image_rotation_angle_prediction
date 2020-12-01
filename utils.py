@@ -278,7 +278,7 @@ class RotNetDataGenerator(Iterator):
 
     def __init__(self, input, input_shape=None, color_mode='rgb', batch_size=64,
                  one_hot=True, preprocess_func=None, rotate=True, crop_center=False,
-                 crop_largest_rect=False, shuffle=False, seed=None, is_swing=True):
+                 crop_largest_rect=False, shuffle=False, seed=None, is_train=True):
 
         self.images = None
         self.filenames = None
@@ -292,7 +292,7 @@ class RotNetDataGenerator(Iterator):
         self.crop_largest_rect = crop_largest_rect
         self.shuffle = shuffle
 
-        self.is_swing = is_swing  # 是否增强摆动数据
+        self.is_train = is_train  # 是否增强摆动数据
 
         if self.color_mode not in {'rgb', 'grayscale'}:
             raise ValueError('Invalid color mode:', self.color_mode,
@@ -318,7 +318,7 @@ class RotNetDataGenerator(Iterator):
             # get a random angle
             # offset_angle = 0
             # offset_angle = random.randint(-5, 5)
-            if self.is_swing:
+            if self.is_train:
                 offset_angle = random.randint(-8, 8)
             else:
                 offset_angle = 0
@@ -371,17 +371,13 @@ class RotNetDataGenerator(Iterator):
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
                 # 随机剪裁
-                # if random_prob(0.5):
-                #     h, w, _ = image.shape
-                #     if random_prob(0.5):
-                #         out_h = int(h // 2)  # mode 1
-                #         if random_prob(0.7):  # mode 2
-                #             out_h = int(h // 2)
-                #         else:
-                #             out_h = int(h // 3)
-                #     else:
-                #         out_h = h
-                #     image = random_crop(image, out_h, w)
+                if self.is_train and random_prob(0.5):
+                    h, w, _ = image.shape
+                    if random_prob(0.5):
+                        out_h = int(h // 2)  # mode 1
+                    else:
+                        out_h = h
+                    image = random_crop(image, out_h, w)
 
             rotated_image, rotation_angle, rotated_ratio, is_ok = self.process_img(image)
             if not is_ok:

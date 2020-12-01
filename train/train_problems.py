@@ -165,7 +165,7 @@ model.fit(
         preprocess_func=preprocess_input,
         crop_center=False,
         crop_largest_rect=True,
-        is_swing=False
+        is_train=False
     ),
     validation_steps=len(test_filenames) / batch_size,
     # callbacks=[checkpointer, reduce_lr, early_stopping, tensorboard],
