@@ -124,8 +124,8 @@ batch_size = 48
 nb_epoch = 200
 
 # 加载已有模型
-# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_448_20201201.2.hdf5')  # 最好模型
-model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad448_20201201.4.hdf5')  # 最好模型
+model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_448_20201201.2.hdf5')  # 最好模型
+# model_path = os.path.join(DATA_DIR, 'models', 'problem_rotnet_mobilenetv2_pad448_20201201.4.hdf5')  # 最好模型
 model.load_weights(model_path)
 print('[Info] 加载模型的路径: {}'.format(model_path))
 
