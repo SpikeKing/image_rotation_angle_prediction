@@ -115,7 +115,7 @@ model = Model(inputs=[base_model.input, input_ratio], outputs=final_output)
 #               optimizer=Adam(learning_rate=lr_schedule),
 #               metrics=[angle_error])
 model.compile(loss='categorical_crossentropy',
-              optimizer=SGD(lr=0.002, momentum=0.9),
+              optimizer=SGD(lr=0.001, momentum=0.9),
               metrics=["acc", angle_error])
 
 # training parameters
