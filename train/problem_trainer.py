@@ -26,12 +26,14 @@ from root_dir import ROOT_DIR
 class ProblemTrainer(object):
     def __init__(self,
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
+                 nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  batch_size=192,  # V100, 224->192, 448->48
-                 nb_epoch=200
+                 nb_epoch=200,
                  ):
-        self.nb_classes = 4
+
         self.mode = mode  # 训练模式
+        self.nb_classes = nb_classes
         self.input_shape = input_shape  # 输入图像尺寸
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
@@ -40,8 +42,8 @@ class ProblemTrainer(object):
 
         print('[Info] ' + "-" * 50)
         print('[Info] 训练参数: ')
-        print('[Info] nb_classes: {}'.format(self.nb_classes))
         print('[Info] mode: {}'.format(self.mode))
+        print('[Info] nb_classes: {}'.format(self.nb_classes))
         print('[Info] input_shape: {}'.format(self.input_shape))
         print('[Info] batch_size: {}'.format(self.batch_size))
         print('[Info] nb_epoch: {}'.format(self.nb_epoch))
@@ -73,6 +75,8 @@ class ProblemTrainer(object):
 
         final_output = Dense(self.nb_classes, activation='softmax', name='fc360')(x)
         model = Model(inputs=base_model.input, outputs=final_output)
+
+        model.summary()
 
         # 优化器
         if self.nb_classes == 360:
