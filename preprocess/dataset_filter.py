@@ -57,12 +57,13 @@ class DatasetFilter(object):
 
     @staticmethod
     def check_url(idx, url, out_path):
-        print('[Info] url: {}'.format(url))
+        # print('[Info] url: {}'.format(url))
         angle = get_uc_rotation_vpf_service(url)
         angle = int(angle)
         if angle != 0:
+            print('[Info] url: {}'.format(url))
             write_line(out_path, url)
-        if idx % 1000 == 0:
+        if idx % 100 == 0:
             print('[Info] idx: {}'.format(idx))
 
     def filter_checked_urls(self):
