@@ -57,6 +57,7 @@ class DatasetFilter(object):
 
     @staticmethod
     def check_url(idx, url, out_path):
+        print('[Info] url: {}'.format(url))
         angle = get_uc_rotation_vpf_service(url)
         angle = int(angle)
         if angle != 0:
@@ -68,6 +69,7 @@ class DatasetFilter(object):
         in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
         out_path = os.path.join(DATA_DIR, 'checked_19881_urls.out.txt')
         data_lines = read_file(in_path)
+        print('[Info] 文本数量: {}'.format(len(data_lines)))
         pool = Pool(processes=40)
         for idx, data_line in enumerate(data_lines):
             url = data_line
