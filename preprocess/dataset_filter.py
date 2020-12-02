@@ -58,7 +58,8 @@ class DatasetFilter(object):
     @staticmethod
     def check_url(idx, url, out_path):
         print('[Info] url: {}'.format(url))
-        angle = get_uc_rotation_vpf_service(url)
+        res_dict = get_uc_rotation_vpf_service(url)
+        angle = res_dict['data']['angle']
         angle = int(angle)
         print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
         if angle != 0:
