@@ -74,6 +74,8 @@ class DatasetFilter(object):
             url = data_line
             # DatasetFilter.check_url(idx, url, out_path)
             pool.apply_async(DatasetFilter.check_url, (idx, url, out_path))
+            if idx % 1000 == 0:
+                print('[Info] idx: {}'.format(idx))
 
         pool.close()
         pool.join()
