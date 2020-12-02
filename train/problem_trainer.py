@@ -19,7 +19,7 @@ if p not in sys.path:
     sys.path.append(p)
 
 from utils import angle_error, RotNetDataGenerator
-from myutils.project_utils import traverse_dir_files, get_current_time_str
+from myutils.project_utils import traverse_dir_files, get_current_time_str, mkdir_if_not_exist
 from root_dir import ROOT_DIR
 
 
@@ -52,6 +52,8 @@ class ProblemTrainer(object):
 
         _, self.model = self.init_model()  # 初始化模型
         self.train_data, self.test_data = self.load_train_and_test_dataset()  # 加载训练和测试数据
+
+        mkdir_if_not_exist(self.output_dir)
 
     def init_model(self, mode="resnet50"):
         """
