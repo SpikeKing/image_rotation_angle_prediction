@@ -114,7 +114,7 @@ class ProblemTrainer(object):
         """
         获取训练和测试数据
         """
-        image_paths, _ = traverse_dir_files(img_dir, is_sorted=False)
+        image_paths, _ = traverse_dir_files(img_dir, is_sorted=False, ext="jpg")
         random.shuffle(image_paths)
 
         n_train_samples = int(len(image_paths) * prob)  # 数据总量
@@ -133,7 +133,7 @@ class ProblemTrainer(object):
         """
         获取全部数据
         """
-        image_paths, _ = traverse_dir_files(img_dir, is_sorted=False)
+        image_paths, _ = traverse_dir_files(img_dir, is_sorted=False, ext="jpg")
         random.shuffle(image_paths)
 
         print('[Info] ' + '-' * 50)

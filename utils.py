@@ -373,7 +373,12 @@ class RotNetDataGenerator(Iterator):
                         out_h = int(h // 2)  # mode 1
                         image = random_crop(image, out_h, w)
 
-            rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
+            try:
+                rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
+            except Exception as e:
+                print('[Exception] e')
+                print('[Exception] path: {}'.format(self.filenames[j]))
+                raise Exception(e)
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
@@ -387,8 +392,8 @@ class RotNetDataGenerator(Iterator):
                 raise Exception("[Exception] 角度 {} 支持 4(0-90-180-270) 或 360!".format(self.nb_classes))
 
             # 测试
-            print('[Test] rotated_image: {}, rotated_ratio: {}, rotation_angle_idx: {}'.format(
-                rotated_image.shape, rotated_ratio, rotation_angle_idx))
+            # print('[Test] rotated_image: {}, rotated_ratio: {}, rotation_angle_idx: {}'.format(
+            #     rotated_image.shape, rotated_ratio, rotation_angle_idx))
 
             # store the image and label in their corresponding batches
             batch_x[i] = rotated_image
