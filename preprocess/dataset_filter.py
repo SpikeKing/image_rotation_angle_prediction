@@ -35,6 +35,25 @@ class DatasetFilter(object):
             out_path = os.path.join(out_dir, 'angle_{}.txt'.format(angle))
             write_line(out_path, data_line)
 
+    def generate_checked_urls(self):
+        """
+        https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/datasets/
+        datasets_v4_checked/checked_19881/O1CN01002cx31NZW01vj7uW_!!6000000001584-0-quark.jpg
+        """
+        url_format = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/datasets/" \
+                     "datasets_v4_checked/checked_19881/{}"
+        out_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
+        img_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked', 'checked_19881')
+        paths_list, names_list = traverse_dir_files(img_dir, is_sorted=True, ext=".jpg")
+
+        for idx, (path, name) in enumerate(zip(paths_list, names_list)):
+            out_line = url_format.format(name)
+            write_line(out_path, out_line)
+            if idx % 10000 == 0:
+                print('[Info] idx: {}'.format(idx))
+        print('[Info] 处理完成: {}'.format(out_path))
+
+
     @staticmethod
     def process_img_angle(idx, url, angle, out_dir):
         try:
@@ -122,7 +141,7 @@ class DatasetFilter(object):
 def main():
     df = DatasetFilter()
     # df.filter()
-    df.download_right_angle_v2()
+    df.generate_checked_urls()
     # df.read_labeled_data()
 
 
