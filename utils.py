@@ -224,6 +224,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     crop_largest_rect option. To resize the final image, use the size
     option.
     """
+    image_copy = image.copy()
     height, width = image.shape[:2]
     if crop_center:
         if width < height:
@@ -248,7 +249,7 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     except Exception as e:
         angle = format_angle(angle)
         from myutils.cv_utils import rotate_img_for_4angle
-        rotated_image = rotate_img_for_4angle(image, angle)
+        rotated_image = rotate_img_for_4angle(image_copy, angle)
 
         rh, rw, _ = rotated_image.shape
         rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
