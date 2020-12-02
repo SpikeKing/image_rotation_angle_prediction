@@ -64,8 +64,12 @@ class DatasetFilter(object):
     @staticmethod
     def check_url(idx, url, out_error_path, out_right_path):
         # print('[Info] url: {}'.format(url))
-        res_dict = get_uc_rotation_vpf_service(url)
-        angle = res_dict['data']['angle']
+        try:
+            res_dict = get_uc_rotation_vpf_service(url)
+            angle = res_dict['data']['angle']
+        except Exception as e:
+            print('[Info] error url: {}'.format(url))
+            return
         angle = int(angle)
 
         if angle != 0:
@@ -84,6 +88,7 @@ class DatasetFilter(object):
         paths_list, names_list = traverse_dir_files(in_dir)
         pool = Pool(processes=40)
 
+        idx = 0
         for in_path, in_name in zip(paths_list, names_list):
             # in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
             out_error_path = os.path.join(out_dir, '{}.error.txt'.format(in_name))
@@ -91,12 +96,12 @@ class DatasetFilter(object):
             print('[Info] out_file: {} - {}'.format(out_error_path, out_right_path))
             data_lines = read_file(in_path)
             print('[Info] 文本数量: {}'.format(len(data_lines)))
-            for idx, data_line in enumerate(data_lines):
+            for data_line in data_lines:
                 url = data_line
                 # DatasetFilter.check_url(idx, url, out_path)
                 pool.apply_async(DatasetFilter.check_url, (idx, url, out_error_path, out_right_path))
-                # if idx % 1000 == 0:
-                #     print('[Info] idx: {}'.format(idx))
+                if idx % 1000 == 0:
+                    print('[Info] idx: {}'.format(idx))
 
         pool.close()
         pool.join()
@@ -189,8 +194,8 @@ class DatasetFilter(object):
 def main():
     df = DatasetFilter()
     # df.filter()
-    df.generate_checked_urls()
-    # df.filter_checked_urls()
+    # df.generate_checked_urls()
+    df.filter_checked_urls()
     # df.read_labeled_data()
 
 
