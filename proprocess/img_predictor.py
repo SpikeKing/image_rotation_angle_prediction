@@ -304,55 +304,32 @@ class ImgPredictor(object):
         print(x)
 
     def process_item_v3(self, url):
+        print('[Info] vpf: {}'.format(url))
         res_dict = get_uc_rotation_vpf_service(url)
         angle = res_dict['data']['angle']
         angle = int(angle)
         return angle
 
-    def process_v3(self):
-        """
-        处理数据v3
-        """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.csv')
-        data_lines = read_file(in_file)
-        out_list = []
-        n_old_right = 0
-        n_right = 0
-        n_all = 0
-        n_error = 0
-        for idx, data_line in enumerate(data_lines):
-            if idx == 0:
-                continue
-            url, r_angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
 
-            uc_angle = int(uc_angle)
-            uc_is_ok = int(is_uc)
-            r_angle = int(r_angle)
 
-            x_angle = self.process_item_v3(url)
-            x_is_ok = 1 if x_angle == r_angle else 0
-            if uc_is_ok == 1:
-                n_old_right += 1
-            if x_angle == r_angle:
-                print('[Info] {} 预测正确 {} - {}! {}'.format(idx, x_angle, r_angle, url))
-                n_right += 1
-            else:
-                print('[Info] {} 预测错误 {} - {}! {}'.format(idx, x_angle, r_angle, url))
-                n_error += 1
-            n_all += 1
 
-            out_list.append([url, r_angle, dmy_angle, is_dmy, uc_angle, uc_is_ok, x_angle, x_is_ok])
+def demo_of_urls():
+    url_path = os.path.join(DATA_DIR, 'long_text_2020-12-02-09-44-42.txt')
+    out_dir = os.path.join(DATA_DIR, 'long_text_2020-12-02-09-44-42-vpf')
+    mkdir_if_not_exist(out_dir)
 
-        print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
-        print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
+    ip = ImgPredictor()
+    for url in read_file(url_path):
+        name = url.split('/')[-1].split("?")[0]
+        is_ok, img_bgr = download_url_img(url)
+        # angle = ip.predict_img_bgr(img_bgr)
+        angle = ip.process_item_v3(url)
+        img_bgr = rotate_img_for_4angle(img_bgr, angle)
+        out_path = os.path.join(out_dir, "{}".format(name))
+        print('out_path: {}'.format(out_path))
+        cv2.imwrite(out_path, img_bgr)
 
-        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.xlsx'.format(self.model_name, safe_div(n_right, n_all),
-                                                                       n_error))
-        write_list_to_excel(
-            out_file,
-            ["url", "r_angle", "dmy_angle", "is_dmy", "uc_angle", "uc_is_ok", "x_angle", "x_is_ok"],
-            out_list
-        )
+    print('[Info] 处理完成: {}'.format(out_dir))
 
 
 def demo_of_img_dir():
@@ -383,12 +360,13 @@ def demo_of_one_img():
 
 
 def main():
-    ip = ImgPredictor()
+    # ip = ImgPredictor()
     # ip.process()
-    ip.process_v2()
+    # ip.process_v2()
     # ip.process_v3()
     # demo_of_img_dir()
     # demo_of_one_img()
+    demo_of_urls()
 
 
 if __name__ == '__main__':
