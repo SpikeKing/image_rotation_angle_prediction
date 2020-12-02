@@ -131,8 +131,8 @@ class ImgPredictor(object):
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-        # img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
-        img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
+        img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
+        # img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
         # img_rgb_resized = resize_image_with_padding(img_bgr, 448)  # pad
 
         img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
