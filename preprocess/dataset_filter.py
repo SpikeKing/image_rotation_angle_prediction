@@ -100,6 +100,7 @@ class DatasetFilter(object):
                 url = data_line
                 # DatasetFilter.check_url(idx, url, out_path)
                 pool.apply_async(DatasetFilter.check_url, (idx, url, out_error_path, out_right_path))
+                idx += 1
                 if idx % 1000 == 0:
                     print('[Info] idx: {}'.format(idx))
 
