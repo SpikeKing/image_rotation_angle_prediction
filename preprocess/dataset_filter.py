@@ -42,18 +42,24 @@ class DatasetFilter(object):
         datasets_v4_checked/checked_19881/O1CN01002cx31NZW01vj7uW_!!6000000001584-0-quark.jpg
         """
         url_format = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/datasets/" \
-                     "datasets_v4_checked/checked_19881/{}"
-        out_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
-        img_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked', 'checked_19881')
-        paths_list, names_list = traverse_dir_files(img_dir, is_sorted=True, ext=".jpg")
+                     "datasets_v4_checked/{}/{}"
 
-        for idx, (path, name) in enumerate(zip(paths_list, names_list)):
-            out_line = url_format.format(name)
+        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls')
+        mkdir_if_not_exist(out_dir)
+        img_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked')
+
+        paths_list, names_list = traverse_dir_files(img_dir, is_sorted=True)
+        idx = 0
+        for path, name in zip(paths_list, names_list):
+            items = path.split('/')
+            folder = items[-1]
+            out_line = url_format.format(folder, name)
+            out_path = os.path.join(out_dir, '{}.txt'.format(folder))
             write_line(out_path, out_line)
+            idx += 1
             if idx % 10000 == 0:
                 print('[Info] idx: {}'.format(idx))
-        print('[Info] 处理完成: {}'.format(out_path))
-
+        print('[Info] 处理完成: {}'.format(out_dir))
 
     @staticmethod
     def check_url(idx, url, out_error_path, out_right_path):
@@ -64,7 +70,7 @@ class DatasetFilter(object):
 
         if angle != 0:
             print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
-            write_line(out_error_path, url)
+            write_line(out_error_path, url+","+str(angle))
         else:
             write_line(out_right_path, url)
         if idx % 1000 == 0:
@@ -177,8 +183,8 @@ class DatasetFilter(object):
 def main():
     df = DatasetFilter()
     # df.filter()
-    # df.generate_checked_urls()
-    df.filter_checked_urls()
+    df.generate_checked_urls()
+    # df.filter_checked_urls()
     # df.read_labeled_data()
 
 
