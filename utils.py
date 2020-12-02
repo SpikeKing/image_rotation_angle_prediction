@@ -232,30 +232,30 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
             width = height
 
     # image = rotate(image, angle)  # 第1种旋转模式
-    image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
+    rotated_image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
 
     if crop_largest_rect:  # 最大剪切
-        image = crop_largest_rectangle(image, angle, height, width)
+        rotated_image = crop_largest_rectangle(rotated_image, angle, height, width)
 
     try:
-        rh, rw, _ = image.shape
+        rh, rw, _ = rotated_image.shape
         rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
 
         if size:
-            image = cv2.resize(image, size)  # 普通的Resize
+            rotated_image = cv2.resize(rotated_image, size)  # 普通的Resize
             # from myutils.cv_utils import resize_image_with_padding
-            # image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
+            # rotated_image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
     except Exception as e:
         angle = format_angle(angle)
         from myutils.cv_utils import rotate_img_for_4angle
-        image = rotate_img_for_4angle(image, angle)
+        rotated_image = rotate_img_for_4angle(image, angle)
 
-        rh, rw, _ = image.shape
+        rh, rw, _ = rotated_image.shape
         rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
         if size:
-            image = cv2.resize(image, size)  # 普通的Resize
+            rotated_image = cv2.resize(rotated_image, size)  # 普通的Resize
 
-    return image, angle, rhw_ratio
+    return rotated_image, angle, rhw_ratio
 
 
 class RotNetDataGenerator(Iterator):
