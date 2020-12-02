@@ -215,15 +215,6 @@ def format_angle(angle):
     return r_angle
 
 
-def get_format_img(size):
-    image = np.ones((size[1], size[0], 3)) * 255
-    image = image.astype(np.uint8)
-    rh, rw, _ = image.shape
-    rotated_ratio = float(rh) / float(rw)
-    angle = 0
-    return image, rotated_ratio, angle
-
-
 def generate_rotated_image(image, angle, size=None, crop_center=False,
                            crop_largest_rect=False):
     """
@@ -241,21 +232,27 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         else:
             width = height
 
-    try:
-        # image = rotate(image, angle)  # 第1种旋转模式
-        image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
+    # image = rotate(image, angle)  # 第1种旋转模式
+    image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
 
-        if crop_largest_rect:  # 最大剪切
-            image = crop_largest_rectangle(image, angle, height, width)
+    if crop_largest_rect:  # 最大剪切
+        image = crop_largest_rectangle(image, angle, height, width)
 
-        if size:
-            image = cv2.resize(image, size)  # 普通的Resize
-            # from myutils.cv_utils import resize_image_with_padding
-            # image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
-    except Exception as e:
-        is_ok = False
+    h, w, _ = image.shape
+    if h == 0 or w == 0:
+        angle = format_angle(angle)
+        from myutils.cv_utils import rotate_img_for_4angle
+        image = rotate_img_for_4angle(image, angle)
 
-    return image, angle, is_ok
+    rh, rw, _ = image.shape
+    rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
+
+    if size:
+        image = cv2.resize(image, size)  # 普通的Resize
+        # from myutils.cv_utils import resize_image_with_padding
+        # image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
+
+    return image, angle, rhw_ratio
 
 
 class RotNetDataGenerator(Iterator):
@@ -332,7 +329,7 @@ class RotNetDataGenerator(Iterator):
             rotation_angle = 0
 
         # generate the rotated image
-        rotated_image, rotation_angle, is_ok = generate_rotated_image(
+        image, angle, rhw_ratio = generate_rotated_image(
             image,
             rotation_angle,
             size=self.input_shape[:2],
@@ -340,17 +337,9 @@ class RotNetDataGenerator(Iterator):
             crop_largest_rect=self.crop_largest_rect
         )
 
-        if not is_ok:  # 旋转失败之后，只旋转4个角度
-            rotation_angle = format_angle(rotation_angle)
-            from myutils.cv_utils import rotate_img_for_4angle
-            rotated_image = rotate_img_for_4angle(image, rotation_angle)
+        angle = format_angle(angle)  # 输出固定的度数
 
-        rh, rw, _ = rotated_image.shape
-        rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
-
-        rotation_angle = format_angle(rotation_angle)  # 输出固定的度数
-
-        return rotated_image, rotation_angle, rhw_ratio
+        return image, angle, rhw_ratio
 
     def _get_batches_of_transformed_samples(self, index_array):
         # create array to hold the images
