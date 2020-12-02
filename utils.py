@@ -215,6 +215,15 @@ def format_angle(angle):
     return r_angle
 
 
+def get_radio_and_resize(image, size):
+    rh, rw, _ = image.shape
+    rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
+    if size:
+        image = cv2.resize(image, size)  # 普通的Resize
+        # from myutils.cv_utils import resize_image_with_padding
+        # rotated_image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
+    return rhw_ratio, image
+
 def generate_rotated_image(image, angle, size=None, crop_center=False,
                            crop_largest_rect=False):
     """
@@ -239,22 +248,12 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         rotated_image = crop_largest_rectangle(rotated_image, angle, height, width)
 
     try:
-        rh, rw, _ = rotated_image.shape
-        rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
-
-        if size:
-            rotated_image = cv2.resize(rotated_image, size)  # 普通的Resize
-            # from myutils.cv_utils import resize_image_with_padding
-            # rotated_image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
+        rhw_ratio, rotated_image = get_radio_and_resize(rotated_image, size)
     except Exception as e:
         angle = format_angle(angle)
         from myutils.cv_utils import rotate_img_for_4angle
         rotated_image = rotate_img_for_4angle(image_copy, angle)
-
-        rh, rw, _ = rotated_image.shape
-        rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
-        if size:
-            rotated_image = cv2.resize(rotated_image, size)  # 普通的Resize
+        rhw_ratio, rotated_image = get_radio_and_resize(rotated_image, size)
 
     return rotated_image, angle, rhw_ratio
 
@@ -322,7 +321,7 @@ class RotNetDataGenerator(Iterator):
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
     def process_img(self, image):
-        if self.rotate:
+        if self.rotate:  # 随机旋转
             if self.is_train and random_prob(0.5):
                 offset_angle = random.randint(self.random_angle*(-1), self.random_angle)
             else:
