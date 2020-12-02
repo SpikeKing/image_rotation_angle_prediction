@@ -224,7 +224,6 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     crop_largest_rect option. To resize the final image, use the size
     option.
     """
-    is_ok = True
     height, width = image.shape[:2]
     if crop_center:
         if width < height:
@@ -377,12 +376,7 @@ class RotNetDataGenerator(Iterator):
                         out_h = int(h // 2)  # mode 1
                         image = random_crop(image, out_h, w)
 
-            try:
-                rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
-            except Exception as e:
-                print('[Exception] e')
-                print('[Exception] path: {}'.format(self.filenames[j]))
-                raise Exception(e)
+            rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
