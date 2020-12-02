@@ -382,11 +382,11 @@ def demo_of_one_img():
 
 
 def main():
-    # ip = ImgPredictor()
+    ip = ImgPredictor()
     # ip.process()
-    # ip.process_v2()
+    ip.process_v2()
     # ip.process_v3()
-    demo_of_img_dir()
+    # demo_of_img_dir()
     # demo_of_one_img()
 
 
