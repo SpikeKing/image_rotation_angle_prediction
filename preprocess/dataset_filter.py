@@ -72,29 +72,35 @@ class DatasetFilter(object):
             print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
             write_line(out_error_path, url+","+str(angle))
         else:
-            write_line(out_right_path, url)
+            write_line(out_right_path, url+","+str(angle))
         if idx % 1000 == 0:
             print('[Info] idx: {}'.format(idx))
 
     def filter_checked_urls(self):
-        in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
-        time_str = get_current_time_str()
-        out_error_path = os.path.join(DATA_DIR, 'checked_19881_urls.error.{}.txt'.format(time_str))
-        out_right_path = os.path.join(DATA_DIR, 'checked_19881_urls.right.{}.txt'.format(time_str))
-        print('[Info] out_file: {} - {}'.format(out_error_path, out_right_path))
-        data_lines = read_file(in_path)
-        print('[Info] 文本数量: {}'.format(len(data_lines)))
+        in_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls')
+        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls_out')
+        mkdir_if_not_exist(out_dir)
+
+        paths_list, names_list = traverse_dir_files(in_dir)
         pool = Pool(processes=40)
-        for idx, data_line in enumerate(data_lines):
-            url = data_line
-            # DatasetFilter.check_url(idx, url, out_path)
-            pool.apply_async(DatasetFilter.check_url, (idx, url, out_error_path, out_right_path))
-            # if idx % 1000 == 0:
-            #     print('[Info] idx: {}'.format(idx))
+
+        for in_path, in_name in zip(paths_list, names_list):
+            # in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
+            out_error_path = os.path.join(out_dir, '{}.error.txt'.format(in_name))
+            out_right_path = os.path.join(out_dir, '{}.right.txt'.format(in_name))
+            print('[Info] out_file: {} - {}'.format(out_error_path, out_right_path))
+            data_lines = read_file(in_path)
+            print('[Info] 文本数量: {}'.format(len(data_lines)))
+            for idx, data_line in enumerate(data_lines):
+                url = data_line
+                # DatasetFilter.check_url(idx, url, out_path)
+                pool.apply_async(DatasetFilter.check_url, (idx, url, out_error_path, out_right_path))
+                # if idx % 1000 == 0:
+                #     print('[Info] idx: {}'.format(idx))
 
         pool.close()
         pool.join()
-        print('[Info] 处理完成: {}'.format(out_path))
+        print('[Info] 处理完成: {}'.format(out_dir))
 
     @staticmethod
     def process_img_angle(idx, url, angle, out_dir):
