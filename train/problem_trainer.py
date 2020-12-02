@@ -75,9 +75,14 @@ class ProblemTrainer(object):
         model = Model(inputs=base_model.input, outputs=final_output)
 
         # 优化器
+        if self.nb_classes == 360:
+            metrics = ["acc", angle_error]
+        else:
+            metrics = ["acc"]
+
         model.compile(loss='categorical_crossentropy',
                       optimizer=SGD(lr=0.001, momentum=0.9),
-                      metrics=["acc", angle_error])
+                      metrics=metrics)
 
         return model_name, model
 
