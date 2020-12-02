@@ -34,24 +34,6 @@ from utils import angle_error, generate_rotated_image, crop_largest_rectangle, r
 class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_even_20201126.3.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_123x_20201126.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_a12_20201126.2.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_s3_20201126.3.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_base_20201127.3.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_pad_20201127.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_v34_20201128.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_v4_pad_20201128.3.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_base_20201128_1.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_base_20201130.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_pad448_20201130.3.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_basex_20201130.4.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_pad448_base_20201201.4.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_base_20201201.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_448_20201201.2.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_448_20201201_tmp.1.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_224_20201201.4.hdf5"
-        # self.model_name = "problem_rotnet_mobilenetv2_base448_20201201.1.hdf5"
         self.model_name = "problem_rotnet_mobilenetv2_224_20201202.4.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
@@ -147,8 +129,8 @@ class ImgPredictor(object):
         """
         预测角度
         """
-        img_bgr = rotate(img_bgr, 90)
-        img_bgr = rotate(img_bgr, -90)
+        img_bgr = rotate_img_with_bound(img_bgr, 90)
+        img_bgr = rotate_img_with_bound(img_bgr, -90)
 
         probs = self.predict_img_bgr_prob(img_bgr)
         angle = int(K.argmax(probs)) % 360
@@ -234,7 +216,7 @@ class ImgPredictor(object):
         """
         处理数据v2
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.csv')
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -360,13 +342,13 @@ def demo_of_one_img():
 
 
 def main():
-    # ip = ImgPredictor()
+    ip = ImgPredictor()
     # ip.process()
-    # ip.process_v2()
+    ip.process_v2()
     # ip.process_v3()
     # demo_of_img_dir()
     # demo_of_one_img()
-    demo_of_urls()
+    # demo_of_urls()
 
 
 if __name__ == '__main__':

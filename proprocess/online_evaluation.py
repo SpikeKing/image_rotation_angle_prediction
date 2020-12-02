@@ -14,7 +14,7 @@ if p not in sys.path:
 
 from root_dir import DATA_DIR
 from myutils.project_utils import *
-from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service
+from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service
 
 
 class OnlineEvaluation(object):
@@ -30,6 +30,9 @@ class OnlineEvaluation(object):
         if mode == "dmy":
             res_dict = get_dmy_rotation_vpf_service(img_url)
             angle = res_dict['data']['angel']
+        if mode == "test":
+            res_dict = get_uc_rotation_vpf_service(img_url)
+            angle = res_dict['data']['angle']
         return angle
 
     def init_urls(self):
@@ -85,7 +88,7 @@ class OnlineEvaluation(object):
         """
         处理数据v3
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.csv')
+        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
         data_lines = read_file(in_file)
         out_list = []
 
@@ -99,7 +102,9 @@ class OnlineEvaluation(object):
             uc_is_ok = int(is_uc)
             r_angle = int(r_angle)
 
-            x_angle = self.process_url(url, mode="trt")
+            x_angle = self.process_url(url, mode="test")
+            x_angle = int(x_angle)
+
             x_is_ok = 1 if x_angle == r_angle else 0
             if uc_is_ok == 1:
                 n_old_right += 1
@@ -126,7 +131,7 @@ class OnlineEvaluation(object):
 
 def main():
     oe = OnlineEvaluation()
-    oe.update_urls()
+    oe.evaluate_1000_right()
 
 
 if __name__ == '__main__':

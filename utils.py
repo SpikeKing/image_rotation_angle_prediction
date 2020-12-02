@@ -11,7 +11,7 @@ from tensorflow.keras.utils import to_categorical
 import tensorflow.keras.backend as K
 
 from myutils.cv_utils import random_crop, rotate_img_with_bound
-from myutils.project_utils import random_pick, random_prob
+from myutils.project_utils import random_pick, random_prob, safe_div
 
 
 def angle_difference(x, y):
@@ -241,31 +241,21 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         else:
             width = height
 
-    # from myutils.cv_utils import show_img_bgr
-    # show_img_bgr(image)
-
     try:
-        # image = rotate(image, angle)
-        image = rotate_img_with_bound(image, angle)
-        # show_img_bgr(image)
+        # image = rotate(image, angle)  # 第1种旋转模式
+        image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
 
-        if crop_largest_rect:
+        if crop_largest_rect:  # 最大剪切
             image = crop_largest_rectangle(image, angle, height, width)
-            # show_img_bgr(image)
-
-        rh, rw, _ = image.shape
-        rotated_ratio = float(rh) / float(rw)
 
         if size:
             image = cv2.resize(image, size)  # 普通的Resize
             # from myutils.cv_utils import resize_image_with_padding
             # image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
-
     except Exception as e:
-        image, rotated_ratio, angle = get_format_img(size)
         is_ok = False
 
-    return image, angle, rotated_ratio, is_ok
+    return image, angle, is_ok
 
 
 class RotNetDataGenerator(Iterator):
@@ -276,7 +266,12 @@ class RotNetDataGenerator(Iterator):
 
     def __init__(self, input, input_shape=None, color_mode='rgb', batch_size=64,
                  one_hot=True, preprocess_func=None, rotate=True, crop_center=False,
-                 crop_largest_rect=False, shuffle=False, seed=None, is_train=True):
+                 crop_largest_rect=False, shuffle=False, seed=None,
+                 is_train=True,
+                 is_hw_ratio=False,
+                 is_random_crop_h=False,
+                 random_angle=8,
+                 nb_classes=4):
 
         self.images = None
         self.filenames = None
@@ -290,14 +285,28 @@ class RotNetDataGenerator(Iterator):
         self.crop_largest_rect = crop_largest_rect
         self.shuffle = shuffle
 
+        # 新增参数
         self.is_train = is_train  # 是否增强摆动数据
+        self.is_hw_ratio = is_hw_ratio  # 是否增加高宽比例
+        self.is_random_crop_h = is_random_crop_h  # 是否支持高度随机剪裁
+        self.random_angle = random_angle
+        self.nb_classes = nb_classes
+
+        print('[Info] ' + "-" * 50)
+        print('[Info] 数据参数: ')
+        print('[Info] color_mode: {}'.format(self.color_mode))
+        print('[Info] is_train: {}'.format(self.is_train))
+        print('[Info] is_hw_ratio: {}'.format(self.is_hw_ratio))
+        print('[Info] random_angle: {}'.format(self.random_angle))
+        print('[Info] nb_classes: {}'.format(self.nb_classes))
+        print('[Info] ' + "-" * 50)
 
         if self.color_mode not in {'rgb', 'grayscale'}:
             raise ValueError('Invalid color mode:', self.color_mode,
                              '; expected "rgb" or "grayscale".')
 
         # check whether the input is a NumPy array or a list of paths
-        if isinstance(input, (np.ndarray)):
+        if isinstance(input, np.ndarray):
             self.images = input
             N = self.images.shape[0]
             if not self.input_shape:
@@ -313,18 +322,17 @@ class RotNetDataGenerator(Iterator):
 
     def process_img(self, image):
         if self.rotate:
-            if self.is_train:
-                offset_angle = random.randint(-8, 8)
+            if self.is_train and random_prob(0.5):
+                offset_angle = random.randint(self.random_angle*(-1), self.random_angle)
             else:
                 offset_angle = 0
-
             rotation_angle = random_pick([0, 90, 180, 270], [0.25, 0.25, 0.25, 0.25])
             rotation_angle = (rotation_angle + offset_angle) % 360
         else:
             rotation_angle = 0
 
         # generate the rotated image
-        rotated_image, rotation_angle, rotated_ratio, is_ok = generate_rotated_image(
+        rotated_image, rotation_angle, is_ok = generate_rotated_image(
             image,
             rotation_angle,
             size=self.input_shape[:2],
@@ -332,19 +340,17 @@ class RotNetDataGenerator(Iterator):
             crop_largest_rect=self.crop_largest_rect
         )
 
-        if not is_ok:
+        if not is_ok:  # 旋转失败之后，只旋转4个角度
             rotation_angle = format_angle(rotation_angle)
-            rotated_image, rotation_angle, rotated_ratio, is_ok = generate_rotated_image(
-                image,
-                rotation_angle,
-                size=self.input_shape[:2],
-                crop_center=self.crop_center,
-                crop_largest_rect=self.crop_largest_rect
-            )
+            from myutils.cv_utils import rotate_img_for_4angle
+            rotated_image = rotate_img_for_4angle(image, rotation_angle)
+
+        rh, rw, _ = rotated_image.shape
+        rhw_ratio = safe_div(float(rh), float(rw))  # 高宽比例
 
         rotation_angle = format_angle(rotation_angle)  # 输出固定的度数
 
-        return rotated_image, rotation_angle, rotated_ratio, is_ok
+        return rotated_image, rotation_angle, rhw_ratio
 
     def _get_batches_of_transformed_samples(self, index_array):
         # create array to hold the images
@@ -366,51 +372,43 @@ class RotNetDataGenerator(Iterator):
                     if is_color:
                         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 except Exception as e:
-                    print('[Error] error image: {}'.format(self.filenames[j]))
+                    # 数据路径错误
+                    print('[Error] error image path: {}'.format(self.filenames[j]))
                     continue
 
                 # 随机剪裁
-                if self.is_train and random_prob(0.5):
-                    h, w, _ = image.shape
+                if self.is_train and self.is_random_crop_h:
                     if random_prob(0.5):
+                        print('[Info] 随机剪裁')
+                        h, w, _ = image.shape
                         out_h = int(h // 2)  # mode 1
-                    else:
-                        out_h = h
-                    image = random_crop(image, out_h, w)
+                        image = random_crop(image, out_h, w)
 
-            rotated_image, rotation_angle, rotated_ratio, is_ok = self.process_img(image)
-            if not is_ok:
-                print('[Error] error image: {}'.format(self.filenames[j]))
-                continue
+            rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
                 rotated_image = np.expand_dims(rotated_image, axis=2)
 
+            if self.nb_classes == 4:
+                rotation_angle_idx = format_angle(rotation_angle) // 90
+            elif self.nb_classes == 360:
+                rotation_angle_idx = rotation_angle
+            else:
+                raise Exception("[Exception] 角度 {} 支持 4(0-90-180-270) 或 360!".format(self.nb_classes))
+
+            # 测试
+            print('[Test] rotated_image: {}, rotated_ratio: {}, rotation_angle_idx: {}'.format(
+                rotated_image.shape, rotated_ratio, rotation_angle_idx))
+
             # store the image and label in their corresponding batches
-            img_list.append(rotated_image)
-            ratio_list.append(rotated_ratio)
-            angle_list.append(rotation_angle)
-
-        if not img_list:  # 容错
-            rotated_image, rotated_ratio, rotation_angle = get_format_img(size=self.input_shape[:2])
-            img_list.append(rotated_image)
-            ratio_list.append(rotated_ratio)
-            angle_list.append(rotation_angle)
-            print('[Error] batch empty!!!!')
-
-        n_index = len(index_array)
-        n_real = len(img_list)
-        for n_i in range(n_index):
-            batch_x[n_i] = img_list[n_i % n_real]
-            batch_x_2[n_i] = ratio_list[n_i % n_real]
-            batch_y[n_i] = angle_list[n_i % n_real]
-            # print('[Info] rotated_image: {}, angle: {}, rotated_ratio: {}'
-            #       .format(img_list[n_i % n_real].shape, angle_list[n_i % n_real], ratio_list[n_i % n_real]))
+            batch_x[i] = rotated_image
+            batch_x_2[i] = rotated_ratio
+            batch_y[i] = rotation_angle_idx
 
         if self.one_hot:
             # convert the numerical labels to binary labels
-            batch_y = to_categorical(batch_y, 360)
+            batch_y = to_categorical(batch_y, self.nb_classes)
         else:
             batch_y /= 360
 
@@ -548,12 +546,9 @@ def display_examples(model, input, num_images=5, size=None, crop_center=False,
         plt.savefig(save_path)
 
 
-def demo_of_generate_rotated_image():
-    pass
-
 def main():
-    demo_of_generate_rotated_image()
     # print(-1 % 360)
+    pass
 
 
 if __name__ == '__main__':

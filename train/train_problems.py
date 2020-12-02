@@ -25,21 +25,6 @@ from train.data_utils import get_problems_data
 from root_dir import ROOT_DIR, DATA_DIR
 from myutils.project_utils import get_current_time_str
 
-# data1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v1_123974')
-# print('[Info] data1_path: {}'.format(data1_path))
-# train1_filenames, test1_filenames = get_problems_data(data1_path)
-# print('[Info] data1 train: {}, test: {}'.format(len(train1_filenames), len(test1_filenames)))
-
-# data2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v2_111311')
-# print('[Info] data2_path: {}'.format(data2_path))
-# train2_filenames, test2_filenames = get_problems_data(data2_path)
-# print('[Info] data2 train: {}, test: {}'.format(len(train2_filenames), len(test2_filenames)))
-
-# 包含黑边的数据
-# data4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_x_2500')
-# print('[Info] data4_path: {}'.format(data4_path))
-# train4_filenames, test4_filenames = get_problems_data(data4_path)
-# print('[Info] data4 train: {}, test: {}'.format(len(train4_filenames), len(test4_filenames)))
 
 # 包含黑边的数据
 data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
