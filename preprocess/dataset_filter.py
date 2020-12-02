@@ -61,13 +61,16 @@ class DatasetFilter(object):
         res_dict = get_uc_rotation_vpf_service(url)
         angle = res_dict['data']['angle']
         angle = int(angle)
-        print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
+
         if angle != 0:
+            print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
             write_line(out_path, url)
+        if idx % 1000 == 0:
+            print('[Info] idx: {}'.format(idx))
 
     def filter_checked_urls(self):
         in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
-        out_path = os.path.join(DATA_DIR, 'checked_19881_urls.out.txt')
+        out_path = os.path.join(DATA_DIR, 'checked_19881_urls.out.{}.txt'.format(get_current_time_str()))
         data_lines = read_file(in_path)
         print('[Info] 文本数量: {}'.format(len(data_lines)))
         pool = Pool(processes=40)
