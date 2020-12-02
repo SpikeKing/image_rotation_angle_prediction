@@ -57,7 +57,7 @@ class DatasetFilter(object):
 
     @staticmethod
     def check_url(idx, url, out_path):
-        # print('[Info] url: {}'.format(url))
+        print('[Info] url: {}'.format(url))
         angle = get_uc_rotation_vpf_service(url)
         angle = int(angle)
         print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
@@ -72,8 +72,8 @@ class DatasetFilter(object):
         pool = Pool(processes=40)
         for idx, data_line in enumerate(data_lines):
             url = data_line
-            # DatasetFilter.check_url(idx, url, out_path)
-            pool.apply_async(DatasetFilter.check_url, (idx, url, out_path))
+            DatasetFilter.check_url(idx, url, out_path)
+            # pool.apply_async(DatasetFilter.check_url, (idx, url, out_path))
             if idx % 1000 == 0:
                 print('[Info] idx: {}'.format(idx))
 
