@@ -56,7 +56,7 @@ class DatasetFilter(object):
 
 
     @staticmethod
-    def check_url(idx, url, out_path):
+    def check_url(idx, url, out_error_path, out_right_path):
         # print('[Info] url: {}'.format(url))
         res_dict = get_uc_rotation_vpf_service(url)
         angle = res_dict['data']['angle']
@@ -64,20 +64,25 @@ class DatasetFilter(object):
 
         if angle != 0:
             print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
-            write_line(out_path, url)
+            write_line(out_error_path, url)
+        else:
+            write_line(out_right_path, url)
         if idx % 1000 == 0:
             print('[Info] idx: {}'.format(idx))
 
     def filter_checked_urls(self):
         in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
-        out_path = os.path.join(DATA_DIR, 'checked_19881_urls.out.{}.txt'.format(get_current_time_str()))
+        time_str = get_current_time_str()
+        out_error_path = os.path.join(DATA_DIR, 'checked_19881_urls.error.{}.txt'.format(time_str))
+        out_right_path = os.path.join(DATA_DIR, 'checked_19881_urls.right.{}.txt'.format(time_str))
+        print('[Info] out_file: {} - {}'.format(out_error_path, out_right_path))
         data_lines = read_file(in_path)
         print('[Info] 文本数量: {}'.format(len(data_lines)))
         pool = Pool(processes=40)
         for idx, data_line in enumerate(data_lines):
             url = data_line
             # DatasetFilter.check_url(idx, url, out_path)
-            pool.apply_async(DatasetFilter.check_url, (idx, url, out_path))
+            pool.apply_async(DatasetFilter.check_url, (idx, url, out_error_path, out_right_path))
             # if idx % 1000 == 0:
             #     print('[Info] idx: {}'.format(idx))
 
