@@ -47,12 +47,12 @@ class DatasetFilter(object):
         out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls')
         mkdir_if_not_exist(out_dir)
         img_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked')
-
         paths_list, names_list = traverse_dir_files(img_dir, is_sorted=True)
+
         idx = 0
         for path, name in zip(paths_list, names_list):
             items = path.split('/')
-            folder = items[-1]
+            folder = items[-2]
             out_line = url_format.format(folder, name)
             out_path = os.path.join(out_dir, '{}.txt'.format(folder))
             write_line(out_path, out_line)
