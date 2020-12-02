@@ -238,8 +238,9 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     if crop_largest_rect:  # 最大剪切
         image = crop_largest_rectangle(image, angle, height, width)
 
-    h, w, _ = image.shape
-    if h == 0 or w == 0:
+    try:
+        h, w, _ = image.shape
+    except Exception as e:
         angle = format_angle(angle)
         from myutils.cv_utils import rotate_img_for_4angle
         image = rotate_img_for_4angle(image, angle)
