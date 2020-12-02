@@ -60,11 +60,9 @@ class DatasetFilter(object):
         # print('[Info] url: {}'.format(url))
         angle = get_uc_rotation_vpf_service(url)
         angle = int(angle)
+        print('[Info] idx: {}, angle: {}, url: {}'.format(idx, angle, url))
         if angle != 0:
-            print('[Info] url: {}'.format(url))
             write_line(out_path, url)
-        if idx % 100 == 0:
-            print('[Info] idx: {}'.format(idx))
 
     def filter_checked_urls(self):
         in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
