@@ -162,7 +162,8 @@ class ProblemTrainer(object):
                 preprocess_func=preprocess_input,
                 crop_center=False,
                 crop_largest_rect=True,
-                shuffle=True
+                shuffle=True,
+                is_random_crop_h=True
             )
 
         test_generator = RotNetDataGenerator(
