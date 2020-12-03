@@ -202,7 +202,8 @@ class DatasetFilter(object):
 
     def download_urls_dir(self):
         imgs_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_right')
-        outs_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_right_imgs_{}'.format(get_current_time_str()))
+        outs_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r_{}'
+                                .format(get_current_time_str()))
         mkdir_if_not_exist(outs_dir)
 
         pool = Pool(processes=80)
