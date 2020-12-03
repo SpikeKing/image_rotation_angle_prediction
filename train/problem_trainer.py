@@ -9,6 +9,13 @@ import os
 import sys
 import random
 
+# 增加使用GPU
+import tensorflow as tf
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.visible_device_list = '0'
+config.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=config)
+
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.layers import Dense, Flatten
