@@ -27,15 +27,15 @@ from myutils.project_utils import get_current_time_str
 
 
 # 包含黑边的数据
-data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-print('[Info] data3_path: {}'.format(data3_path))
-train3_filenames, test3_filenames = get_problems_data(data3_path)
-print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
-random.shuffle(train3_filenames)
-train3_filenames = train3_filenames[:len(train3_filenames)//2]
+# data3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+# print('[Info] data3_path: {}'.format(data3_path))
+# train3_filenames, test3_filenames = get_problems_data(data3_path)
+# print('[Info] data3 train: {}, test: {}'.format(len(train3_filenames), len(test3_filenames)))
+# random.shuffle(train3_filenames)
+# train3_filenames = train3_filenames[:len(train3_filenames)//2]
 
 # 无黑边数据 8.8w数据
-data5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked')
+data5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
 print('[Info] data5_path: {}'.format(data5_path))
 train5_filenames, test5_filenames = get_problems_data(data5_path)
 print('[Info] data5 train: {}, test: {}'.format(len(train5_filenames), len(test5_filenames)))
@@ -48,7 +48,7 @@ train_val_filenames, test_val_filenames = get_problems_data(data_val_path)
 test_val_filenames = train_val_filenames + test_val_filenames  # 全部数据都是验证数据
 print('[Info] data val test: {}'.format(len(test_val_filenames)))
 
-train_filenames = train3_filenames + train5_filenames
+train_filenames = train5_filenames
 test_filenames = test5_filenames + test_val_filenames * 10
 
 random.shuffle(train_filenames)

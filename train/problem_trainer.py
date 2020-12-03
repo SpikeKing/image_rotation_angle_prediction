@@ -20,7 +20,7 @@ if p not in sys.path:
 
 from utils import angle_error, RotNetDataGenerator
 from myutils.project_utils import traverse_dir_files, get_current_time_str, mkdir_if_not_exist
-from root_dir import ROOT_DIR
+from root_dir import ROOT_DIR, DATA_DIR
 
 
 class ProblemTrainer(object):
@@ -37,6 +37,7 @@ class ProblemTrainer(object):
         self.input_shape = input_shape  # 输入图像尺寸
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
+        self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
 
@@ -89,6 +90,9 @@ class ProblemTrainer(object):
         model.compile(loss='categorical_crossentropy',
                       optimizer=SGD(lr=0.001, momentum=0.9),
                       metrics=metrics)
+
+        model.load_weights(self.model_path)
+        print('[Info] 加载模型的路径: {}'.format(self.model_path))
 
         return model_name, model
 
