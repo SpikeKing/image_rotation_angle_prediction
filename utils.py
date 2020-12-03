@@ -409,8 +409,10 @@ class RotNetDataGenerator(Iterator):
         if self.preprocess_func:
             batch_x = self.preprocess_func(batch_x)
 
-        return [batch_x, batch_x_2], batch_y
-        # return batch_x, batch_y
+        if self.is_hw_ratio:
+            return [batch_x, batch_x_2], batch_y
+        else:
+            return batch_x, batch_y
 
     def next(self):
         with self.lock:

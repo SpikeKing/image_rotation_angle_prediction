@@ -8,11 +8,14 @@ Created by C. L. Wang on 2.12.20
 import os
 import sys
 import random
+
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
+from tensorflow_core.python.keras import Input
+from tensorflow_core.python.keras.layers import concatenate
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
@@ -29,6 +32,7 @@ class ProblemTrainer(object):
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=10,  # 随机10度
+                 is_hw_ratio=False,  # 是否使用高宽比
                  batch_size=256,  # V100, 224->192, 448->48
                  nb_epoch=200,
                  ):
@@ -37,9 +41,11 @@ class ProblemTrainer(object):
         self.nb_classes = nb_classes  # 类别数
         self.input_shape = input_shape  # 输入图像尺寸
         self.random_angle = random_angle  # 随机角度
+        self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
         self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
+
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
 
@@ -77,6 +83,13 @@ class ProblemTrainer(object):
 
         x = base_model.output
         x = Flatten()(x)
+
+        if self.is_hw_ratio:  # 是否使用宽高比
+            x1 = base_model.output
+            x1 = Flatten()(x1)
+            input_ratio = Input(shape=(1,), name='ratio')
+            x2 = Dense(1, activation='relu')(input_ratio)
+            x = concatenate([x1, x2])
 
         final_output = Dense(self.nb_classes, activation='softmax', name='fc360')(x)
         model = Model(inputs=base_model.input, outputs=final_output)
@@ -165,6 +178,7 @@ class ProblemTrainer(object):
                 crop_center=False,
                 crop_largest_rect=True,
                 shuffle=True,
+                is_hw_ratio=self.is_hw_ratio,
                 random_angle=self.random_angle,
                 is_random_crop_h=True
             )
@@ -176,7 +190,8 @@ class ProblemTrainer(object):
                 preprocess_func=preprocess_input,
                 crop_center=False,
                 crop_largest_rect=True,
-                is_train=False  # 关闭训练参数
+                is_train=False,  # 关闭训练参数
+                is_hw_ratio=self.is_hw_ratio,
             )
 
         steps_per_epoch = len(self.train_data) // self.batch_size
