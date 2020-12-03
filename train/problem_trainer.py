@@ -35,12 +35,12 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
-                 batch_size=256,  # V100, 224->192, 448->48
+                 batch_size=192,  # V100, 224->192, 448->48
                  nb_epoch=200,
                  ):
 
@@ -51,7 +51,8 @@ class ProblemTrainer(object):
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
-        self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
+        # self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
+        self.model_path = None
 
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
@@ -112,9 +113,9 @@ class ProblemTrainer(object):
         model.compile(loss='categorical_crossentropy',
                       optimizer=SGD(lr=0.001, momentum=0.9),
                       metrics=metrics)
-
-        model.load_weights(self.model_path)
-        print('[Info] 加载模型的路径: {}'.format(self.model_path))
+        if self.model_path:
+            model.load_weights(self.model_path)
+            print('[Info] 加载模型的路径: {}'.format(self.model_path))
 
         return model_name, model
 
