@@ -372,7 +372,7 @@ class RotNetDataGenerator(Iterator):
                 # 随机剪裁
                 if self.is_train and self.is_random_crop_h:
                     if random_prob(0.5):
-                        print('[Info] 随机剪裁')
+                        # print('[Info] 随机剪裁')
                         h, w, _ = image.shape
                         out_h = int(h // 2)  # mode 1
                         image = random_crop(image, out_h, w)
