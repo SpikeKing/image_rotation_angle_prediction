@@ -28,13 +28,15 @@ class ProblemTrainer(object):
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
-                 batch_size=192,  # V100, 224->192, 448->48
+                 random_angle=10,  # 随机10度
+                 batch_size=256,  # V100, 224->192, 448->48
                  nb_epoch=200,
                  ):
 
         self.mode = mode  # 训练模式
-        self.nb_classes = nb_classes
+        self.nb_classes = nb_classes  # 类别数
         self.input_shape = input_shape  # 输入图像尺寸
+        self.random_angle = random_angle  # 随机角度
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
         self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
@@ -98,8 +100,8 @@ class ProblemTrainer(object):
 
     def load_train_and_test_dataset(self):
         # 18w有黑边的数据集
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-        train1_filenames = self.get_total_datasets(dataset1_path)
+        # dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+        # train1_filenames = self.get_total_datasets(dataset1_path)
 
         # 14w无黑边数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
@@ -110,8 +112,8 @@ class ProblemTrainer(object):
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        train_filenames = train1_filenames + train2_filenames * 5
-        # train_filenames = train2_filenames
+        # train_filenames = train1_filenames + train2_filenames * 5
+        train_filenames = train2_filenames * 10
         test_filenames = test2_filenames + test_val_filenames * 10
 
         random.shuffle(train_filenames)
@@ -163,6 +165,7 @@ class ProblemTrainer(object):
                 crop_center=False,
                 crop_largest_rect=True,
                 shuffle=True,
+                random_angle=self.random_angle,
                 is_random_crop_h=True
             )
 
