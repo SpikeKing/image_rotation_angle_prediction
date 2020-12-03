@@ -40,7 +40,7 @@ class ProblemTrainer(object):
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
-                 batch_size=192,  # V100, 224->192, 448->48
+                 batch_size=320,  # V100, 224->192, 448->48
                  nb_epoch=200,
                  ):
 
@@ -52,6 +52,7 @@ class ProblemTrainer(object):
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
         # self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
+        self.model_path = os.path.join(DATA_DIR, 'models', 'model_resnet50_224_20201203.5.h5')  # 最好模型
         self.model_path = None
 
         # 输出文件夹
@@ -214,7 +215,7 @@ class ProblemTrainer(object):
         reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
         tensorboard = TensorBoard()
 
-        n_workers = 10
+        n_workers = 15
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
