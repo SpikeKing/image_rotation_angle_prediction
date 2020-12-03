@@ -191,13 +191,45 @@ class DatasetFilter(object):
             if idx % 1000 == 0:
                 print('[Info] idx: {}'.format(idx))
 
+    @staticmethod
+    def download_url(data_line, outs_dir):
+        url, angle = data_line.split(',')
+        img_name = url.split('/')[-1]
+        is_ok, img_bgr = download_url_img(url)
+        out_path = os.path.join(outs_dir, img_name)
+        print('[Info] saved: {}'.format(out_path))
+        cv2.imwrite(out_path, img_bgr)
+
+    def download_urls_dir(self):
+        imgs_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_right')
+        outs_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_right_imgs_{}'.format(get_current_time_str()))
+        mkdir_if_not_exist(outs_dir)
+
+        pool = Pool(processes=80)
+        file_paths, file_names = traverse_dir_files(imgs_dir)
+        for file_path, file_name in zip(file_paths, file_names):
+            # file_name_x = file_name.split(".")[0]
+            # file_dir = os.path.join(outs_dir, file_name_x)
+            # mkdir_if_not_exist(file_dir)
+            data_lines = read_file(file_path)
+            for data_line in data_lines:
+                # DatasetFilter.download_url(data_line, outs_dir)
+                pool.apply_async(DatasetFilter.download_url, (data_line, outs_dir))
+
+        pool.close()
+        pool.join()
+
+        print('[Info] 全部处理完成: {}'.format(outs_dir))
+
 
 def main():
     df = DatasetFilter()
     # df.filter()
     # df.generate_checked_urls()
-    df.filter_checked_urls()
+    # df.filter_checked_urls()
     # df.read_labeled_data()
+    df.download_urls_dir()
+    # df.download_error_dir()
 
 
 if __name__ == '__main__':
