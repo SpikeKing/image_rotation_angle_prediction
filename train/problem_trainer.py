@@ -53,7 +53,8 @@ class ProblemTrainer(object):
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'model_mobilenetv2_base_20201204.hdf5')  # 最好模型
+            # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_0.01_20201204.h5')  # 最好模型
+            self.model_path = None
             self.batch_size = 320  # batch size, v100
         elif self.mode == "resnet50":
             self.model_path = None
@@ -96,7 +97,12 @@ class ProblemTrainer(object):
         else:
             raise Exception("[Exception] mode {} 不支持!!".format(mode))
 
+        # freeze
+        for layer in base_model.layers:
+            layer.trainable = False
+
         x = base_model.output
+        x = Dense(128, activation="relu")(x)
         x = Flatten()(x)
 
         if self.is_hw_ratio:  # 是否使用宽高比
