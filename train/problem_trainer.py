@@ -35,14 +35,13 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
-                 random_angle=8,  # 随机10度
+                 random_angle=12,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
-                 batch_size=224,  # V100, 224->192, 448->48
                  nb_epoch=200,
-                 is_random_crop_h=False  # 随机高度剪裁
+                 is_random_crop_h=True  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -50,14 +49,15 @@ class ProblemTrainer(object):
         self.input_shape = input_shape  # 输入图像尺寸
         self.random_angle = random_angle  # 随机角度
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
-        self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'model_mobilenetv2_base_20201204.hdf5')  # 最好模型
+            self.batch_size = 320  # batch size, v100
         elif self.mode == "resnet50":
             self.model_path = None
+            self.batch_size = 224  # batch size, v100
 
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
