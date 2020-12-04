@@ -224,6 +224,7 @@ def get_radio_and_resize(image, size):
         # rotated_image = resize_image_with_padding(image, desired_size=size[0])  # Padding Resize
     return rhw_ratio, image
 
+
 def generate_rotated_image(image, angle, size=None, crop_center=False,
                            crop_largest_rect=False):
     """

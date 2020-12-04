@@ -31,7 +31,8 @@ class ProblemTester(object):
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
-    def save_pb_model(self, model):
+    @staticmethod
+    def save_pb_model(model):
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
         full_model = full_model.get_concrete_function(
@@ -79,7 +80,8 @@ class ProblemTester(object):
 
         return model
 
-    def format_angle(self, angle):
+    @staticmethod
+    def format_angle(angle):
         """
         格式化角度
         """
