@@ -59,7 +59,7 @@ class ProblemTrainer(object):
             self.model_path = None
 
         if self.input_shape[0] == 224:
-            self.batch_size = 512  # batch size, v100
+            self.batch_size = 384  # batch size, v100
         elif self.input_shape[0] == 448:
             self.batch_size = 128  # batch size, v100
 
@@ -153,7 +153,7 @@ class ProblemTrainer(object):
         if self.input_shape[0] == 448:
             train_filenames = train2_filenames
         else:
-            train_filenames = train2_filenames * 8
+            train_filenames = train2_filenames * 5
         test_filenames = test2_filenames + test_val_filenames * 10
 
         random.shuffle(train_filenames)
