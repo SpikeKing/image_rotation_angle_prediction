@@ -41,7 +41,7 @@ class ProblemTrainer(object):
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
-                 is_random_crop_h=True  # 随机高度剪裁
+                 is_random_crop_h=False  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -55,11 +55,11 @@ class ProblemTrainer(object):
         if self.mode == "mobilenetv2":
             # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_0.01_20201204.h5')  # 最好模型
             self.model_path = None
-            self.batch_size = 320  # batch size, v100
+            self.batch_size = 512  # batch size, v100
         elif self.mode == "resnet50":
             # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_0.02_20201204.1.h5')
             self.model_path = None
-            self.batch_size = 224  # batch size, v100
+            self.batch_size = 512  # batch size, v100
 
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
@@ -103,7 +103,7 @@ class ProblemTrainer(object):
             layer.trainable = False
 
         x = base_model.output
-        x = Dense(128, activation="relu")(x)
+        # x = Dense(128, activation="relu")(x)
         x = Flatten()(x)
 
         if self.is_hw_ratio:  # 是否使用宽高比
