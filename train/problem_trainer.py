@@ -103,7 +103,7 @@ class ProblemTrainer(object):
             layer.trainable = False
 
         x = base_model.output
-        # x = Dense(128, activation="relu")(x)
+        x = Dense(128, activation="relu")(x)
         x = Flatten()(x)
 
         if self.is_hw_ratio:  # 是否使用宽高比
