@@ -59,9 +59,9 @@ class ProblemTrainer(object):
             # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_0.02_20201204.1.h5')
             self.model_path = None
 
-        if self.input_shape == 224:
+        if self.input_shape[0] == 224:
             self.batch_size = 512  # batch size, v100
-        elif self.input_shape == 448:
+        elif self.input_shape[0] == 448:
             self.batch_size = 128  # batch size, v100
 
         # 输出文件夹
