@@ -19,10 +19,8 @@ if p not in sys.path:
 
 from myutils.cv_utils import *
 from myutils.project_utils import *
-from x_utils.vpf_utils import get_uc_rotation_vpf_service
 
 from root_dir import DATA_DIR
-from utils import rotate
 
 
 class ProblemTester(object):
@@ -96,15 +94,22 @@ class ProblemTester(object):
         return r_angle
 
     def predict_img_bgr_prob(self, img_bgr):
-        img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        img_list = []
+        img_size = (224, 224)
+        img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        img_rgb = cv2.resize(img_rgb, img_size)  # resize
 
-        img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
-        # img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
+        img_list.append(img_rgb)
+        for idx in [90, 180, 270]:
+            img_tmp = rotate_img_for_4angle(img_rgb, idx)
+            img_list.append(img_tmp)
 
-        img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
-        img_bgr_b = preprocess_input(img_bgr_b)
+        imgs_arr = np.array(img_list)
+        print('[Info] imgs_arr: {}'.format(imgs_arr.shape))
 
-        prediction = self.model.predict(img_bgr_b)
+        imgs_arr_b = preprocess_input(imgs_arr)
+
+        prediction = self.model.predict(imgs_arr_b)
         probs = prediction[0]
         return probs
 
@@ -131,37 +136,7 @@ class ProblemTester(object):
 
         return angle
 
-    def process_item(self, data_dict, out_dir):
-        """
-        处理单个数据
-        """
-        img_id = data_dict["id"]
-        url = data_dict["url"]
-        angle = data_dict["angle"]
-        angle = (360 - angle) % 360
-        print('[Info] img_id: {}'.format(img_id))
-        print('[Info] url: {}'.format(url))
-        print('[Info] angle: {}'.format(angle))
-        is_ok, img_bgr = download_url_img(url)
-        h, w, _ = img_bgr.shape
-        s_time = time.time()
-        p_angle = self.predict_img_bgr(img_bgr)
-        print('[Info] p_angle: {}'.format(p_angle))
-
-        elapsed_time = time.time() - s_time
-        a = angle - p_angle
-        abs_angle = abs((a + 180) % 360 - 180)
-
-        if abs_angle > 5:
-            img_bgr_d = rotate_img_with_bound(img_bgr, angle)
-            img_bgr_p = rotate_img_with_bound(img_bgr, p_angle)
-            img_merged = merge_two_imgs(img_bgr_d, img_bgr_p)
-            out_file = os.path.join(out_dir, '{}_{}.jpg'.format(img_id, abs_angle))
-            cv2.imwrite(out_file, img_merged)
-
-        return [img_id, url, angle, p_angle, abs_angle, elapsed_time]
-
-    def process_item_v2(self, url):
+    def process_img_url(self, url):
         is_ok, img_bgr = download_url_img(url)
         angle = self.predict_img_bgr(img_bgr)
         return angle
@@ -186,7 +161,7 @@ class ProblemTester(object):
             uc_is_ok = int(is_uc)
             r_angle = int(r_angle)
 
-            x_angle = self.process_item_v2(url)
+            x_angle = self.process_img_url(url)
 
             x_is_ok = 1 if x_angle == r_angle else 0
             if uc_is_ok == 1:
@@ -213,85 +188,6 @@ class ProblemTester(object):
             out_list
         )
 
-    def new_test(self):
-        # img_path = os.path.join(DATA_DIR, 'datasets_val', 'val_1000', 'O1CN01395Jpz1zErXatzlXa_!!6000000006683-0-quark.jpg')
-        # image = cv2.imread(img_path)
-        #
-        # image, angle, rotated_ratio, is_ok = generate_rotated_image(
-        #     image,
-        #     270,
-        #     size=None,
-        #     crop_center=False,
-        #     crop_largest_rect=True
-        # )
-
-        img_path = os.path.join(DATA_DIR, 'datasets_val', 'x2.jpg')
-        image = cv2.imread(img_path)
-        image = rotate(image, 90)
-        image = rotate(image, -90)
-
-        # url = "https://img.alicdn.com/imgextra/i2/6000000006683/O1CN01395Jpz1zErXatzlXa_!!6000000006683-0-quark.jpg"
-        # is_ok, image = download_url_img(url)
-        # show_img_bgr(image)
-
-        show_img_bgr(image)
-
-        x = self.predict_img_bgr(image)
-
-        print(x)
-
-    def process_item_v3(self, url):
-        print('[Info] vpf: {}'.format(url))
-        res_dict = get_uc_rotation_vpf_service(url)
-        angle = res_dict['data']['angle']
-        angle = int(angle)
-        return angle
-
-
-def demo_of_urls():
-    url_path = os.path.join(DATA_DIR, 'long_text_2020-12-02-09-44-42.txt')
-    out_dir = os.path.join(DATA_DIR, 'long_text_2020-12-02-09-44-42-vpf')
-    mkdir_if_not_exist(out_dir)
-
-    ip = ImgPredictor()
-    for url in read_file(url_path):
-        name = url.split('/')[-1].split("?")[0]
-        is_ok, img_bgr = download_url_img(url)
-        # angle = ip.predict_img_bgr(img_bgr)
-        angle = ip.process_item_v3(url)
-        img_bgr = rotate_img_for_4angle(img_bgr, angle)
-        out_path = os.path.join(out_dir, "{}".format(name))
-        print('out_path: {}'.format(out_path))
-        cv2.imwrite(out_path, img_bgr)
-
-    print('[Info] 处理完成: {}'.format(out_dir))
-
-
-def demo_of_img_dir():
-    error_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32')
-    error2_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32_out')
-    mkdir_if_not_exist(error2_dir)
-    ip = ImgPredictor()
-    paths_list, names_list = traverse_dir_files(error_dir)
-    for idx, (path, name) in enumerate(zip(paths_list, names_list)):
-        img_bgr = cv2.imread(path)
-        angle = ip.predict_img_bgr(img_bgr)
-        img_bgr = rotate_img_for_4angle(img_bgr, angle)
-        out_path = os.path.join(error2_dir, "{}.jpg".format(idx))
-        print('out_path: {}'.format(out_path))
-        cv2.imwrite(out_path, img_bgr)
-        show_img_bgr(img_bgr)
-        print('-' * 50)
-    print('[Info] 完成!')
-
-
-def demo_of_one_img():
-    name = '2.270.jpg'
-    img_path = os.path.join(DATA_DIR, 'cases', name)
-    r_angle = int(name.split('.')[1])
-    ip = ImgPredictor()
-    p_angle = ip.predict_img_path(img_path)
-    print('[Info] r_angle: {}, p_angle: {}, is_equal: {}'.format(r_angle, p_angle, r_angle == p_angle))
 
 
 def main():
