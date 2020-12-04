@@ -35,7 +35,7 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=8,  # 随机10度
