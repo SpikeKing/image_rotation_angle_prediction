@@ -128,8 +128,8 @@ class ProblemTrainer(object):
 
     def load_train_and_test_dataset(self):
         # 18w有黑边的数据集
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-        train1_filenames = self.get_total_datasets(dataset1_path)
+        # dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+        # train1_filenames = self.get_total_datasets(dataset1_path)
 
         # 14w无黑边数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
@@ -140,8 +140,8 @@ class ProblemTrainer(object):
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        train_filenames = train1_filenames + train2_filenames * 5
-        # train_filenames = train2_filenames * 10
+        # train_filenames = train1_filenames + train2_filenames * 5
+        train_filenames = train2_filenames * 8
         test_filenames = test2_filenames + test_val_filenames * 10
 
         random.shuffle(train_filenames)
@@ -221,7 +221,7 @@ class ProblemTrainer(object):
         reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
         tensorboard = TensorBoard()
 
-        n_workers = 15
+        n_workers = 10
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
