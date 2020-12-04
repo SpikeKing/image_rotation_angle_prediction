@@ -58,10 +58,14 @@ class ProblemTrainer(object):
             # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_0.02_20201204.1.h5')
             self.model_path = None
 
-        if self.input_shape[0] == 224:
+        if self.input_shape[0] == 224 and mode == "mobilenetv2":
             self.batch_size = 384  # batch size, v100
+        elif self.input_shape[0] == 224 and mode == "resnet50":
+            self.batch_size = 224  # batch size, v100
         elif self.input_shape[0] == 448:
             self.batch_size = 128  # batch size, v100
+        else:
+            self.batch_size = 100
 
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
