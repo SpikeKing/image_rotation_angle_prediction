@@ -16,7 +16,8 @@ from myutils.cv_utils import *
 def main():
     img_path = os.path.join(DATA_DIR, 'error_imgs', 'error1_20201125.0.jpg')
     im = cv2.imread(img_path)
-    new_im = resize_image_with_padding(im, 224)
+    new_im = rotate_img_for_4angle(im, (360 - 90) % 360)
+    # new_im = rotate_img_with_bound(im, 90)
     show_img_bgr(new_im)
 
 

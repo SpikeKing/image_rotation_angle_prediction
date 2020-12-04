@@ -672,7 +672,7 @@ def main():
     from root_dir import DATA_DIR
     img_path = os.path.join(DATA_DIR, 'error_imgs', 'error1_20201127.270.jpg')
     img_bgr = cv2.imread(img_path)
-    img_bgr = resize_image_with_padding(img_bgr, 224)
+    img_bgr = rotate_img_with_bound(img_bgr, 90)
     show_img_bgr(img_bgr)
 
 

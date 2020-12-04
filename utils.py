@@ -233,6 +233,8 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
     crop_largest_rect option. To resize the final image, use the size
     option.
     """
+    from myutils.cv_utils import rotate_img_for_4angle
+
     image_copy = image.copy()
     height, width = image.shape[:2]
     if crop_center:
@@ -241,18 +243,19 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         else:
             width = height
 
-    # image = rotate(image, angle)  # 第1种旋转模式
-    rotated_image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
-
-    if crop_largest_rect:  # 最大剪切
-        rotated_image = crop_largest_rectangle(rotated_image, angle, height, width)
-
     try:
+        # image = rotate(image, angle)  # 第1种旋转模式
+        if angle % 90 != 0:
+            rotated_image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
+        else:
+            rotated_image = rotate_img_for_4angle(image, (360 - angle) % 90)
+
+        if crop_largest_rect:  # 最大剪切
+            rotated_image = crop_largest_rectangle(rotated_image, angle, height, width)
         rhw_ratio, rotated_image = get_radio_and_resize(rotated_image, size)
     except Exception as e:
         angle = format_angle(angle)
-        from myutils.cv_utils import rotate_img_for_4angle
-        rotated_image = rotate_img_for_4angle(image_copy, angle)
+        rotated_image = rotate_img_for_4angle(image_copy, (360 - angle) % 90)
         rhw_ratio, rotated_image = get_radio_and_resize(rotated_image, size)
 
     return rotated_image, angle, rhw_ratio
