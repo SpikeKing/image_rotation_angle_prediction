@@ -81,11 +81,11 @@ class ProblemTrainer(object):
         """
         if mode == "resnet50":
             from tensorflow.keras.applications.resnet50 import ResNet50
-            model_name = 'rotnet_v3_resnet50_{epoch:02d}.h5'
+            model_name = 'rotnet_v3_resnet50_{epoch:02d}_{val_loss:.2f}.h5'
             base_model = ResNet50(weights='imagenet', include_top=False, input_shape=self.input_shape)
         elif mode == "mobilenetv2":
             from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
-            model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}.h5'
+            model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}_{val_loss:.2f}.h5'
             base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=self.input_shape)
         else:
             raise Exception("[Exception] mode {} 不支持!!".format(mode))
