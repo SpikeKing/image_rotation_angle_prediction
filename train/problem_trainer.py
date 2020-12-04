@@ -52,7 +52,7 @@ class ProblemTrainer(object):
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
         # self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
-        self.model_path = os.path.join(DATA_DIR, 'models', 'model_resnet50_224_20201203.5.h5')  # 最好模型
+        self.model_path = os.path.join(DATA_DIR, 'models', 'model_mobilenetv2_base_20201204.hdf5')  # 最好模型
         # self.model_path = None
 
         # 输出文件夹
