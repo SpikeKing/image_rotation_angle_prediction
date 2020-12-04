@@ -51,9 +51,11 @@ class ProblemTrainer(object):
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
-        # self.model_path = os.path.join(DATA_DIR, 'models', 'model_224_20201203.1.h5')  # 最好模型
-        self.model_path = os.path.join(DATA_DIR, 'models', 'model_mobilenetv2_base_20201204.hdf5')  # 最好模型
-        # self.model_path = None
+
+        if self.mode == "mobilenetv2":
+            self.model_path = os.path.join(DATA_DIR, 'models', 'model_mobilenetv2_base_20201204.hdf5')  # 最好模型
+        elif self.mode == "resnet50":
+            self.model_path = None
 
         # 输出文件夹
         self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
