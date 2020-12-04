@@ -68,7 +68,7 @@ class ProblemTrainer(object):
         print('[Info] output_dir: {}'.format(self.output_dir))
         print('[Info] ' + "-" * 50)
 
-        _, self.model = self.init_model()  # 初始化模型
+        self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
         self.train_data, self.test_data = self.load_train_and_test_dataset()  # 加载训练和测试数据
 
         mkdir_if_not_exist(self.output_dir)
@@ -80,13 +80,13 @@ class ProblemTrainer(object):
         :return: 模型名称和基础模型
         """
         if mode == "resnet50":
-            from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
-            model_name = 'rotnet_v3_resnet50'
-            base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=self.input_shape)
-        elif mode == "mobilenetv2":
             from tensorflow.keras.applications.resnet50 import ResNet50
-            model_name = 'rotnet_v3_mobilenetv2'
+            model_name = 'rotnet_v3_resnet50_{epoch:02d}.h5'
             base_model = ResNet50(weights='imagenet', include_top=False, input_shape=self.input_shape)
+        elif mode == "mobilenetv2":
+            from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
+            model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}.h5'
+            base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=self.input_shape)
         else:
             raise Exception("[Exception] mode {} 不支持!!".format(mode))
 
@@ -208,7 +208,7 @@ class ProblemTrainer(object):
 
         monitor = 'val_acc'
         checkpointer = ModelCheckpoint(
-            filepath=os.path.join(self.output_dir, "model_{epoch:02d}.h5"),
+            filepath=os.path.join(self.output_dir, self.model_name),
             monitor=monitor,
             save_best_only=True
         )
