@@ -151,7 +151,10 @@ class ProblemTrainer(object):
 
         # 全部数据集
         # train_filenames = train1_filenames + train2_filenames * 5
-        train_filenames = train2_filenames * 8
+        if self.input_shape[0] == 448:
+            train_filenames = train2_filenames
+        else:
+            train_filenames = train2_filenames * 8
         test_filenames = test2_filenames + test_val_filenames * 10
 
         random.shuffle(train_filenames)
