@@ -207,6 +207,8 @@ class ProblemTrainer(object):
                 crop_largest_rect=True,
                 is_train=False,  # 关闭训练参数
                 is_hw_ratio=self.is_hw_ratio,
+                random_angle=self.random_angle,
+                is_random_crop_h=True
             )
 
         steps_per_epoch = len(self.train_data) // self.batch_size
