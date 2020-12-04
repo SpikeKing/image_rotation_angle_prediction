@@ -189,7 +189,6 @@ class ProblemTester(object):
         )
 
 
-
 def main():
     pt = ProblemTester()
     pt.process_1000_items()
