@@ -38,10 +38,11 @@ class ProblemTrainer(object):
                  mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
-                 random_angle=10,  # 随机10度
+                 random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  batch_size=224,  # V100, 224->192, 448->48
                  nb_epoch=200,
+                 is_random_crop_h=False  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -51,6 +52,7 @@ class ProblemTrainer(object):
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.batch_size = batch_size  # batch size
         self.nb_epoch = nb_epoch  # epoch
+        self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'model_mobilenetv2_base_20201204.hdf5')  # 最好模型
@@ -67,6 +69,8 @@ class ProblemTrainer(object):
         print('[Info] input_shape: {}'.format(self.input_shape))
         print('[Info] batch_size: {}'.format(self.batch_size))
         print('[Info] nb_epoch: {}'.format(self.nb_epoch))
+        print('[Info] random_angle: {}'.format(self.random_angle))
+        print('[Info] is_random_crop_h: {}'.format(self.is_random_crop_h))
         print('[Info] output_dir: {}'.format(self.output_dir))
         print('[Info] ' + "-" * 50)
 
