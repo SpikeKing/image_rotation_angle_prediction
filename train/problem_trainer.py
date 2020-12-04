@@ -40,7 +40,7 @@ class ProblemTrainer(object):
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
-                 batch_size=320,  # V100, 224->192, 448->48
+                 batch_size=224,  # V100, 224->192, 448->48
                  nb_epoch=200,
                  ):
 
