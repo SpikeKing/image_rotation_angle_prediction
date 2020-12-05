@@ -183,6 +183,12 @@ class ImgPredictor(object):
         angle = self.predict_img_bgr(img_bgr)
         return angle
 
+    def process_item_vpf(self, img_url):
+        res_dict = get_uc_rotation_vpf_service(img_url)
+        angle = res_dict["data"]["angle"]
+        angle = int(angle)
+        return angle
+
     def process(self):
         """
         处理全部数据
@@ -216,7 +222,7 @@ class ImgPredictor(object):
         """
         处理数据v2
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
+        in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -232,7 +238,8 @@ class ImgPredictor(object):
             uc_is_ok = int(is_uc)
             r_angle = int(r_angle)
 
-            x_angle = self.process_item_v2(url)
+            # x_angle = self.process_item_v2(url)
+            x_angle = self.process_item_vpf(url)
 
             x_is_ok = 1 if x_angle == r_angle else 0
             if uc_is_ok == 1:
