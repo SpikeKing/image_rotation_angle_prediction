@@ -157,8 +157,8 @@ class ProblemTester(object):
         """
         处理1000条基准数据
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
-        # in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
+        # in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
+        in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -204,8 +204,8 @@ class ProblemTester(object):
         )
 
     def demo_of_img_dir(self):
-        error_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32')
-        error2_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32_out')
+        error_dir = os.path.join(DATA_DIR, 'datasets_val', 'important_cases')
+        error2_dir = os.path.join(DATA_DIR, 'datasets_val', 'important_cases_out')
         mkdir_if_not_exist(error2_dir)
 
         paths_list, names_list = traverse_dir_files(error_dir)
@@ -221,13 +221,14 @@ class ProblemTester(object):
             cv2.imwrite(out_path, img_bgr)
             show_img_bgr(img_bgr)
             print('-' * 50)
+
         print('[Info] 完成!')
 
 
 def main():
     pt = ProblemTester()
-    pt.process_1000_items()
-    # pt.demo_of_img_dir()
+    # pt.process_1000_items()
+    pt.demo_of_img_dir()
 
 
 if __name__ == '__main__':

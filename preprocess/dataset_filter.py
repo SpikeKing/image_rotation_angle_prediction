@@ -41,12 +41,12 @@ class DatasetFilter(object):
         https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/datasets/
         datasets_v4_checked/checked_19881/O1CN01002cx31NZW01vj7uW_!!6000000001584-0-quark.jpg
         """
-        url_format = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/datasets/" \
-                     "datasets_v4_checked/{}/{}"
+        url_format = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/" \
+                     "datasets/datasets_v4_checked_r/checked_v1_128921/{}"
 
-        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls')
+        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_r_txt')
         mkdir_if_not_exist(out_dir)
-        img_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked')
+        img_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         paths_list, names_list = traverse_dir_files(img_dir, is_sorted=True)
 
         idx = 0
@@ -225,12 +225,7 @@ class DatasetFilter(object):
 
 def main():
     df = DatasetFilter()
-    # df.filter()
-    # df.generate_checked_urls()
-    # df.filter_checked_urls()
-    # df.read_labeled_data()
-    df.download_urls_dir()
-    # df.download_error_dir()
+    df.generate_checked_urls()
 
 
 if __name__ == '__main__':
