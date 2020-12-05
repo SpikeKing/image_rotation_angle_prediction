@@ -64,7 +64,7 @@ class ProblemTrainer(object):
         elif self.input_shape[0] == 224 and mode == "resnet50":
             self.batch_size = 224  # batch size, v100
         elif self.input_shape[0] == 448:
-            self.batch_size = 128  # batch size, v100
+            self.batch_size = 64  # batch size, v100
         else:
             self.batch_size = 100
 
