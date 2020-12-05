@@ -6,12 +6,15 @@ Created by C. L. Wang on 11.11.20
 """
 import os
 import sys
+import collections
 
 import cv2
 import tensorflow as tf
 import tensorflow.python.keras.backend as K
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+
+from x_utils.vpf_utils import get_uc_rotation_vpf_service
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
@@ -25,7 +28,7 @@ from root_dir import DATA_DIR
 
 class ProblemTester(object):
     def __init__(self):
-        self.model_name = "rotnet_v3_mobilenetv2_0.01_20201204.h5"
+        self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
@@ -33,9 +36,11 @@ class ProblemTester(object):
     def save_pb_model(model):
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
+        # full_model = full_model.get_concrete_function(
+        #     [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype),
+        #      tf.TensorSpec(model.inputs[1].shape, model.inputs[1].dtype)])
         full_model = full_model.get_concrete_function(
-            [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype),
-             tf.TensorSpec(model.inputs[1].shape, model.inputs[1].dtype)])
+            tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
         # Get frozen ConcreteFunction
         frozen_func = convert_variables_to_constants_v2(full_model)
         frozen_func.graph.as_graph_def()
@@ -73,9 +78,7 @@ class ProblemTester(object):
         """
         model_location = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_location, compile=False)
-
         # self.save_pb_model(model)  # 存储pb模型
-
         return model
 
     @staticmethod
@@ -109,20 +112,24 @@ class ProblemTester(object):
 
         imgs_arr_b = preprocess_input(imgs_arr)
 
-        prediction = self.model.predict(imgs_arr_b)
-        probs = prediction[0]
-        return probs
+        predictions = self.model.predict(imgs_arr_b)
+        angle_dict = collections.defaultdict(int)
+        for i in range(4):
+            probs = predictions[i]
+            angle = (int(K.argmax(probs))) * 90 % 360
+            angle = (angle + 90 * i) % 360
+            angle_dict[angle] += 1
+
+        angle_list = sort_dict_by_value(angle_dict)
+        angle = angle_list[0][0]
+        return angle
 
     def predict_img_bgr(self, img_bgr):
         """
         预测角度
         """
-        img_bgr = rotate_img_with_bound(img_bgr, 90)
-        img_bgr = rotate_img_with_bound(img_bgr, -90)
-        probs = self.predict_img_bgr_prob(img_bgr)
-        angle = (int(K.argmax(probs))) * 90 % 360
+        angle = self.predict_img_bgr_prob(img_bgr)
         # angle = self.format_angle(angle)
-
         return angle
 
     def predict_img_path(self, img_path):
@@ -133,7 +140,6 @@ class ProblemTester(object):
         img_bgr = cv2.imread(img_path)
         angle = self.predict_img_bgr(img_bgr)
         print('[Info] 预测角度: {}'.format(angle))
-
         return angle
 
     def process_img_url(self, url):
@@ -141,11 +147,18 @@ class ProblemTester(object):
         angle = self.predict_img_bgr(img_bgr)
         return angle
 
+    def process_img_vpf(self, img_url):
+        res_dict = get_uc_rotation_vpf_service(img_url)
+        angle = res_dict["data"]["angle"]
+        angle = int(angle)
+        return angle
+
     def process_1000_items(self):
         """
         处理1000条基准数据
         """
         in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
+        # in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -161,9 +174,11 @@ class ProblemTester(object):
             uc_is_ok = int(is_uc)
             r_angle = int(r_angle)
 
-            x_angle = self.process_img_url(url)
+            # x_angle = self.process_img_url(url)
+            x_angle = self.process_img_vpf(url)
 
             x_is_ok = 1 if x_angle == r_angle else 0
+
             if uc_is_ok == 1:
                 n_old_right += 1
             if x_angle == r_angle:
@@ -188,10 +203,31 @@ class ProblemTester(object):
             out_list
         )
 
+    def demo_of_img_dir(self):
+        error_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32')
+        error2_dir = os.path.join(DATA_DIR, 'datasets_val', 'TestCases32_out')
+        mkdir_if_not_exist(error2_dir)
+
+        paths_list, names_list = traverse_dir_files(error_dir)
+
+        for idx, (path, name) in enumerate(zip(paths_list, names_list)):
+            img_bgr = cv2.imread(path)
+            angle = self.predict_img_bgr(img_bgr)
+            img_bgr = rotate_img_for_4angle(img_bgr, angle)
+
+            out_path = os.path.join(error2_dir, "{}.jpg".format(idx))
+            print('out_path: {}'.format(out_path))
+
+            cv2.imwrite(out_path, img_bgr)
+            show_img_bgr(img_bgr)
+            print('-' * 50)
+        print('[Info] 完成!')
+
 
 def main():
     pt = ProblemTester()
     pt.process_1000_items()
+    # pt.demo_of_img_dir()
 
 
 if __name__ == '__main__':

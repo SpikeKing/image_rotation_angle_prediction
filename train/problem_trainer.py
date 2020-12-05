@@ -38,7 +38,7 @@ class ProblemTrainer(object):
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
-                 random_angle=8,  # 随机10度
+                 random_angle=12,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
                  is_random_crop_h=False  # 随机高度剪裁
@@ -53,12 +53,11 @@ class ProblemTrainer(object):
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201205_1.1.h5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201205_3.1.h5')
         elif self.mode == "mobilenetv2" and self.input_shape[0] == 448:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base448_20201205_1.2.h5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base448_20201205_2.2.h5')
         elif self.mode == "resnet50":
-            # self.model_path = os.path.join(DATA_DIR, 'models', '')
-            self.model_path = None
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_base224_20201205.3.h5')
 
         if self.input_shape[0] == 224 and mode == "mobilenetv2":
             self.batch_size = 384  # batch size, v100
