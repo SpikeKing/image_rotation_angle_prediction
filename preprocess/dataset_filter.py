@@ -42,7 +42,7 @@ class DatasetFilter(object):
         datasets_v4_checked/checked_19881/O1CN01002cx31NZW01vj7uW_!!6000000001584-0-quark.jpg
         """
         url_format = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/" \
-                     "datasets/datasets_v4_checked_r/checked_v1_128921/{}"
+                     "datasets/datasets_v4_checked_r/{}/{}"
 
         out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_r_txt')
         mkdir_if_not_exist(out_dir)
