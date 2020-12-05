@@ -53,7 +53,7 @@ class ProblemTrainer(object):
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201204.h5')  # 最好模型
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201205.1.h5')  # 最好模型
         elif self.mode == "resnet50":
             # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_0.02_20201204.1.h5')
             self.model_path = None
