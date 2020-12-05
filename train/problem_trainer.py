@@ -35,7 +35,7 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=0,  # 随机10度
@@ -106,8 +106,8 @@ class ProblemTrainer(object):
             raise Exception("[Exception] mode {} 不支持!!".format(mode))
 
         # freeze
-        # for layer in base_model.layers:
-        #     layer.trainable = False
+        for layer in base_model.layers:
+            layer.trainable = True
 
         x = base_model.output
         # x = Dense(128, activation="relu")(x)
