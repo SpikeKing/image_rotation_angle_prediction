@@ -55,8 +55,7 @@ class ProblemTrainer(object):
         if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201205.1.h5')  # 最好模型
         elif self.mode == "resnet50":
-            # self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_0.02_20201204.1.h5')
-            self.model_path = None
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_base448_20201205.2.h5')
 
         if self.input_shape[0] == 224 and mode == "mobilenetv2":
             self.batch_size = 384  # batch size, v100
@@ -239,7 +238,7 @@ class ProblemTrainer(object):
         reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
         tensorboard = TensorBoard()
 
-        n_workers = 15
+        n_workers = 10
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
