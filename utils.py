@@ -249,14 +249,14 @@ def generate_rotated_image(image, angle, size=None, crop_center=False,
         if angle % 90 != 0:
             rotated_image = rotate_img_with_bound(image, angle)  # 第2种旋转模型
         else:
-            rotated_image = rotate_img_for_4angle(image, (360 - angle) % 90)
+            rotated_image = rotate_img_for_4angle(image, (360 - angle) % 360)
 
         if crop_largest_rect:  # 最大剪切
             rotated_image = crop_largest_rectangle(rotated_image, angle, height, width)
         rhw_ratio, rotated_image = get_radio_and_resize(rotated_image, size)
     except Exception as e:
         angle = format_angle(angle)
-        rotated_image = rotate_img_for_4angle(image_copy, (360 - angle) % 90)
+        rotated_image = rotate_img_for_4angle(image_copy, (360 - angle) % 360)
         rhw_ratio, rotated_image = get_radio_and_resize(rotated_image, size)
 
     return rotated_image, angle, rhw_ratio
