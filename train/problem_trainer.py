@@ -35,13 +35,13 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=12,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
-                 is_random_crop_h=False  # 随机高度剪裁
+                 is_random_crop_h=True  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -96,11 +96,11 @@ class ProblemTrainer(object):
         """
         if mode == "resnet50":
             from tensorflow.keras.applications.resnet50 import ResNet50
-            model_name = 'rotnet_v3_resnet50_{epoch:02d}_{val_loss:.2f}.h5'
+            model_name = 'rotnet_v3_resnet50_{epoch:02d}_{val_loss:.2f}.hdf5'
             base_model = ResNet50(weights='imagenet', include_top=False, input_shape=self.input_shape)
         elif mode == "mobilenetv2":
             from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
-            model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}_{val_loss:.2f}.h5'
+            model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}_{val_loss:.2f}.hdf5'
             base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=self.input_shape)
         else:
             raise Exception("[Exception] mode {} 不支持!!".format(mode))
