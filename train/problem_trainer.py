@@ -53,11 +53,11 @@ class ProblemTrainer(object):
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201205_3.1.h5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201206.1.hdf5')
         elif self.mode == "mobilenetv2" and self.input_shape[0] == 448:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base448_20201205_2.2.h5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_448_20201206.2.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_base224_20201205.3.h5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_224_20201206.3.hdf5')
 
         if self.input_shape[0] == 224 and mode == "mobilenetv2":
             self.batch_size = 384  # batch size, v100
