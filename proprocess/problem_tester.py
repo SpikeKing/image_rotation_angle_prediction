@@ -28,7 +28,8 @@ from root_dir import DATA_DIR
 
 class ProblemTester(object):
     def __init__(self):
-        self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
+        # self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
+        self.model_name = "rotnet_v3_mobilenetv2_448_20201206.2.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
