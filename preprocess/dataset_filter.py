@@ -81,16 +81,15 @@ class DatasetFilter(object):
             print('[Info] idx: {}'.format(idx))
 
     def filter_checked_urls(self):
-        in_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls')
-        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_urls_out_{}'.format(get_current_time_str()))
+        in_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_r_txt')
+        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_r_urls_out_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
 
         paths_list, names_list = traverse_dir_files(in_dir)
-        pool = Pool(processes=40)
+        pool = Pool(processes=80)
 
         idx = 0
         for in_path, in_name in zip(paths_list, names_list):
-            # in_path = os.path.join(DATA_DIR, 'checked_19881_urls.txt')
             out_error_path = os.path.join(out_dir, '{}.error.txt'.format(in_name))
             out_right_path = os.path.join(out_dir, '{}.right.txt'.format(in_name))
             print('[Info] out_file: {} - {}'.format(out_error_path, out_right_path))
@@ -98,7 +97,6 @@ class DatasetFilter(object):
             print('[Info] 文本数量: {}'.format(len(data_lines)))
             for data_line in data_lines:
                 url = data_line
-                # DatasetFilter.check_url(idx, url, out_path)
                 pool.apply_async(DatasetFilter.check_url, (idx, url, out_error_path, out_right_path))
                 idx += 1
                 if idx % 1000 == 0:
@@ -225,7 +223,7 @@ class DatasetFilter(object):
 
 def main():
     df = DatasetFilter()
-    df.generate_checked_urls()
+    df.filter_checked_urls()
 
 
 if __name__ == '__main__':
