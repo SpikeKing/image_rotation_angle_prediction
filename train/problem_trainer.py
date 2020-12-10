@@ -64,7 +64,7 @@ class ProblemTrainer(object):
         elif self.input_shape[0] == 224 and mode == "resnet50":
             self.batch_size = 224  # batch size, v100
         elif self.input_shape[0] == 448:
-            self.batch_size = 64  # batch size, v100
+            self.batch_size = 48  # batch size, v100
         else:
             self.batch_size = 100
 
@@ -146,26 +146,26 @@ class ProblemTrainer(object):
         # train1_filenames = self.get_total_datasets(dataset1_path)
 
         # 14w无黑边数据
-        # dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
-        # train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
+        dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
+        train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
 
-        # dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
-        # train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
+        dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
+        train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
 
         # 1k纯粹验证集
         dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        # if self.input_shape[0] == 448:
-        #     train_filenames = train2_filenames + train3_filenames * 3
-        # else:
-        #     train_filenames = train2_filenames + train3_filenames * 3
-        #
-        # test_filenames = test2_filenames + test3_filenames * 3 + test_val_filenames * 10
+        if self.input_shape[0] == 448:
+            train_filenames = train2_filenames[:30000] + train3_filenames
+        else:
+            train_filenames = train2_filenames[:30000] + train3_filenames
 
-        train_filenames = test_val_filenames
-        test_filenames = test_val_filenames
+        test_filenames = test2_filenames + test3_filenames + test_val_filenames
+
+        # train_filenames = test_val_filenames
+        # test_filenames = test_val_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
