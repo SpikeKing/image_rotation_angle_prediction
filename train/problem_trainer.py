@@ -148,6 +148,8 @@ class ProblemTrainer(object):
         # 14w无黑边数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
+        train2_filenames = train2_filenames[:len(train2_filenames)//2]
+        test2_filenames = test2_filenames[:len(test2_filenames)//2]
 
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
         train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
@@ -158,9 +160,9 @@ class ProblemTrainer(object):
 
         # 全部数据集
         if self.input_shape[0] == 448:
-            train_filenames = train2_filenames[:30000] + train3_filenames
+            train_filenames = train2_filenames + train3_filenames
         else:
-            train_filenames = train2_filenames[:30000] + train3_filenames
+            train_filenames = train2_filenames + train3_filenames
 
         test_filenames = test2_filenames + test3_filenames + test_val_filenames
 
