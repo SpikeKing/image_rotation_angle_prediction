@@ -37,7 +37,7 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
+                 input_shape=(448, 448, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
@@ -149,17 +149,19 @@ class ProblemTrainer(object):
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
 
+        dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
+        train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
+
         # 1k纯粹验证集
         dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        # train_filenames = train1_filenames + train2_filenames * 5
         if self.input_shape[0] == 448:
-            train_filenames = train2_filenames
+            train_filenames = train2_filenames + train3_filenames * 3
         else:
-            train_filenames = train2_filenames * 5
-        test_filenames = test2_filenames + test_val_filenames * 10
+            train_filenames = train2_filenames + train3_filenames * 3
+        test_filenames = test2_filenames + test3_filenames * 3 + test_val_filenames * 10
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
