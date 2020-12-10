@@ -159,6 +159,7 @@ class DatasetPrepareV2(object):
         """
         处理URL
         """
+        print('[Info]' + '-' * 50)
         print('[Info] url: {}'.format(url))
         hw_path, angel_right_path, angel_error_path, processed_path = out_path_list
 
