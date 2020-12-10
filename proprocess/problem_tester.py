@@ -14,12 +14,11 @@ import tensorflow.python.keras.backend as K
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 
-from x_utils.vpf_utils import get_uc_rotation_vpf_service
-
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
 
+from x_utils.vpf_utils import *
 from myutils.cv_utils import *
 from myutils.project_utils import *
 
@@ -28,8 +27,9 @@ from root_dir import DATA_DIR
 
 class ProblemTester(object):
     def __init__(self):
-        # self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
-        self.model_name = "rotnet_v3_mobilenetv2_448_20201206.2.hdf5"
+        self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
+        # self.model_name = "rotnet_v3_mobilenetv2_448_20201206.2.hdf5"  # 效果不好
+        # self.model_name = "rotnet_v3_resnet50_224_20201207.3.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
@@ -99,7 +99,8 @@ class ProblemTester(object):
 
     def predict_img_bgr_prob(self, img_bgr):
         img_list = []
-        img_size = (224, 224)
+        # img_size = (224, 224)
+        img_size = (448, 448)
         img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         img_rgb = cv2.resize(img_rgb, img_size)  # resize
 
@@ -149,15 +150,28 @@ class ProblemTester(object):
         return angle
 
     def process_img_vpf(self, img_url):
-        res_dict = get_uc_rotation_vpf_service(img_url)
-        angle = res_dict["data"]["angle"]
-        angle = int(angle)
+        # res_dict = get_uc_rotation_vpf_service(img_url)
+        # angle = res_dict["data"]["angle"]
+
+        try:
+            res_dict = get_trt_rotation_vpf_service(img_url)
+            print('[Info] 1223: {}'.format(img_url))
+            angle = res_dict["data"]["data"]["angle"]
+
+            angle = int(angle)
+        except Exception as e:
+            print('[Exception] img_url: {}'.format(img_url))
+            angle = -1
         return angle
 
-    def process_1000_items(self):
+    def process_1000_items(self, is_vpf=True):
         """
         处理1000条基准数据
         """
+        if is_vpf:
+            print('[Info] 使用VPF模式!')
+        else:
+            print('[Info] 使用本地模式')
         # in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
         in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
         data_lines = read_file(in_file)
@@ -175,8 +189,10 @@ class ProblemTester(object):
             uc_is_ok = int(is_uc)
             r_angle = int(r_angle)
 
-            # x_angle = self.process_img_url(url)
-            x_angle = self.process_img_vpf(url)
+            if is_vpf:
+                x_angle = self.process_img_vpf(url)
+            else:
+                x_angle = self.process_img_url(url)
 
             x_is_ok = 1 if x_angle == r_angle else 0
 
@@ -195,8 +211,8 @@ class ProblemTester(object):
         print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
         print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
 
-        out_file = os.path.join(DATA_DIR, 'check_{}_{}.e{}.xlsx'
-                                .format(self.model_name, safe_div(n_right, n_all), n_error))
+        out_file = os.path.join(DATA_DIR, 'check_{}_{:.4f}.e{}.{}.xlsx'
+                                .format(self.model_name, safe_div(n_right, n_all), n_error, get_current_time_str()))
 
         write_list_to_excel(
             out_file,
@@ -204,32 +220,46 @@ class ProblemTester(object):
             out_list
         )
 
-    def demo_of_img_dir(self):
-        error_dir = os.path.join(DATA_DIR, 'datasets_val', 'important_cases')
-        error2_dir = os.path.join(DATA_DIR, 'datasets_val', 'important_cases_out')
-        mkdir_if_not_exist(error2_dir)
+    def evaluate_bad_cases(self, is_vpf=True):
+        if is_vpf:
+            print('[Info] 使用VPF模式!')
+        else:
+            print('[Info] 使用本地模式')
 
-        paths_list, names_list = traverse_dir_files(error_dir)
+        error_file = os.path.join(DATA_DIR, 'datasets_val', 'bad_cases_urls.txt')
+        out_file = os.path.join(DATA_DIR, 'datasets_val', 'bad_cases_urls_out.{}.txt'.format(get_current_time_str()))
 
-        for idx, (path, name) in enumerate(zip(paths_list, names_list)):
-            img_bgr = cv2.imread(path)
-            angle = self.predict_img_bgr(img_bgr)
-            img_bgr = rotate_img_for_4angle(img_bgr, angle)
+        n_right = 0
+        data_lines = read_file(error_file)
+        n_all = len(data_lines)
+        print('[Info] data_lines: {}'.format(n_all))
 
-            out_path = os.path.join(error2_dir, "{}.jpg".format(idx))
-            print('out_path: {}'.format(out_path))
+        for data_line in data_lines:
+            url, angle = data_line.split(',')
+            angle = int(angle)
+            if is_vpf:
+                x_angle = self.process_img_vpf(url)
+            else:
+                x_angle = self.process_img_url(url)
 
-            cv2.imwrite(out_path, img_bgr)
-            show_img_bgr(img_bgr)
+            x_angle = int(x_angle)
+            if angle == x_angle:
+                n_right += 1
+                print('[Info] 正确')
+
+            out_list = [url, str(angle), str(x_angle)]
+            out_line = ",".join(out_list)
+            write_line(out_file, out_line)
             print('-' * 50)
 
-        print('[Info] 完成!')
+        print('[Info] 正确率: {}'.format(safe_div(n_right, n_all)))
+        print('[Info] 完成! {}'.format(out_file))
 
 
 def main():
     pt = ProblemTester()
-    # pt.process_1000_items()
-    pt.demo_of_img_dir()
+    pt.process_1000_items()
+    # pt.evaluate_bad_cases()
 
 
 if __name__ == '__main__':

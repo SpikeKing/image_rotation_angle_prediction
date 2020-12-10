@@ -82,7 +82,7 @@ class DatasetFilter(object):
 
     def filter_checked_urls(self):
         in_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_r_txt')
-        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_448r_urls_out_{}'.format(get_current_time_str()))
+        out_dir = os.path.join(DATA_DIR, 'datasets_v4_checked_r_urls_out_{}'.format(get_current_time_str()))
         mkdir_if_not_exist(out_dir)
 
         paths_list, names_list = traverse_dir_files(in_dir)

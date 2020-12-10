@@ -5,13 +5,15 @@ Copyright (c) 2019. All rights reserved.
 Created by C. L. Wang on 2020/3/13
 """
 
+import cv2
+import numpy as np
+
+
 def draw_line_len(img_bgr, start_p, v_length, v_arrow, is_new=True, is_show=False, save_name=None):
     """
     绘制直线
     """
-    import cv2
     import copy
-    import numpy as np
 
     if is_new:
         img_bgr = copy.deepcopy(img_bgr)
@@ -26,7 +28,6 @@ def draw_line_len(img_bgr, start_p, v_length, v_arrow, is_new=True, is_show=Fals
 
 
 def draw_text(img_bgr, text, org=(3, 20), color=(0, 0, 255)):
-    import cv2
     h, w, _ = img_bgr.shape
     m = max(h, w)
     text = str(text)
@@ -45,9 +46,7 @@ def draw_eyes(img_bgr, eyes_landmarks, radius, offsets_list, is_new=True, is_sho
     """
     绘制图像
     """
-    import cv2
     import copy
-    import numpy as np
 
     if is_new:
         img_bgr = copy.deepcopy(img_bgr)
@@ -112,7 +111,6 @@ def draw_box(img_bgr, box, color=(0, 0, 255), is_show=True, is_new=True):
     """
     绘制box
     """
-    import cv2
     import copy
     import matplotlib.pyplot as plt
 
@@ -141,7 +139,6 @@ def draw_points(img_bgr, points, is_new=True, save_name=None):
     """
     绘制多个点
     """
-    import cv2
     import copy
     import matplotlib.pyplot as plt
 
@@ -545,9 +542,6 @@ def rotate_img_with_bound(img_np, angle):
     旋转图像角度
     注意angle是顺时针还是逆时针
     """
-    import cv2
-    import numpy as np
-
     # grab the dimensions of the image and then determine the
     # center
     (h, w) = img_np.shape[:2]

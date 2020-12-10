@@ -51,19 +51,21 @@ class RealEvaluation(object):
             #     break
 
     def process(self):
-        file_path = os.path.join(DATA_DIR, 'test_1000.txt')
-        out_file = os.path.join(DATA_DIR, 'test_1000_res.{}.txt'.format(get_current_time_str()))
+        file_path = os.path.join(DATA_DIR, 'test_400.20201208.txt')
+        out_file = os.path.join(DATA_DIR, 'test_400_res.{}.20201208.txt'.format(get_current_time_str()))
 
         data_lines = read_file(file_path)
 
         for idx, data_line in enumerate(data_lines):
-            img_url, angle = data_line.split('\t')
+            # img_url, angle = data_line.split('\t')
+            img_url = data_line
             img_url = img_url.split('?')[0]
-            print('[Info] img_url: {}, angle: {}'.format(img_url, angle))
-            angle = int(angle)
+            # print('[Info] img_url: {}, angle: {}'.format(img_url, angle))
+            print('[Info] img_url: {}'.format(img_url))
+
             try:
-                uc_dict = get_uc_rotation_vpf_service(img_url)
-                uc_angle = int(uc_dict['data']['angle'])
+                uc_dict = get_trt_rotation_vpf_service(img_url)
+                uc_angle = int(uc_dict['data']['data']['angle'])
             except Exception as e:
                 uc_angle = -1
             print('[Info] uc_angle: {}'.format(uc_angle))
@@ -75,6 +77,8 @@ class RealEvaluation(object):
                 dmy_angle = -1
             print('[Info] dmy_angle: {}'.format(dmy_angle))
 
+            angle = int(uc_angle)
+
             is_dmy = 1 if dmy_angle == angle else 0
             is_uc = 1 if uc_angle == angle else 0
 
@@ -84,6 +88,34 @@ class RealEvaluation(object):
             write_line(out_file, out_line)
             print('[Info] idx: {}'.format(idx))
             print('-' * 50)
+
+    def add_index(self):
+        in_file = os.path.join(DATA_DIR, 'test_400.20201208.txt')
+        in_file_2 = os.path.join(DATA_DIR, 'test_400_res.20201208103631.20201208.csv')
+        out_file = os.path.join(DATA_DIR, 'test_400_res.idx.2.20201208.csv')
+        data_lines = read_file(in_file)
+
+        out_url_format = "http://eps.proxy.taobao.org/#/user/task/data/5fc9b233f6f8fdf602c5d61b/{}"
+
+        url_idx_dict = dict()
+        for idx, data_line in enumerate(data_lines):
+            img_url = data_line.split('?')[0]
+            url_idx_dict[img_url] = idx
+
+        data_lines = read_file(in_file_2)
+        for idx, data_line in enumerate(data_lines):
+            if idx == 0:
+                continue
+            img_url, angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
+            test_idx = url_idx_dict[img_url]
+            out_url = out_url_format.format(test_idx)
+            out_items = [img_url, str(test_idx), out_url, str(angle), str(dmy_angle), str(is_dmy), str(uc_angle), str(is_uc)]
+            print('[Info] out_items: {}'.format(out_items))
+            out_line = ",".join(out_items)
+            write_line(out_file, out_line)
+
+        print('[Info] 处理完成!')
+
 
     def generate_angle_imgs(self):
         img_dir = os.path.join(DATA_DIR, 'test_1000_out')
@@ -182,7 +214,9 @@ class RealEvaluation(object):
 
 def main():
     reo = RealEvaluation()
-    reo.modify_data()
+    # reo.process()
+    reo.add_index()
+    # reo.modify_data()
     # reo.generate_angle_imgs()
     # reo.generate_4a_dmy()
 

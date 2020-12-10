@@ -15,8 +15,14 @@ from utils import generate_rotated_image
 
 
 def main():
-    img_path = os.path.join(DATA_DIR, 'error_imgs', 'error1_20201125.0.jpg')
+    img_path = os.path.join(DATA_DIR, 'error2.png')
+    out_path = os.path.join(DATA_DIR, 'error2.out.jpg')
+    # im = cv2.imread(img_path, flags=cv2.IMREAD_UNCHANGED)
     im = cv2.imread(img_path)
+    cv2.imwrite(out_path, im)
+    show_img_bgr(im)
+    im = cv2.cvtColor(im, cv2.COLOR_BGRA2BGR)
+    im = im.astype(np.uint8)
     show_img_bgr(im)
     angle = 90
     new_im1 = rotate_img_for_4angle(im, (360 - angle) % 360)
