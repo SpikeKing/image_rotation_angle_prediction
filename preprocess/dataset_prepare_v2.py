@@ -220,8 +220,8 @@ class DatasetPrepareV2(object):
             data_lines = read_file(path)
             print('[Info] samples: {}'.format(len(data_lines)))
             for idx, data_line in enumerate(data_lines):
-                if idx == 60:
-                    break
+                # if idx == 60:
+                #     break
 
                 if idx in idx_list:
                     print('[Info] idx: {} 已经处理完成!'.format(idx))
