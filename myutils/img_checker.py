@@ -85,9 +85,7 @@ def check_img(path, size):
 
     if not is_good:
         print('[Info] error path: {}'.format(path))
-        os.remove(path)
-    # else:
-    #     print('[Info] path: {}'.format(path))
+        # os.remove(path)
 
 
 def check_error(img_dir, n_prc, size):
