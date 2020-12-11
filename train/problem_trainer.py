@@ -248,7 +248,7 @@ class ProblemTrainer(object):
         reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
         tensorboard = TensorBoard()
 
-        n_workers = 10
+        n_workers = 5
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
