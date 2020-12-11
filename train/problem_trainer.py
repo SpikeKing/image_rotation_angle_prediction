@@ -55,7 +55,7 @@ class ProblemTrainer(object):
         if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_base224_20201205_2.1.h5')
         elif self.mode == "mobilenetv2" and self.input_shape[0] == 448:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_448_20201206.2.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_pg448_20201211.1.hdf5')
         elif self.mode == "resnet50":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_224_20201206.3.hdf5')
 
@@ -248,7 +248,7 @@ class ProblemTrainer(object):
         reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
         tensorboard = TensorBoard()
 
-        n_workers = 20
+        n_workers = 10
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
