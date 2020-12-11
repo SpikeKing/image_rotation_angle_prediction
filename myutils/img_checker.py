@@ -73,6 +73,7 @@ def traverse_dir_files(root_dir, ext=None):
 
 
 def check_img(path, size):
+    print('[Info]' + '-' * 50)
     is_good = True
     try:
         img_bgr = cv2.imread(path)
