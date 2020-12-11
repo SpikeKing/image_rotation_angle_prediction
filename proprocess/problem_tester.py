@@ -27,9 +27,10 @@ from root_dir import DATA_DIR
 
 class ProblemTester(object):
     def __init__(self):
-        self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
+        # self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
         # self.model_name = "rotnet_v3_mobilenetv2_448_20201206.2.hdf5"  # 效果不好
         # self.model_name = "rotnet_v3_resnet50_224_20201207.3.hdf5"
+        self.model_name = "rotnet_v3_mobilenetv2_pg448_20201211.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
@@ -97,10 +98,10 @@ class ProblemTester(object):
             r_angle = 270
         return r_angle
 
-    def predict_img_bgr_prob(self, img_bgr):
+    def predict_img_bgr_prob(self, img_bgr, img_size=448):
         img_list = []
         # img_size = (224, 224)
-        img_size = (448, 448)
+        img_size = (img_size, img_size)
         img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         img_rgb = cv2.resize(img_rgb, img_size)  # resize
 
@@ -255,11 +256,47 @@ class ProblemTester(object):
         print('[Info] 正确率: {}'.format(safe_div(n_right, n_all)))
         print('[Info] 完成! {}'.format(out_file))
 
+    def evaluate_bad_dir(self):
+        error_dir = os.path.join(DATA_DIR, 'pg_errors')
+        out_dir = os.path.join(DATA_DIR, 'pg_errors_out')
+        mkdir_if_not_exist(out_dir)
+
+        paths_list, names_list = traverse_dir_files(error_dir)
+        for path, name in zip(paths_list, names_list):
+            angle = self.predict_img_path(path)
+            img_bgr = cv2.imread(path)
+            img_out = rotate_img_with_bound(img_bgr, angle)
+            out_name = name.split('.')[0] + "out.jpg"
+            out_path = os.path.join(out_dir, out_name)
+            cv2.imwrite(out_path, img_out)
+            print('[Info] 写入文件完成: {}'.format(out_path))
+
+    def evaluate_pg_res(self):
+        file_path = os.path.join(DATA_DIR, 'pg_dst_result.txt')
+        out_dir = os.path.join(DATA_DIR, 'pg_dst_result_out')
+        mkdir_if_not_exist(out_dir)
+
+        data_lines = read_file(file_path)
+        for data_line in data_lines:
+            items = data_line.split('\t')
+            url = items[0]
+            is_ok, img_bgr = download_url_img(url)
+            angle = self.predict_img_bgr(img_bgr)
+            img_out = rotate_img_with_bound(img_bgr, angle)
+            out_name = url.split('/')[-1]
+            out_path = os.path.join(out_dir, out_name)
+            cv2.imwrite(out_path, img_out)
+            print('[Info] 处理完成: {}'.format(out_path))
+            # print(url)
+            # break
+
 
 def main():
     pt = ProblemTester()
-    pt.process_1000_items()
+    # pt.process_1000_items()
     # pt.evaluate_bad_cases()
+    # pt.evaluate_bad_dir()
+    pt.evaluate_pg_res()
 
 
 if __name__ == '__main__':
