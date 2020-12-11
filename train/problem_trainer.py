@@ -35,9 +35,9 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
+                 input_shape=(448, 448, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
@@ -64,7 +64,7 @@ class ProblemTrainer(object):
         elif self.input_shape[0] == 224 and mode == "resnet50":
             self.batch_size = 128  # batch size, v100
         elif self.input_shape[0] == 448:
-            self.batch_size = 48  # batch size, v100
+            self.batch_size = 96  # batch size, v100
         else:
             self.batch_size = 100
 
