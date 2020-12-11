@@ -164,7 +164,7 @@ class ProblemTrainer(object):
         else:
             train_filenames = train2_filenames + train3_filenames * 4
 
-        test_filenames = test2_filenames + test3_filenames + test_val_filenames
+        test_filenames = test2_filenames + test3_filenames * 4 + test_val_filenames
 
         # train_filenames = test_val_filenames
         # test_filenames = test_val_filenames
