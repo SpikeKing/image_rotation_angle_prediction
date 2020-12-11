@@ -83,6 +83,12 @@ def check_img(path, size):
     except Exception as e:
         is_good = False
 
+    with open(path, 'rb') as f:
+        check_chars = f.read()[-2:]
+    if check_chars != b'\xff\xd9':
+        print('Not complete image')
+        is_good = False
+
     if not is_good:
         print('[Info] error path: {}'.format(path))
         # os.remove(path)
