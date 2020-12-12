@@ -281,7 +281,7 @@ class ProblemTester(object):
         mkdir_if_not_exist(out_dir)
         paths_list, names_list = traverse_dir_files(pg_dir)
         paths_list, names_list = shuffle_two_list(paths_list, names_list)
-        n_count = 1000
+        n_count = 500
         count = 0
         for path, name in zip(paths_list, names_list):
             out_path = os.path.join(out_dir, name)
@@ -310,6 +310,38 @@ class ProblemTester(object):
             # print(url)
             # break
 
+    def process_pigai_csv(self):
+        pigai_path = os.path.join(DATA_DIR, 'detection_all_2w.csv')
+        pigai_right_path = os.path.join(DATA_DIR, 'detection_all_2w_right.txt')
+        create_file(pigai_right_path)
+        data_lines = read_file(pigai_path)
+        url_list = []
+        error_url_list = []
+        for idx, data_line in enumerate(data_lines):
+            if idx == 0:
+                continue
+
+            try:
+                items = data_line.split(';')
+                url = items[5]
+                labeled = json.loads(items[3])
+                shape_list = labeled[0]["polygonal"]["Image"]["shapes"]
+                # print('[Info] url: {}'.format(url))
+                # print('[Info] labeled: {}'.format(labeled))
+                # print('[Info] shape_list: {}'.format(shape_list))
+                if not shape_list:
+                    error_url_list.append(url)
+                    continue
+                else:
+                    url_list.append(url)
+            except Exception as e:
+                continue
+            if idx % 100 == 0:
+                print('[Info] idx: {}'.format(idx))
+        write_list_to_file(pigai_right_path, url_list)
+        print('[Info] 错误: {}'.format(len(error_url_list)))
+        print('[Info] 写入完成: {}, {}'.format(pigai_right_path, len(url_list)))
+
 
 def main():
     pt = ProblemTester()
@@ -318,6 +350,7 @@ def main():
     # pt.evaluate_bad_dir()
     # pt.evaluate_pg_res()
     pt.get_mini_samples()
+    # pt.process_pigai_csv()
 
 
 if __name__ == '__main__':
