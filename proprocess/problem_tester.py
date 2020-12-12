@@ -317,18 +317,21 @@ class ProblemTester(object):
         data_lines = read_file(pigai_path)
         url_list = []
         error_url_list = []
+        url_format = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/yjb219735/ori_imgs/{}"
         for idx, data_line in enumerate(data_lines):
             if idx == 0:
                 continue
 
             try:
                 items = data_line.split(';')
-                url = items[5]
+                url_raw = items[5]
                 labeled = json.loads(items[3])
                 shape_list = labeled[0]["polygonal"]["Image"]["shapes"]
                 # print('[Info] url: {}'.format(url))
                 # print('[Info] labeled: {}'.format(labeled))
                 # print('[Info] shape_list: {}'.format(shape_list))
+                name = url_raw.split('/')[-1]
+                url = url_format.format(name)
                 if not shape_list:
                     error_url_list.append(url)
                     continue
