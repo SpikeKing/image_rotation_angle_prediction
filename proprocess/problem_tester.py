@@ -278,6 +278,7 @@ class ProblemTester(object):
         # pg_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai')
         pg_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
         out_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai_mini')
+        mkdir_if_not_exist(out_dir)
         paths_list, names_list = traverse_dir_files(pg_dir)
         paths_list, names_list = shuffle_two_list(paths_list, names_list)
         n_count = 1000
