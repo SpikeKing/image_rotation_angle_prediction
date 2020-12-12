@@ -30,7 +30,7 @@ class ProblemTester(object):
         # self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
         # self.model_name = "rotnet_v3_mobilenetv2_448_20201206.2.hdf5"  # 效果不好
         # self.model_name = "rotnet_v3_resnet50_224_20201207.3.hdf5"
-        self.model_name = "rotnet_v3_mobilenetv2_pg448_20201211.1.hdf5"
+        self.model_name = "rotnet_v3_mobilenetv2_448_20201212.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
@@ -105,26 +105,29 @@ class ProblemTester(object):
         img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         img_rgb = cv2.resize(img_rgb, img_size)  # resize
 
-        img_list.append(img_rgb)
-        for idx in [90, 180, 270]:
-            img_tmp = rotate_img_for_4angle(img_rgb, idx)
-            img_list.append(img_tmp)
+        # img_list.append(img_rgb)
+        # for idx in [90, 180, 270]:
+        #     img_tmp = rotate_img_for_4angle(img_rgb, idx)
+        #     img_list.append(img_tmp)
 
-        imgs_arr = np.array(img_list)
-        print('[Info] imgs_arr: {}'.format(imgs_arr.shape))
+        # imgs_arr = np.array(img_list)
+        # print('[Info] imgs_arr: {}'.format(imgs_arr.shape))
 
+        imgs_arr = np.expand_dims(img_rgb, axis=0)
         imgs_arr_b = preprocess_input(imgs_arr)
 
         predictions = self.model.predict(imgs_arr_b)
-        angle_dict = collections.defaultdict(int)
-        for i in range(4):
-            probs = predictions[i]
-            angle = (int(K.argmax(probs))) * 90 % 360
-            angle = (angle + 90 * i) % 360
-            angle_dict[angle] += 1
+        # angle_dict = collections.defaultdict(int)
+        # for i in range(4):
+        #     probs = predictions[i]
+        #     angle = (int(K.argmax(probs))) * 90 % 360
+        #     angle = (angle + 90 * i) % 360
+        #     angle_dict[angle] += 1
+        #
+        # angle_list = sort_dict_by_value(angle_dict)
+        probs = predictions[0]
+        angle = (int(K.argmax(probs))) * 90 % 360
 
-        angle_list = sort_dict_by_value(angle_dict)
-        angle = angle_list[0][0]
         return angle
 
     def predict_img_bgr(self, img_bgr):
@@ -271,6 +274,21 @@ class ProblemTester(object):
             cv2.imwrite(out_path, img_out)
             print('[Info] 写入文件完成: {}'.format(out_path))
 
+    def get_mini_samples(self):
+        pg_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai')
+        out_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai_mini')
+        paths_list, names_list = traverse_dir_files(pg_dir)
+        paths_list, names_list = shuffle_two_list(paths_list, names_list)
+        n_count = 1000
+        count = 0
+        for path, name in zip(paths_list, names_list):
+            out_path = os.path.join(out_dir, name)
+            shutil.copy(path, out_path)
+            count += 1
+            if count == n_count:
+                break
+        print('[Info] 处理完成!')
+
     def evaluate_pg_res(self):
         file_path = os.path.join(DATA_DIR, 'pg_dst_result.txt')
         out_dir = os.path.join(DATA_DIR, 'pg_dst_result_out')
@@ -296,7 +314,8 @@ def main():
     # pt.process_1000_items()
     # pt.evaluate_bad_cases()
     # pt.evaluate_bad_dir()
-    pt.evaluate_pg_res()
+    # pt.evaluate_pg_res()
+    pt.get_mini_samples()
 
 
 if __name__ == '__main__':
