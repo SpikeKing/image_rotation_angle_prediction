@@ -22,7 +22,7 @@ from x_utils.vpf_utils import *
 from myutils.cv_utils import *
 from myutils.project_utils import *
 
-from root_dir import DATA_DIR
+from root_dir import DATA_DIR, ROOT_DIR
 
 
 class ProblemTester(object):
@@ -275,7 +275,8 @@ class ProblemTester(object):
             print('[Info] 写入文件完成: {}'.format(out_path))
 
     def get_mini_samples(self):
-        pg_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai')
+        # pg_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai')
+        pg_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
         out_dir = os.path.join(DATA_DIR, 'datasets_v5_pigai_mini')
         paths_list, names_list = traverse_dir_files(pg_dir)
         paths_list, names_list = shuffle_two_list(paths_list, names_list)
