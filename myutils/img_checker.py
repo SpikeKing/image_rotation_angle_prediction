@@ -72,7 +72,7 @@ def traverse_dir_files(root_dir, ext=None):
     return paths_list, names_list
 
 
-def check_img(path, size):
+def check_img(path, size, is_del):
     # print('[Info]' + '-' * 50)
     is_good = True
     try:
@@ -92,10 +92,12 @@ def check_img(path, size):
 
     if not is_good:
         print('[Info] error path: {}'.format(path))
-        # os.remove(path)
+        if is_del == "t" or is_del == "true":
+            os.remove(path)
+            print('[Info] 删除 {}'.format(path))
 
 
-def check_error(img_dir, n_prc, size):
+def check_error(img_dir, n_prc, size, is_del):
     """
     检查错误图像的数量
     """
@@ -106,7 +108,7 @@ def check_error(img_dir, n_prc, size):
     pool = Pool(processes=n_prc)  # 多线程下载
     for idx, path in enumerate(paths_list):
         # check_img(path, size)
-        pool.apply_async(check_img, (path, size))
+        pool.apply_async(check_img, (path, size, is_del))
         if (idx+1) % 1000 == 0:
             print('[Info] idx: {}'.format(idx+1))
 
@@ -125,21 +127,24 @@ def parse_args():
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
     parser.add_argument('-p', dest='n_prc', required=False, default=40, help='进程数', type=str)
     parser.add_argument('-s', dest='size', required=False, default=50, help='最小边长', type=str)
+    parser.add_argument('-d', dest='is_delete', required=False, default=50, help='是否删除', type=str)
     args = parser.parse_args()
 
     in_folder = args.in_folder
     size = int(args.size)
     n_prc = int(args.n_prc)
+    is_del = str(args.is_delete)
     print("文件路径：{}".format(in_folder))
     print("进程数: {}".format(n_prc))
     print("边长: {}".format(size))
+    print("是否删除: {}".format(is_del))
 
-    return in_folder, n_prc, size
+    return in_folder, n_prc, size, is_del
 
 
 def main():
-    arg_in, n_prc, size = parse_args()
-    check_error(arg_in, n_prc, size)
+    arg_in, n_prc, size, is_del = parse_args()
+    check_error(arg_in, n_prc, size, is_del)
 
 
 if __name__ == '__main__':
