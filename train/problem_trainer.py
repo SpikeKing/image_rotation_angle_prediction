@@ -37,7 +37,7 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 input_shape=(448, 448, 3),  # 训练模式，支持224x224x3和448x448x3
+                 input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
@@ -53,7 +53,7 @@ class ProblemTrainer(object):
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
         if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201211_1.2.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201213.2.hdf5')
         elif self.mode == "mobilenetv2" and self.input_shape[0] == 448:
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_448_20201213.1.hdf5')
         elif self.mode == "resnet50":
