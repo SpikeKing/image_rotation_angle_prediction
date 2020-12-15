@@ -36,7 +36,7 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="resnet50v2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
@@ -62,7 +62,7 @@ class ProblemTrainer(object):
 
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
-        elif mode == "resnet50":
+        elif mode == "resnet50v2":
             self.batch_size = 64  # batch size, v100
         else:
             self.batch_size = 100
@@ -95,7 +95,7 @@ class ProblemTrainer(object):
         """
         if mode == "resnet50":
             from tensorflow.keras.applications.resnet_v2 import ResNet50V2
-            model_name = 'rotnet_v3_resnet50_{epoch:02d}_{val_loss:.4f}.hdf5'
+            model_name = 'rotnet_v3_resnet50v2_{epoch:02d}_{val_loss:.4f}.hdf5'
             base_model = ResNet50V2(weights='imagenet', include_top=False, input_shape=self.input_shape)
         elif mode == "mobilenetv2":
             from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
