@@ -30,7 +30,7 @@ class ProblemTester(object):
         # self.model_name = "rotnet_v3_mobilenetv2_base224_20201205_2.1.h5"
         # self.model_name = "rotnet_v3_mobilenetv2_448_20201206.2.hdf5"  # 效果不好
         # self.model_name = "rotnet_v3_resnet50_224_20201207.3.hdf5"
-        self.model_name = "rotnet_v3_mobilenetv2_448_20201212.1.hdf5"
+        self.model_name = "rotnet_v3_mobilenetv2_448_20201213_2.1.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
 
@@ -158,9 +158,10 @@ class ProblemTester(object):
         # angle = res_dict["data"]["angle"]
 
         try:
-            res_dict = get_trt_rotation_vpf_service(img_url)
-            print('[Info] 1223: {}'.format(img_url))
-            angle = res_dict["data"]["data"]["angle"]
+            # res_dict = get_trt_rotation_vpf_service(img_url)
+            res_dict = get_pg_rotation_vpf_service(img_url)
+            # print('[Info] 1223: {}'.format(img_url))
+            angle = res_dict["data"]["angle"]
 
             angle = int(angle)
         except Exception as e:
@@ -297,12 +298,22 @@ class ProblemTester(object):
         mkdir_if_not_exist(out_dir)
 
         data_lines = read_file(file_path)
-        for data_line in data_lines:
+        random.seed(47)
+        random.shuffle(data_lines)
+        for idx, data_line in enumerate(data_lines):
+            if idx == 200:
+                break
+            print('-' * 50)
+            print('[Info] idx: {}'.format(idx))
             items = data_line.split('\t')
             url = items[0]
+
             is_ok, img_bgr = download_url_img(url)
-            angle = self.predict_img_bgr(img_bgr)
-            img_out = rotate_img_with_bound(img_bgr, angle)
+            angle = self.process_img_vpf(url)
+            # angle = self.predict_img_bgr(img_bgr)
+            print('[Info] url: {}'.format(url))
+            print('[Info] angle: {}'.format(angle))
+            img_out = rotate_img_with_bound(img_bgr, -angle)
             out_name = url.split('/')[-1]
             out_path = os.path.join(out_dir, out_name)
             cv2.imwrite(out_path, img_out)
@@ -351,8 +362,8 @@ def main():
     # pt.process_1000_items()
     # pt.evaluate_bad_cases()
     # pt.evaluate_bad_dir()
-    # pt.evaluate_pg_res()
-    pt.get_mini_samples()
+    pt.evaluate_pg_res()
+    # pt.get_mini_samples()
     # pt.process_pigai_csv()
 
 

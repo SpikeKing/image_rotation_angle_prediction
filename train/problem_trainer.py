@@ -11,6 +11,7 @@ import random
 
 # 增加使用GPU
 import tensorflow as tf
+
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.visible_device_list = '0'
 config.gpu_options.allow_growth = True
@@ -37,7 +38,7 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 input_shape=(224, 224, 3),  # 训练模式，支持224x224x3和448x448x3
+                 input_shape=(448, 448, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
@@ -52,18 +53,17 @@ class ProblemTrainer(object):
         self.nb_epoch = nb_epoch  # epoch
         self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
 
-        if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201213.2.hdf5')
-        elif self.mode == "mobilenetv2" and self.input_shape[0] == 448:
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_448_20201213.1.hdf5')
-        elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_224_20201206.3.hdf5')
+        self.model_path = None
+        # if self.mode == "mobilenetv2" and self.input_shape[0] == 224:
+        #     self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201213.2.hdf5')
+        # elif self.mode == "mobilenetv2" and self.input_shape[0] == 448:
+        #     self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_448_20201213.1.hdf5')
+        # elif self.mode == "resnet50":
+        #     self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_224_20201206.3.hdf5')
 
-        if self.input_shape[0] == 224 and mode == "mobilenetv2":
-            self.batch_size = 384  # batch size, v100
-        elif self.input_shape[0] == 224 and mode == "resnet50":
+        if mode == "mobilenetv2":
             self.batch_size = 128  # batch size, v100
-        elif self.input_shape[0] == 448:
+        elif mode == "resnet50":
             self.batch_size = 64  # batch size, v100
         else:
             self.batch_size = 100
@@ -95,9 +95,9 @@ class ProblemTrainer(object):
         :return: 模型名称和基础模型
         """
         if mode == "resnet50":
-            from tensorflow.keras.applications.resnet50 import ResNet50
+            from tensorflow.keras.applications.resnet_v2 import ResNet50V2
             model_name = 'rotnet_v3_resnet50_{epoch:02d}_{val_loss:.4f}.hdf5'
-            base_model = ResNet50(weights='imagenet', include_top=False, input_shape=self.input_shape)
+            base_model = ResNet50V2(weights='imagenet', include_top=False, input_shape=self.input_shape)
         elif mode == "mobilenetv2":
             from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
             model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}_{val_loss:.4f}.hdf5'
@@ -110,7 +110,8 @@ class ProblemTrainer(object):
             layer.trainable = True
 
         x = base_model.output
-        # x = Dense(128, activation="relu")(x)
+        if mode == "mobilenetv2":
+            x = Dense(128, activation="relu")(x)
         x = Flatten()(x)
 
         if self.is_hw_ratio:  # 是否使用宽高比
@@ -142,15 +143,14 @@ class ProblemTrainer(object):
 
     def load_train_and_test_dataset(self):
         # 18w有黑边的数据集
-        # dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-        # train1_filenames = self.get_total_datasets(dataset1_path)
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
+        train1_filenames = self.get_total_datasets(dataset1_path)
 
         # 14w无黑边数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
-        train2_filenames = train2_filenames[:len(train2_filenames)//2]
-        test2_filenames = test2_filenames[:len(test2_filenames)//2]
 
+        # 2w数据集
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
         train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
 
@@ -160,14 +160,11 @@ class ProblemTrainer(object):
 
         # 全部数据集
         if self.input_shape[0] == 448:
-            train_filenames = train2_filenames + train3_filenames * 4
+            train_filenames = train1_filenames + train2_filenames + train3_filenames
         else:
-            train_filenames = train2_filenames + train3_filenames * 4
+            train_filenames = train1_filenames + train2_filenames + train3_filenames
 
-        test_filenames = test2_filenames + test3_filenames * 4 + test_val_filenames
-
-        # train_filenames = test_val_filenames
-        # test_filenames = test_val_filenames
+        test_filenames = test2_filenames + test3_filenames + test_val_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
@@ -211,30 +208,30 @@ class ProblemTrainer(object):
 
     def train(self):
         train_generator = RotNetDataGenerator(
-                self.train_data,
-                input_shape=self.input_shape,
-                batch_size=self.batch_size,
-                preprocess_func=preprocess_input,
-                crop_center=False,
-                crop_largest_rect=True,
-                shuffle=True,
-                is_hw_ratio=self.is_hw_ratio,
-                random_angle=self.random_angle,
-                is_random_crop_h=True
-            )
+            self.train_data,
+            input_shape=self.input_shape,
+            batch_size=self.batch_size,
+            preprocess_func=preprocess_input,
+            crop_center=False,
+            crop_largest_rect=True,
+            shuffle=True,
+            is_hw_ratio=self.is_hw_ratio,
+            random_angle=self.random_angle,
+            is_random_crop_h=True
+        )
 
         test_generator = RotNetDataGenerator(
-                self.test_data,
-                input_shape=self.input_shape,
-                batch_size=self.batch_size,
-                preprocess_func=preprocess_input,
-                crop_center=False,
-                crop_largest_rect=True,
-                is_train=False,  # 关闭训练参数
-                is_hw_ratio=self.is_hw_ratio,
-                random_angle=self.random_angle,
-                is_random_crop_h=True
-            )
+            self.test_data,
+            input_shape=self.input_shape,
+            batch_size=self.batch_size,
+            preprocess_func=preprocess_input,
+            crop_center=False,
+            crop_largest_rect=True,
+            is_train=False,  # 关闭训练参数
+            is_hw_ratio=self.is_hw_ratio,
+            random_angle=self.random_angle,
+            is_random_crop_h=True
+        )
 
         steps_per_epoch = len(self.train_data) // self.batch_size
         validation_steps = len(self.test_data) // self.batch_size
