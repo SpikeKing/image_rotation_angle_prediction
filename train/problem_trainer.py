@@ -38,7 +38,6 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="mobilenetv2",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 input_shape=(448, 448, 3),  # 训练模式，支持224x224x3和448x448x3
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
@@ -47,7 +46,7 @@ class ProblemTrainer(object):
 
         self.mode = mode  # 训练模式
         self.nb_classes = nb_classes  # 类别数
-        self.input_shape = input_shape  # 输入图像尺寸
+        self.input_shape = (448, 448, 3)  # 输入图像尺寸
         self.random_angle = random_angle  # 随机角度
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.nb_epoch = nb_epoch  # epoch
