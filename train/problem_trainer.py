@@ -93,7 +93,7 @@ class ProblemTrainer(object):
         :param mode: 模型类型
         :return: 模型名称和基础模型
         """
-        if mode == "resnet50":
+        if mode == "resnet50v2":
             from tensorflow.keras.applications.resnet_v2 import ResNet50V2
             model_name = 'rotnet_v3_resnet50v2_{epoch:02d}_{val_loss:.4f}.hdf5'
             base_model = ResNet50V2(weights='imagenet', include_top=False, input_shape=self.input_shape)
