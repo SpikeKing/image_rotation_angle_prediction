@@ -141,7 +141,7 @@ class ProblemTrainer(object):
     def load_train_and_test_dataset(self):
         # 18w有黑边的数据集
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-        train1_filenames = self.get_total_datasets(dataset1_path)
+        train1_filenames = self.get_total_datasets(dataset1_path, sample_ratio=0.5)
 
         # 14w无黑边数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
@@ -189,12 +189,17 @@ class ProblemTrainer(object):
         return train_filenames, test_filenames
 
     @staticmethod
-    def get_total_datasets(img_dir):
+    def get_total_datasets(img_dir, sample_ratio=1.0):
         """
         获取全部数据
         """
         image_paths, _ = traverse_dir_files(img_dir, is_sorted=False, ext="jpg")
         random.shuffle(image_paths)
+
+        if sample_ratio < 1.0:
+            n_paths = len(image_paths)
+            rn_paths = int(n_paths * sample_ratio)
+            image_paths = image_paths[:rn_paths]
 
         print('[Info] ' + '-' * 50)
         print('[Info] img_dir: {}'.format(img_dir))
