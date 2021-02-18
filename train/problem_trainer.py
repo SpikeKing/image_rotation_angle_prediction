@@ -141,8 +141,8 @@ class ProblemTrainer(object):
     def load_train_and_test_dataset(self):
         # 18w有黑边的数据集
         # dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-        # 3.5w整页数据
-        dataset1_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/full_page_imgs_1024"
+        # 9w整页数据
+        dataset1_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/ps_datasets_v2/images"
         train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
 
         # 14w无黑边数据
@@ -151,8 +151,8 @@ class ProblemTrainer(object):
 
         # 2w数据集
         # dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
-        # 9w数据
-        dataset3_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/ps_datasets_v2/images"
+        # 3.5w整页数据
+        dataset3_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/full_page_imgs_1024"
         train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
 
         # 1k纯粹验证集
