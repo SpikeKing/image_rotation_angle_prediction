@@ -6,8 +6,8 @@ Created by C. L. Wang on 2.12.20
 """
 
 import os
-import sys
 import random
+import sys
 
 # 增加使用GPU
 import tensorflow as tf
@@ -21,7 +21,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard, ReduceLROnPlateau
+from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard, ReduceLROnPlateau
 from tensorflow_core.python.keras import Input
 from tensorflow_core.python.keras.layers import concatenate
 
@@ -57,6 +57,8 @@ class ProblemTrainer(object):
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201213.2.hdf5')
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
+        elif self.mode == "resnet50":
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_01_0.3279.hdf5')
 
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
@@ -263,7 +265,8 @@ class ProblemTrainer(object):
             validation_data=test_generator,
             validation_steps=validation_steps,
             # callbacks=[checkpointer, reduce_lr, tensorboard],
-            callbacks=[checkpointer, reduce_lr],
+            # callbacks=[checkpointer, reduce_lr],
+            callbacks=[checkpointer],
             workers=n_workers,
         )
 
