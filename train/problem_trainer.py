@@ -58,12 +58,12 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_01_0.3279_20210219.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_01_0.1111_20210219.hdf5')
 
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
         elif mode == "resnet50":
-            self.batch_size = 64  # batch size, v100
+            self.batch_size = 32  # batch size, v100
         else:
             self.batch_size = 100
 
@@ -254,7 +254,7 @@ class ProblemTrainer(object):
         reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
         tensorboard = TensorBoard()
 
-        n_workers = 5
+        n_workers = 3
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
