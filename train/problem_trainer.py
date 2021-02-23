@@ -38,7 +38,7 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 random_angle=8,  # 随机10度
+                 random_angle=12,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
                  is_random_crop=True  # 随机高度剪裁
