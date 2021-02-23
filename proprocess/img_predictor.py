@@ -34,7 +34,8 @@ from utils import angle_error, generate_rotated_image, crop_largest_rectangle, r
 class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
-        self.model_name = "rotnet_v3_mobilenetv2_448_20201213_2.1.hdf5"
+        # self.model_name = "rotnet_v3_mobilenetv2_448_20201213_2.1.hdf5"
+        self.model_name = "rotnet_v3_resnet50_best_20210223.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -113,8 +114,8 @@ class ImgPredictor(object):
 
         img_bgr = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-        img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
-        # img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
+        # img_rgb_resized = cv2.resize(img_bgr, (224, 224))  # resize
+        img_rgb_resized = cv2.resize(img_bgr, (448, 448))  # resize
         # img_rgb_resized = resize_image_with_padding(img_bgr, 448)  # pad
 
         img_bgr_b = np.expand_dims(img_rgb_resized, axis=0)
@@ -340,7 +341,7 @@ def demo_of_img_dir():
 
 
 def demo_of_one_img():
-    name = '2.270.jpg'
+    name = 'O1CN01hhyeDt1pwhIMic3nP_!!6000000005425-0-quark.0.jpg'
     img_path = os.path.join(DATA_DIR, 'cases', name)
     r_angle = int(name.split('.')[1])
     ip = ImgPredictor()
@@ -349,12 +350,12 @@ def demo_of_one_img():
 
 
 def main():
-    ip = ImgPredictor()
+    # ip = ImgPredictor()
     # ip.process()
     # ip.process_v2()
     # ip.process_v3()
     # demo_of_img_dir()
-    # demo_of_one_img()
+    demo_of_one_img()
     # demo_of_urls()
 
 

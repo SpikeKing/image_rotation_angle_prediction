@@ -41,7 +41,7 @@ class ProblemTrainer(object):
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
-                 is_random_crop_h=False  # 随机高度剪裁
+                 is_random_crop=True  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -50,7 +50,7 @@ class ProblemTrainer(object):
         self.random_angle = random_angle  # 随机角度
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.nb_epoch = nb_epoch  # epoch
-        self.is_random_crop_h = is_random_crop_h  # 随机高度剪裁
+        self.is_random_crop = is_random_crop  # 随机高度剪裁
 
         self.model_path = None
         if self.mode == "mobilenetv2":
@@ -78,7 +78,7 @@ class ProblemTrainer(object):
         print('[Info] batch_size: {}'.format(self.batch_size))
         print('[Info] nb_epoch: {}'.format(self.nb_epoch))
         print('[Info] random_angle: {}'.format(self.random_angle))
-        print('[Info] is_random_crop_h: {}'.format(self.is_random_crop_h))
+        print('[Info] is_random_crop_h: {}'.format(self.is_random_crop))
         print('[Info] output_dir: {}'.format(self.output_dir))
         print('[Info] ' + "-" * 50)
 
@@ -226,7 +226,7 @@ class ProblemTrainer(object):
             shuffle=True,
             is_hw_ratio=self.is_hw_ratio,
             random_angle=self.random_angle,
-            is_random_crop_h=self.is_random_crop_h
+            is_random_crop=self.is_random_crop
         )
 
         test_generator = RotNetDataGenerator(
@@ -239,7 +239,7 @@ class ProblemTrainer(object):
             is_train=False,  # 关闭训练参数
             is_hw_ratio=self.is_hw_ratio,
             random_angle=self.random_angle,
-            is_random_crop_h=self.is_random_crop_h
+            is_random_crop=self.is_random_crop
         )
 
         steps_per_epoch = len(self.train_data) // self.batch_size

@@ -273,7 +273,7 @@ class RotNetDataGenerator(Iterator):
                  crop_largest_rect=False, shuffle=False, seed=None,
                  is_train=True,
                  is_hw_ratio=False,
-                 is_random_crop_h=False,
+                 is_random_crop=False,
                  random_angle=8,
                  nb_classes=4):
 
@@ -292,7 +292,7 @@ class RotNetDataGenerator(Iterator):
         # 新增参数
         self.is_train = is_train  # 是否增强摆动数据
         self.is_hw_ratio = is_hw_ratio  # 是否增加高宽比例
-        self.is_random_crop_h = is_random_crop_h  # 是否支持高度随机剪裁
+        self.is_random_crop = is_random_crop  # 是否支持高度随机剪裁
         self.random_angle = random_angle
         self.nb_classes = nb_classes
 
@@ -303,7 +303,7 @@ class RotNetDataGenerator(Iterator):
         print('[Info] is_hw_ratio: {}'.format(self.is_hw_ratio))
         print('[Info] random_angle: {}'.format(self.random_angle))
         print('[Info] nb_classes: {}'.format(self.nb_classes))
-        print('[Info] is_random_crop_h: {}'.format(self.is_random_crop_h))
+        print('[Info] is_random_crop_h: {}'.format(self.is_random_crop))
         print('[Info] ' + "-" * 50)
 
         if self.color_mode not in {'rgb', 'grayscale'}:
@@ -374,12 +374,17 @@ class RotNetDataGenerator(Iterator):
                     continue
 
                 # 随机剪裁
-                if self.is_train and self.is_random_crop_h:
+                if self.is_train and self.is_random_crop:
                     if random_prob(0.5):
                         # print('[Info] 随机剪裁')
-                        h, w, _ = image.shape
-                        out_h = int(h // 2)  # mode 1
-                        image = random_crop(image, out_h, w)
+                        if random_prob(0.5):
+                            h, w, _ = image.shape
+                            out_h = int(h // 2)  # mode 1
+                            image = random_crop(image, out_h, w)
+                        else:
+                            h, w, _ = image.shape
+                            out_w = int(w // 2)  # mode 1
+                            image = random_crop(image, h, out_w)
 
             rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
 
