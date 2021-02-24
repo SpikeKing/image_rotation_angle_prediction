@@ -34,6 +34,10 @@ class ImgPredictor(object):
         pass
 
     def save_pb_model(self, model):
+        saved_out_path = os.path.join(DATA_DIR, 'saved_models')
+        model.save(saved_out_path)
+        print('[Info] 存储saved模型完成! {}'.format(saved_out_path))
+
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
         # full_model = full_model.get_concrete_function(
@@ -70,7 +74,8 @@ class ImgPredictor(object):
                           logdir=frozen_out_path,
                           name=f"{frozen_graph_filename}.pbtxt",
                           as_text=True)
-        print('[Info] 存储PB模型完成!')
+
+        print('[Info] 存储PB模型完成! {}'.format(frozen_out_path))
 
     def load_model(self):
         """
