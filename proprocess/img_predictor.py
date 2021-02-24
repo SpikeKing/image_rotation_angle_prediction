@@ -4,20 +4,13 @@
 Copyright (c) 2020. All rights reserved.
 Created by C. L. Wang on 11.11.20
 """
-import cv2
-import copy
-import json
 import os
 import sys
-import numpy as np
-import tensorflow.python.keras.backend as K
+
 import tensorflow as tf
-import tensorflow_core
+import tensorflow.python.keras.backend as K
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
-from tensorflow import keras
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
-from tensorflow_core.python.keras.models import load_model
-from tensorflow_core.python.keras.optimizers import SGD
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
@@ -28,7 +21,7 @@ from myutils.project_utils import *
 from x_utils.vpf_utils import get_uc_rotation_vpf_service
 
 from root_dir import DATA_DIR
-from utils import angle_error, generate_rotated_image, crop_largest_rectangle, rotate
+from utils import angle_error, rotate
 
 
 class ImgPredictor(object):
