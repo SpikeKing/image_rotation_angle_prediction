@@ -35,7 +35,7 @@ class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
         # self.model_name = "rotnet_v3_mobilenetv2_448_20201213_2.1.hdf5"
-        self.model_name = "rotnet_v3_resnet50_best_20210223.hdf5"
+        self.model_name = "rotnet_v3_resnet50_best_20210224.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
@@ -88,7 +88,7 @@ class ImgPredictor(object):
         model_location = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_location, custom_objects=dependencies, compile=False)
 
-        # self.save_pb_model(model)  # 存储pb模型
+        self.save_pb_model(model)  # 存储pb模型
 
         return model
 
@@ -301,8 +301,6 @@ class ImgPredictor(object):
         return angle
 
 
-
-
 def demo_of_urls():
     url_path = os.path.join(DATA_DIR, 'long_text_2020-12-02-09-44-42.txt')
     out_dir = os.path.join(DATA_DIR, 'long_text_2020-12-02-09-44-42-vpf')
@@ -350,12 +348,12 @@ def demo_of_one_img():
 
 
 def main():
-    # ip = ImgPredictor()
+    ip = ImgPredictor()  # 存储模型
     # ip.process()
     # ip.process_v2()
     # ip.process_v3()
     # demo_of_img_dir()
-    demo_of_one_img()
+    # demo_of_one_img()
     # demo_of_urls()
 
 
