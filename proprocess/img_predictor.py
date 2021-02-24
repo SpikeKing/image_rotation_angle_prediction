@@ -36,9 +36,11 @@ class ImgPredictor(object):
     def save_pb_model(self, model):
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
+        # full_model = full_model.get_concrete_function(
+        #     [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype),
+        #      tf.TensorSpec(model.inputs[1].shape, model.inputs[1].dtype)])
         full_model = full_model.get_concrete_function(
-            [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype),
-             tf.TensorSpec(model.inputs[1].shape, model.inputs[1].dtype)])
+            [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype)])
         # Get frozen ConcreteFunction
         frozen_func = convert_variables_to_constants_v2(full_model)
         frozen_func.graph.as_graph_def()
