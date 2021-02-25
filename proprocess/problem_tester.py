@@ -177,8 +177,8 @@ class ProblemTester(object):
             print('[Info] 使用VPF模式!')
         else:
             print('[Info] 使用本地模式')
-        # in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
-        in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
+        # in_file = os.path.join(DATA_DIR, 'test_1000_right.csv')
+        in_file = os.path.join(DATA_DIR, 'test_400_right.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0

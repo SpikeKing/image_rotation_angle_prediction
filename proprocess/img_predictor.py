@@ -28,15 +28,15 @@ class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
         # self.model_name = "rotnet_v3_mobilenetv2_448_20201213_2.1.hdf5"
-        self.model_name = "rotnet_v3_resnet50_best_20210224.hdf5"
+        self.model_name = "rotnet_v3_resnet50_best_20210223.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
 
     def save_pb_model(self, model):
-        saved_out_path = os.path.join(DATA_DIR, 'saved_models')
-        model.save(saved_out_path)
-        print('[Info] 存储saved模型完成! {}'.format(saved_out_path))
+        # saved_out_path = os.path.join(DATA_DIR, 'saved_models')
+        # model.save(saved_out_path)
+        # print('[Info] 存储saved模型完成! {}'.format(saved_out_path))
 
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
@@ -85,10 +85,10 @@ class ImgPredictor(object):
             "angle_error": angle_error
         }
 
-        model_location = os.path.join(DATA_DIR, 'models', self.model_name)
-        model = tf.keras.models.load_model(model_location, custom_objects=dependencies, compile=False)
+        model_path = os.path.join(DATA_DIR, 'models', self.model_name)
+        model = tf.keras.models.load_model(model_path, custom_objects=dependencies, compile=False)
 
-        self.save_pb_model(model)  # 存储pb模型
+        # self.save_pb_model(model)  # 存储pb模型
 
         return model
 
@@ -223,7 +223,7 @@ class ImgPredictor(object):
         """
         处理数据v2
         """
-        in_file = os.path.join(DATA_DIR, 'test_400_res.right.e0.csv')
+        in_file = os.path.join(DATA_DIR, 'test_400_right.csv')
         data_lines = read_file(in_file)
         out_list = []
         n_old_right = 0
@@ -339,7 +339,7 @@ def demo_of_img_dir():
 
 
 def demo_of_one_img():
-    name = 'O1CN01hhyeDt1pwhIMic3nP_!!6000000005425-0-quark.0.jpg'
+    name = 'O1CN01hhkQby1V3vcdS7IlN_!!6000000002598-0-quark.0.jpg'
     img_path = os.path.join(DATA_DIR, 'cases', name)
     r_angle = int(name.split('.')[1])
     ip = ImgPredictor()
@@ -348,12 +348,12 @@ def demo_of_one_img():
 
 
 def main():
-    ip = ImgPredictor()  # 存储模型
+    # ip = ImgPredictor()  # 存储模型
     # ip.process()
     # ip.process_v2()
     # ip.process_v3()
     # demo_of_img_dir()
-    # demo_of_one_img()
+    demo_of_one_img()
     # demo_of_urls()
 
 

@@ -14,7 +14,8 @@ if p not in sys.path:
 
 from root_dir import DATA_DIR
 from myutils.project_utils import *
-from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service
+from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service, \
+    get_rotation_service_v3, get_rotation_service_v4
 
 
 class OnlineEvaluation(object):
@@ -27,12 +28,19 @@ class OnlineEvaluation(object):
         if mode == "trt":
             res_dict = get_trt_rotation_vpf_service(img_url)
             angle = res_dict['data']['angle']
-        if mode == "dmy":
+        elif mode == "dmy":
             res_dict = get_dmy_rotation_vpf_service(img_url)
             angle = res_dict['data']['angel']
-        if mode == "test":
+        elif mode == "test":
             res_dict = get_uc_rotation_vpf_service(img_url)
             angle = res_dict['data']['angle']
+        elif mode == "v3":
+            res_dict = get_rotation_service_v3(img_url)
+            angle = int(res_dict['data']['angle'])
+        elif mode == "v4":
+            res_dict = get_rotation_service_v4(img_url)
+            angle = int(res_dict['data']['angle'])
+
         return angle
 
     def init_urls(self):
@@ -88,7 +96,7 @@ class OnlineEvaluation(object):
         """
         处理数据v3
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_res.right.e2.csv')
+        in_file = os.path.join(DATA_DIR, 'test_1000_right.csv')
         data_lines = read_file(in_file)
         out_list = []
 
@@ -128,10 +136,62 @@ class OnlineEvaluation(object):
             out_list
         )
 
+    @staticmethod
+    def process_thread_right(idx, url, r_angle, out_file):
+        """
+        多进程处理，有正确角度
+        """
+        angel_old = OnlineEvaluation.process_url(url, mode="v3")
+        angel_old = int(angel_old)
+        angel_new = OnlineEvaluation.process_url(url, mode="v4")
+        angel_new = int(angel_new)
+        print('[Info] idx: {},  r_angle: {}, angel_v3: {}, angel_v4: {}'
+              .format(idx, r_angle, angel_old, angel_new))
+        is_old = 0 if r_angle == angel_old else 1
+        is_new = 0 if r_angle == angel_new else 1
+        is_diff = 0 if angel_old == angel_new else 1
+        out_line = ",".join([url, str(r_angle), str(angel_old), str(angel_new),
+                             str(is_old), str(is_new), str(is_diff)])
+        write_line(out_file, out_line)
+
+    def evaluate_csv_right(self):
+        """
+        评估CSV文件
+        """
+        # in_file_name = 'test_400_right'     # 测试400
+        # in_file_name = 'test_1000_right'    # 测试1000
+        # in_file = os.path.join(DATA_DIR, in_file_name + ".csv")
+
+        in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
+        in_file = os.path.join(DATA_DIR, 'page_dataset_raw', in_file_name)  # 输入文件
+
+        data_lines = read_file(in_file)
+
+        if len(data_lines) > 10000:
+            random.shuffle(data_lines)  # 随机生成
+            data_lines = data_lines[:10000]
+
+        out_name = 'check_{}.{}.csv'.format(in_file_name, get_current_time_str())
+        out_file = os.path.join(DATA_DIR, out_name)
+
+        pool = Pool(processes=40)
+        for idx, data_line in enumerate(data_lines):
+            # if idx == 0:
+            #     continue
+            # url, r_angle = data_line.split(',')
+            url = data_line
+            r_angle = 0
+            pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file))
+            # OnlineEvaluation.process_thread(idx, url, r_angle, out_file)
+        pool.close()
+        pool.join()
+
+        print('[Info] 写入文件: {}'.format(out_file))
+
 
 def main():
     oe = OnlineEvaluation()
-    oe.evaluate_1000_right()
+    oe.evaluate_csv_right()
 
 
 if __name__ == '__main__':
