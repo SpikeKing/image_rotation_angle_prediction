@@ -171,7 +171,7 @@ class OnlineEvaluation(object):
         if len(data_lines) > 10000:
             random.seed(47)
             random.shuffle(data_lines)  # 随机生成
-            data_lines = data_lines[:10000]
+            data_lines = data_lines[:500]
 
         out_name = 'check_{}.{}.csv'.format(in_file_name, get_current_time_str())
         out_file = os.path.join(DATA_DIR, out_name)

@@ -158,19 +158,22 @@ class ProblemTrainer(object):
         # 2w数据集
         # dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
         # 3.5w整页数据
-        dataset3_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/full_page_imgs_1024"
+        dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
         train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
+
+        dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_zhengye_3w')
+        train4_filenames, test4_filenames = self.get_split_datasets(dataset4_path)
 
         # 1k纯粹验证集
         dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        train_filenames = train1_filenames + train2_filenames + train3_filenames
+        train_filenames = train1_filenames + train2_filenames + train3_filenames + train4_filenames
 
-        train_filenames = train_filenames * 3  # 2倍数据
+        # train_filenames = train_filenames * 3  # 2倍数据
 
-        test_filenames = test1_filenames + test2_filenames + test3_filenames + test_val_filenames
+        test_filenames = test1_filenames + test2_filenames + test3_filenames + test4_filenames + test_val_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
