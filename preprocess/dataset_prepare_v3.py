@@ -112,6 +112,19 @@ class DatasetGeneratorV2(object):
         print('[Info] 处理完成! {}'.format(file_path))
         return img_urls
 
+    @staticmethod
+    def generate_file_v2(file_path, out_path):
+        data_lines = read_file(file_path)
+        print('[Info] 文件行数: {}'.format(len(data_lines)))
+        url_list = []
+        for data_line in data_lines:
+            data_line = data_line.replace("\'", "\"")
+            data_dict = json.loads(data_line)
+            url = data_dict['url']
+            print('[Info] url: {}'.format(url))
+            url_list.append(url)
+        write_list_to_file(out_path, url_list)
+        print('[Info] 结果: {}'.format(out_path))
 
 def process():
     dir_path = os.path.join(DATA_DIR, 'write_dataset_raw')
@@ -142,8 +155,14 @@ def process():
     print('[Info] 全部处理完成: {}'.format(dir_path))
 
 
+def process_v2():
+    file_path = os.path.join(DATA_DIR, 'write_dataset_raw', 'dump纯手写图片公式文本标注.txt')
+    out_path = os.path.join(DATA_DIR, 'write_dataset_txt', 'dump纯手写图片公式文本标注.out.txt')
+    DatasetGeneratorV2.generate_file_v2(file_path, out_path)
+
+
 def main():
-    process()
+    process_v2()
 
 
 if __name__ == '__main__':
