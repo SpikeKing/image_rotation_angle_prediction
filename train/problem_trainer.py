@@ -145,22 +145,19 @@ class ProblemTrainer(object):
         return model_name, model
 
     def load_train_and_test_dataset(self):
-        # 18w有黑边的数据集
-        # dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v3_187281')
-        # 9w整页数据
+        # 9w query数据
         dataset1_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/ps_datasets_v2/images"
         train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
 
-        # 14w无黑边数据
+        # 14w query数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
 
-        # 2w数据集
-        # dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v5_pigai')
-        # 3.5w整页数据
+        # 5k 题库数据
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
         train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
 
+        # 3w 题库数据
         dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_zhengye_3w')
         train4_filenames, test4_filenames = self.get_split_datasets(dataset4_path)
 
