@@ -176,11 +176,11 @@ class ProblemTrainer(object):
         train_filenames = train1_filenames + train2_filenames + train3_filenames + \
                           train4_filenames + train5_filenames + train6_filenames
 
-        train_filenames = train_filenames * 2
-
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
                          test_val_filenames
+
+        train_filenames = train_filenames * 2 + test_filenames * 5
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
