@@ -80,7 +80,7 @@ class ProblemTester(object):
         """
         model_location = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_location, compile=False)
-        # self.save_pb_model(model)  # 存储pb模型
+        self.save_pb_model(model)  # 存储pb模型
         return model
 
     @staticmethod
@@ -362,7 +362,7 @@ def main():
     # pt.process_1000_items()
     # pt.evaluate_bad_cases()
     # pt.evaluate_bad_dir()
-    pt.evaluate_pg_res()
+    # pt.evaluate_pg_res()
     # pt.get_mini_samples()
     # pt.process_pigai_csv()
 

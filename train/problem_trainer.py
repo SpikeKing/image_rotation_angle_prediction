@@ -165,18 +165,22 @@ class ProblemTrainer(object):
         dataset5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write_4w')
         train5_filenames, test5_filenames = self.get_split_datasets(dataset5_path)
 
-        # 1k纯粹验证集
+        # 3w Query数据
+        dataset6_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write2_3w')
+        train6_filenames, test6_filenames = self.get_split_datasets(dataset6_path)
+
         dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
         train_filenames = train1_filenames + train2_filenames + train3_filenames + \
-                          train4_filenames + train5_filenames
+                          train4_filenames + train5_filenames + train6_filenames
 
-        # train_filenames = train_filenames * 3  # 2倍数据
+        train_filenames = train_filenames * 2
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
-                         test4_filenames + test5_filenames + test_val_filenames
+                         test4_filenames + test5_filenames + test6_filenames + \
+                         test_val_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)

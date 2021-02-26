@@ -156,8 +156,8 @@ def process():
 
 
 def process_v2():
-    file_path = os.path.join(DATA_DIR, 'write_dataset_raw', 'dump纯手写图片公式文本标注.txt')
-    out_path = os.path.join(DATA_DIR, 'write_dataset_txt', 'dump纯手写图片公式文本标注.out.txt')
+    file_path = os.path.join(DATA_DIR, 'write_dataset_raw', 'HW_VAL.txt')
+    out_path = os.path.join(DATA_DIR, 'write_dataset_txt', 'HW_VAL.out.txt')
     DatasetGeneratorV2.generate_file_v2(file_path, out_path)
 
 
