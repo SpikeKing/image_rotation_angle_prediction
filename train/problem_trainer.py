@@ -180,7 +180,7 @@ class ProblemTrainer(object):
                          test4_filenames + test5_filenames + test6_filenames + \
                          test_val_filenames
 
-        train_filenames = train_filenames * 2 + test_filenames * 5
+        train_filenames = train_filenames * 2
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)

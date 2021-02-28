@@ -88,7 +88,7 @@ class ImgPredictor(object):
         model_path = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_path, custom_objects=dependencies, compile=False)
 
-        # self.save_pb_model(model)  # 存储pb模型
+        self.save_pb_model(model)  # 存储pb模型
 
         return model
 
@@ -348,12 +348,12 @@ def demo_of_one_img():
 
 
 def main():
-    # ip = ImgPredictor()  # 存储模型
+    ip = ImgPredictor()  # 存储模型
     # ip.process()
     # ip.process_v2()
     # ip.process_v3()
     # demo_of_img_dir()
-    demo_of_one_img()
+    # demo_of_one_img()
     # demo_of_urls()
 
 
