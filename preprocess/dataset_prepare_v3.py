@@ -98,10 +98,16 @@ class DatasetGeneratorV2(object):
             # print('[Info] idx: {}'.format(idx))
             bbox_yolo_list = image_dict[image_name]
             image_url = url_format.format(image_name)
-            if len(bbox_yolo_list) == 0:
+
+            if len(bbox_yolo_list) <= 5:
                 n_error += 1
                 error_urls.append(image_url)
                 continue
+
+            if image_name == "d55ec611acbc3c23894651ec72bbc29":
+                print(image_url)
+                print(image_dict[image_name])
+                raise Exception("x")
             img_urls.append(image_url)
 
         print('[Info] 全部URL: {}, 正确: {}, 错误: {}'.format(len(image_name_list), len(img_urls), len(error_urls)))
@@ -110,37 +116,42 @@ class DatasetGeneratorV2(object):
         # write_list_to_file(err_file_path, error_urls)
 
         print('[Info] 处理完成! {}'.format(file_path))
-        return img_urls
+        return img_urls, error_urls
 
     @staticmethod
     def generate_file_v2(file_path, out_path):
         data_lines = read_file(file_path)
         print('[Info] 文件行数: {}'.format(len(data_lines)))
         url_list = []
+        url_format = "http://sm-transfer.oss-cn-hangzhou.aliyuncs.com/yjb219735/ori_imgs/{}"
         for data_line in data_lines:
             data_line = data_line.replace("\'", "\"")
             data_dict = json.loads(data_line)
             url = data_dict['url']
+            url = url_format.format(url)
             print('[Info] url: {}'.format(url))
             url_list.append(url)
         write_list_to_file(out_path, url_list)
         print('[Info] 结果: {}'.format(out_path))
 
+
 def process():
-    dir_path = os.path.join(DATA_DIR, 'write_dataset_raw')
+    dir_path = os.path.join(DATA_DIR, 'page_dataset_json')
     paths_list, names_list = traverse_dir_files(dir_path)
 
-    out_dataset_dir = os.path.join(DATA_DIR, 'write_dataset_txt')
+    out_dataset_dir = os.path.join(DATA_DIR, 'page_dataset_txt')
     mkdir_if_not_exist(out_dataset_dir)
-    out_file_path = os.path.join(out_dataset_dir, 'write_img_urls.{}.txt'.format(get_current_time_str()))
-    # err_file_path = os.path.join(out_dataset_dir, 'err_urls.{}.txt'.format(get_current_time_str()))
+    out_file_path = os.path.join(out_dataset_dir, 'page_img_urls.{}.txt'.format(get_current_time_str()))
+    err_file_path = os.path.join(out_dataset_dir, 'err_urls.{}.txt'.format(get_current_time_str()))
 
     pool = Pool(processes=20)
 
     all_img_urls = []
+    all_error_urls = []
     for file_idx, (path, name) in enumerate(zip(paths_list, names_list)):
-        img_urls = DatasetGeneratorV2.generate_file(path, file_idx, out_file_path)
+        img_urls, error_urls = DatasetGeneratorV2.generate_file(path, file_idx, out_file_path)
         all_img_urls += img_urls
+        all_error_urls += error_urls
         # print('[Info] path: {}'.format(path))
         # pool.apply_async(DatasetGeneratorV2.generate_file, (path, file_idx))
 
@@ -149,6 +160,7 @@ def process():
     print('[Info] 数据: {}'.format(len(all_img_urls)))
     all_img_urls = sorted(all_img_urls)
     write_list_to_file(out_file_path, all_img_urls)
+    write_list_to_file(err_file_path, all_error_urls)
 
     pool.close()
     pool.join()
@@ -156,13 +168,14 @@ def process():
 
 
 def process_v2():
-    file_path = os.path.join(DATA_DIR, 'write_dataset_raw', 'HW_VAL.txt')
-    out_path = os.path.join(DATA_DIR, 'write_dataset_txt', 'HW_VAL.out.txt')
+    file_path = os.path.join(DATA_DIR, 'write_dataset_raw', '7_train_原始图像.txt')
+    out_path = os.path.join(DATA_DIR, 'write_dataset_txt', '7_train_原始图像.out.txt')
     DatasetGeneratorV2.generate_file_v2(file_path, out_path)
 
 
 def main():
     process_v2()
+    # process()
 
 
 if __name__ == '__main__':

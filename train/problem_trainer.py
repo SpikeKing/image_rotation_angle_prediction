@@ -41,7 +41,7 @@ class ProblemTrainer(object):
                  random_angle=8,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
-                 is_random_crop=True  # 随机高度剪裁
+                 is_random_crop=False  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -58,7 +58,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210226.1.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210228.hdf5')
 
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
@@ -157,8 +157,8 @@ class ProblemTrainer(object):
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
         train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
 
-        # 2.5w 题库数据
-        dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_zhengye_3w')
+        # 2.2w 题库数据
+        dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_2w')
         train4_filenames, test4_filenames = self.get_split_datasets(dataset4_path)
 
         # 4w 手写数据
@@ -169,18 +169,23 @@ class ProblemTrainer(object):
         dataset6_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write2_3w')
         train6_filenames, test6_filenames = self.get_split_datasets(dataset6_path)
 
+        # 2.2w 题库修改数据
+        dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
+        train7_filenames, test7_filenames = self.get_split_datasets(dataset7_path)
+
         dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        train_filenames = train1_filenames + train2_filenames + train3_filenames + \
-                          train4_filenames + train5_filenames + train6_filenames
+        train_filenames = train1_filenames + train2_filenames + train3_filenames * 4 + \
+                          train4_filenames + train5_filenames * 3 + train6_filenames * 3 + \
+                          train7_filenames
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
-                         test_val_filenames
+                         test7_filenames + test_val_filenames
 
-        train_filenames = train_filenames * 2
+        train_filenames = train_filenames + test_filenames * 4
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
