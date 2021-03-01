@@ -14,6 +14,7 @@ if p not in sys.path:
 
 from root_dir import DATA_DIR
 from myutils.project_utils import *
+from myutils.cv_utils import *
 from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service, \
     get_rotation_service_v3, get_rotation_service_v4
 
@@ -92,49 +93,43 @@ class OnlineEvaluation(object):
         pool.close()
         pool.join()
 
-    def evaluate_1000_right(self):
+    @staticmethod
+    def process_url_and_download(data_line, out_dir, idx, names_list):
+        url = data_line
+        name = url.split("?")[0].split("/")[-1]
+        if name in names_list:
+            print('[Info] 已处理: {}'.format(name))
+            return
+        is_ok, img_bgr = download_url_img(url)
+        angel_new = OnlineEvaluation.process_url(url, mode="v4")
+        img_bgr = rotate_img_for_4angle(img_bgr, angel_new)
+        out_file = os.path.join(out_dir, name)
+        print("[Info] idx: {}, out_file: {}".format(idx, out_file))
+        cv2.imwrite(out_file, img_bgr)
+
+    def evaluate_url_and_download(self):
         """
-        处理数据v3
+        处理数据
         """
-        in_file = os.path.join(DATA_DIR, 'test_1000_right.csv')
+        in_file = os.path.join(DATA_DIR, 'test_200_20210301.txt')
+        out_dir = os.path.join(DATA_DIR, 'test_200_20210301')
+
+        paths_list, names_list = traverse_dir_files(out_dir)
+        mkdir_if_not_exist(out_dir)
+
         data_lines = read_file(in_file)
-        out_list = []
 
-        n_old_right, n_right, n_all, n_error = 0, 0, 0, 0
+        pool = Pool(processes=40)
+
         for idx, data_line in enumerate(data_lines):
-            if idx == 0:
-                continue
-            url, r_angle, dmy_angle, is_dmy, uc_angle, is_uc = data_line.split(',')
+            OnlineEvaluation.process_url_and_download(data_line, out_dir, idx, names_list)
+            # pool.apply_async(OnlineEvaluation.process_url_and_download, (data_line, out_dir, idx, names_list))
 
-            uc_angle = int(uc_angle)
-            uc_is_ok = int(is_uc)
-            r_angle = int(r_angle)
+        pool.close()
+        pool.join()
 
-            x_angle = self.process_url(url, mode="test")
-            x_angle = int(x_angle)
+        print('[Info] 处理完成')
 
-            x_is_ok = 1 if x_angle == r_angle else 0
-            if uc_is_ok == 1:
-                n_old_right += 1
-            if x_angle == r_angle:
-                print('[Info] {} 预测正确 {} - {}! {}'.format(idx, x_angle, r_angle, url))
-                n_right += 1
-            else:
-                print('[Info] {} 预测错误 {} - {}! {}'.format(idx, x_angle, r_angle, url))
-                n_error += 1
-            n_all += 1
-
-            out_list.append([url, r_angle, dmy_angle, is_dmy, uc_angle, uc_is_ok, x_angle, x_is_ok])
-
-        print('[Info] 最好正确率: {} - {} / {}'.format(safe_div(n_old_right, n_all), n_old_right, n_all))
-        print('[Info] 当前正确率: {} - {} / {}'.format(safe_div(n_right, n_all), n_right, n_all))
-
-        out_file = os.path.join(DATA_DIR, 'check_{}.e{}.xlsx'.format(safe_div(n_right, n_all), n_error))
-        write_list_to_excel(
-            out_file,
-            ["url", "r_angle", "dmy_angle", "is_dmy", "uc_angle", "uc_is_ok", "x_angle", "x_is_ok"],
-            out_list
-        )
 
     @staticmethod
     def process_thread_right(idx, url, r_angle, out_file):
@@ -163,11 +158,11 @@ class OnlineEvaluation(object):
         # in_file_name = 'test_1000_right'    # 测试1000
         # in_file = os.path.join(DATA_DIR, in_file_name + ".csv")
 
-        in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
+        # in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
         # in_file_name = "dump纯手写图片公式文本标注.out"
         # in_file_name = "7_train_原始图像.out"
-        # in_file_name = "HW_TRAIN.out"
-        in_file = os.path.join(DATA_DIR, 'page_dataset_out', in_file_name+".txt")  # 输入文件
+        in_file_name = "HW_TRAIN.out"
+        in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         data_lines = read_file(in_file)
 
@@ -200,7 +195,8 @@ class OnlineEvaluation(object):
 
 def main():
     oe = OnlineEvaluation()
-    oe.evaluate_csv_right()
+    # oe.evaluate_csv_right()
+    oe.evaluate_url_and_download()
 
 
 if __name__ == '__main__':
