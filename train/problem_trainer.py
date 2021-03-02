@@ -146,7 +146,7 @@ class ProblemTrainer(object):
 
     def load_train_and_test_dataset(self):
         # 9w query数据
-        dataset1_path = "/ProjectRoot/workspace/problems-segmentation-yolov5/mydata/ps_datasets_v2/images"
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
         train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
 
         # 14w query数据
@@ -177,8 +177,8 @@ class ProblemTrainer(object):
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        train_filenames = train1_filenames + train2_filenames + train3_filenames * 4 + \
-                          train4_filenames + train5_filenames * 3 + train6_filenames * 3 + \
+        train_filenames = train1_filenames + train2_filenames + train3_filenames * 2 + \
+                          train4_filenames + train5_filenames + train6_filenames * 4 + \
                           train7_filenames + test_val_filenames * 4
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
