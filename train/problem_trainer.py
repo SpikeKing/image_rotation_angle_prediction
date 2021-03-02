@@ -146,6 +146,10 @@ class ProblemTrainer(object):
         return model_name, model
 
     def load_train_and_test_dataset(self):
+        # 2.2w 题库修改数据
+        dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_formula')
+        train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path)
+
         # 14w query数据
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
         train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
@@ -180,11 +184,11 @@ class ProblemTrainer(object):
         # 全部数据集
         train_filenames = train1_filenames + train2_filenames + train3_filenames * 2 + \
                           train4_filenames + train5_filenames + train6_filenames * 4 + \
-                          train7_filenames + test_val_filenames * 4
+                          train7_filenames + train8_filenames + test_val_filenames * 4
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
-                         test7_filenames + test_val_filenames * 4
+                         test7_filenames + test8_filenames + test_val_filenames * 4
 
         train_filenames = train_filenames + test_filenames
 
