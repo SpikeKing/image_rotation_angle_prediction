@@ -162,6 +162,21 @@ class DatasetGeneratorV2(object):
 
         print('[Info] 处理完成!')
 
+    @staticmethod
+    def check_dataset_file_v2(file_path, out_path):
+        data_lines = read_file(file_path)
+        print('[Info] 行数: {}'.format(len(data_lines)))
+        # pool = Pool(processes=80)
+        for idx, data_line in enumerate(data_lines):
+            img_url = data_line.split("\t")[0]
+            write_line(out_path, img_url)
+            # pool.apply_async(DatasetGeneratorV2.check_url_file, (idx, data_line, out_path))
+
+        # pool.close()
+        # pool.join()
+
+        print('[Info] 处理完成!')
+
 
 
 def process():
@@ -203,9 +218,9 @@ def process_v2():
 
 
 def process_v3():
-    file_path = os.path.join(DATA_DIR, 'ds_angle_solution_30000.txt')
-    out_path = os.path.join(DATA_DIR, 'ds_angle_xiaotu_2w.txt')
-    DatasetGeneratorV2.check_dataset_file(file_path, out_path)
+    file_path = os.path.join(DATA_DIR, 'biaozhu_fix.txt')
+    out_path = os.path.join(DATA_DIR, 'biaozhu_fix.check.txt')
+    DatasetGeneratorV2.check_dataset_file_v2(file_path, out_path)
 
 
 def main():

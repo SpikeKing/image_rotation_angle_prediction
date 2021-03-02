@@ -163,7 +163,7 @@ class OnlineEvaluation(object):
         # in_file_name = "dump纯手写图片公式文本标注.out"
         # in_file_name = "7_train_原始图像.out"
         # in_file_name = "HW_TRAIN.out"
-        in_file_name = "ds_angle_tiku_30000"
+        in_file_name = "biaozhu_fix.check"
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
         print('[Info] in_file: {}'.format(in_file))
 
