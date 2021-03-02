@@ -134,6 +134,35 @@ class DatasetGeneratorV2(object):
         write_list_to_file(out_path, url_list)
         print('[Info] 结果: {}'.format(out_path))
 
+    @staticmethod
+    def check_url_file(idx, data_line, out_path):
+        img_url = data_line.split(",")[0]
+        if img_url.endswith("jpg") or img_url.endswith("png"):
+            is_ok, img_bgr = download_url_img(img_url)
+            try:
+                h, w, c = img_bgr.shape
+                x = min(h, w)
+                if x > 50 and c == 3:
+                    print('[Info] idx: {}, img_url: {}'.format(idx, img_url))
+                    write_line(out_path, img_url)
+            except Exception as e:
+                return
+
+    @staticmethod
+    def check_dataset_file(file_path, out_path):
+        data_lines = read_file(file_path)
+        print('[Info] 行数: {}'.format(len(data_lines)))
+        pool = Pool(processes=80)
+        for idx, data_line in enumerate(data_lines):
+            # DatasetGeneratorV2.check_url_file(idx, data_line, out_path)
+            pool.apply_async(DatasetGeneratorV2.check_url_file, (idx, data_line, out_path))
+
+        pool.close()
+        pool.join()
+
+        print('[Info] 处理完成!')
+
+
 
 def process():
     dir_path = os.path.join(DATA_DIR, 'page_dataset_json')
@@ -173,8 +202,14 @@ def process_v2():
     DatasetGeneratorV2.generate_file_v2(file_path, out_path)
 
 
+def process_v3():
+    file_path = os.path.join(DATA_DIR, 'ds_angle_solution_30000.txt')
+    out_path = os.path.join(DATA_DIR, 'ds_angle_xiaotu_2w.txt')
+    DatasetGeneratorV2.check_dataset_file(file_path, out_path)
+
+
 def main():
-    process_v2()
+    process_v3()
     # process()
 
 

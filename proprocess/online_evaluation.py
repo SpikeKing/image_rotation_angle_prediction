@@ -164,16 +164,16 @@ class OnlineEvaluation(object):
         # in_file_name = "7_train_原始图像.out"
         # in_file_name = "HW_TRAIN.out"
         # in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
-        in_file_name = "pingce_angle_20210302_2000"
+        in_file_name = "ds_angle_xiaotu_2w"
         in_file = os.path.join(DATA_DIR, in_file_name+".txt")
 
         data_lines = read_file(in_file)
         print('[Info] 样本数量: {}'.format(len(data_lines)))
 
-        if len(data_lines) > 2000:
+        if len(data_lines) > 1000:
             random.seed(47)
             random.shuffle(data_lines)  # 随机生成
-            data_lines = data_lines[:2000]
+            data_lines = data_lines[:1000]
 
         out_name = 'check_{}.{}.csv'.format(in_file_name, get_current_time_str())
         out_file = os.path.join(DATA_DIR, out_name)
