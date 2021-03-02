@@ -166,6 +166,7 @@ class OnlineEvaluation(object):
         # in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
         in_file_name = "ds_angle_xiaotu_2w"
         in_file = os.path.join(DATA_DIR, in_file_name+".txt")
+        print('[Info] in_file: {}'.format(in_file))
 
         data_lines = read_file(in_file)
         print('[Info] 样本数量: {}'.format(len(data_lines)))
