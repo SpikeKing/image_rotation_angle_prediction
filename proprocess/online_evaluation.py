@@ -111,8 +111,8 @@ class OnlineEvaluation(object):
         """
         处理数据
         """
-        in_file = os.path.join(DATA_DIR, 'test_200_20210301.txt')
-        out_dir = os.path.join(DATA_DIR, 'test_200_20210301')
+        in_file = os.path.join(DATA_DIR, 'pingce_angle_20210302_2000.txt')
+        out_dir = os.path.join(DATA_DIR, 'test_2000_20210302')
 
         paths_list, names_list = traverse_dir_files(out_dir)
         mkdir_if_not_exist(out_dir)
@@ -136,6 +136,7 @@ class OnlineEvaluation(object):
         """
         多进程处理，有正确角度
         """
+        print('[Info] url: {}'.format(url))
         r_angle = int(r_angle)
         angel_old = OnlineEvaluation.process_url(url, mode="v3")
         angel_old = int(angel_old)
@@ -161,10 +162,13 @@ class OnlineEvaluation(object):
         # in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
         # in_file_name = "dump纯手写图片公式文本标注.out"
         # in_file_name = "7_train_原始图像.out"
-        in_file_name = "HW_TRAIN.out"
-        in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
+        # in_file_name = "HW_TRAIN.out"
+        # in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
+        in_file_name = "pingce_angle_20210302_2000"
+        in_file = os.path.join(DATA_DIR, in_file_name+".txt")
 
         data_lines = read_file(in_file)
+        print('[Info] 样本数量: {}'.format(len(data_lines)))
 
         if len(data_lines) > 2000:
             random.seed(47)
@@ -195,8 +199,8 @@ class OnlineEvaluation(object):
 
 def main():
     oe = OnlineEvaluation()
-    # oe.evaluate_csv_right()
-    oe.evaluate_url_and_download()
+    oe.evaluate_csv_right()
+    # oe.evaluate_url_and_download()
 
 
 if __name__ == '__main__':
