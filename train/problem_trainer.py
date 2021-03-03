@@ -58,7 +58,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210302.2.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210303.hdf5')
 
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
@@ -146,7 +146,7 @@ class ProblemTrainer(object):
         return model_name, model
 
     def load_train_and_test_dataset(self):
-        # 2.2w 题库修改数据
+        # 7.3w 题库修改数据
         dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_formula')
         train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path)
 
