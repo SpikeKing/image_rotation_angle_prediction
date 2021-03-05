@@ -181,7 +181,7 @@ class OnlineEvaluation(object):
         mkdir_if_not_exist(out_dir)
         out_file = os.path.join(out_dir, out_name)
 
-        pool = Pool(processes=40)
+        pool = Pool(processes=80)
         for idx, data_line in enumerate(data_lines):
             # 方案1
             if idx == 0:
