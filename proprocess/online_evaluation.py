@@ -155,17 +155,17 @@ class OnlineEvaluation(object):
         """
         评估CSV文件
         """
-        # in_file_name = 'test_400_right'     # 测试400
+        in_file_name = 'test_400_right'     # 测试400
         # in_file_name = 'test_1000_right'    # 测试1000
-        # in_file = os.path.join(DATA_DIR, in_file_name + ".csv")
+        in_file = os.path.join(DATA_DIR, in_file_name + ".csv")
 
         # in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
         # in_file_name = "dump纯手写图片公式文本标注.out"
         # in_file_name = "7_train_原始图像.out"
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
-        in_file_name = "biaozhu_csv_out"
-        in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
+        # in_file_name = "biaozhu_csv_out"
+        # in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
         print('[Info] in_file: {}'.format(in_file))
 
         data_lines = read_file(in_file)
@@ -177,20 +177,22 @@ class OnlineEvaluation(object):
             data_lines = data_lines[:1000]
 
         out_name = 'check_{}.{}.csv'.format(in_file_name, get_current_time_str())
-        out_file = os.path.join(DATA_DIR, out_name)
+        out_dir = os.path.join(DATA_DIR, "check_dir_20210305")
+        mkdir_if_not_exist(out_dir)
+        out_file = os.path.join(out_dir, out_name)
 
         pool = Pool(processes=40)
         for idx, data_line in enumerate(data_lines):
             # 方案1
-            # if idx == 0:
-            #     continue
-            # url, r_angle = data_line.split(',')
+            if idx == 0:
+                continue
+            url, r_angle = data_line.split(',')
 
             # 方案2
-            url, r_angle = data_line, 0
+            # url, r_angle = data_line, 0
 
-            pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file))
-            # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file)
+            # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file))
+            OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file)
 
         pool.close()
         pool.join()

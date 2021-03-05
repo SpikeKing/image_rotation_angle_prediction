@@ -34,7 +34,7 @@ class ImgPredictor(object):
         pass
 
     def save_pb_model(self, model):
-        # saved_out_path = os.path.join(DATA_DIR, 'saved_models')
+        # saved_out_path = os.path.join(DATA_DIR, 'saved_models-{}'.format(get_current_time_str()))
         # model.save(saved_out_path)
         # print('[Info] 存储saved模型完成! {}'.format(saved_out_path))
 
