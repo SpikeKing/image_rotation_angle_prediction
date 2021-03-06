@@ -43,8 +43,12 @@ class ImgPredictor(object):
         # full_model = full_model.get_concrete_function(
         #     [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype),
         #      tf.TensorSpec(model.inputs[1].shape, model.inputs[1].dtype)])
+        inputs_shape = model.inputs[0].shape
+        print('[Info] inputs_shape: {}'.format(inputs_shape))
+        inputs_shape_x = tf.TensorShape((16, 448, 448, 3))
+        print('[Info] inputs_shape_x: {}'.format(inputs_shape_x))
         full_model = full_model.get_concrete_function(
-            [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype)])
+            [tf.TensorSpec(inputs_shape_x, model.inputs[0].dtype)])
         # Get frozen ConcreteFunction
         frozen_func = convert_variables_to_constants_v2(full_model)
         frozen_func.graph.as_graph_def()
