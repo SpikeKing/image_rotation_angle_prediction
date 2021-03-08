@@ -79,19 +79,21 @@ def check_img(path, size, is_del):
         img_bgr = cv2.imread(path)
         h, w, _ = img_bgr.shape
         if h < size or w < size:
+            print('[Info] small path: {}, h: {}, w: {}'.format(path, h, w))
             is_good = False
         img_re = cv2.resize(img_bgr, (224, 224))
     except Exception as e:
+        print('[Info] error path: {}'.format(path))
         is_good = False
 
     with open(path, 'rb') as f:
         check_chars = f.read()[-2:]
     if check_chars != b'\xff\xd9':
-        print('Not complete image')
+        print('[Info] Not complete image path: {}'.format(path))
         is_good = False
 
     if not is_good:
-        print('[Info] error path: {}'.format(path))
+        # print('[Info] error path: {}'.format(path))
         if is_del == "t" or is_del == "true":
             os.remove(path)
             print('[Info] 删除 {}'.format(path))
@@ -125,7 +127,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='压缩图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
-    parser.add_argument('-p', dest='n_prc', required=False, default=40, help='进程数', type=str)
+    parser.add_argument('-p', dest='n_prc', required=False, default=100, help='进程数', type=str)
     parser.add_argument('-s', dest='size', required=False, default=50, help='最小边长', type=str)
     parser.add_argument('-d', dest='is_delete', required=False, default=False, help='是否删除', type=str)
     args = parser.parse_args()
