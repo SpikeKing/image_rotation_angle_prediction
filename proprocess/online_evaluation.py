@@ -16,7 +16,7 @@ from root_dir import DATA_DIR
 from myutils.project_utils import *
 from myutils.cv_utils import *
 from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service, \
-    get_rotation_service_v3, get_rotation_service_v4
+    get_rotation_service_v3, get_rotation_service_v4, get_ocr_angle_service_v4
 
 
 class OnlineEvaluation(object):
@@ -27,22 +27,16 @@ class OnlineEvaluation(object):
     def process_url(img_url, mode="trt"):
         angle = -1
         out_url = ""
-        if mode == "trt":
-            res_dict = get_trt_rotation_vpf_service(img_url)
-            angle = res_dict['data']['angle']
-        elif mode == "dmy":
-            res_dict = get_dmy_rotation_vpf_service(img_url)
-            angle = res_dict['data']['angel']
-        elif mode == "test":
-            res_dict = get_uc_rotation_vpf_service(img_url)
-            angle = res_dict['data']['angle']
-        elif mode == "v3":
+        if mode == "v3":
             res_dict = get_rotation_service_v3(img_url)
             angle = int(res_dict['data']['angle'])
         elif mode == "v4":
             res_dict = get_rotation_service_v4(img_url)
             angle = int(res_dict['data']['angle'])
             out_url = res_dict['data']['image_oss_url']
+        elif mode == "v4-test":
+            res_dict = get_ocr_angle_service_v4(img_url)
+            angle = int(res_dict['data']['data']['angle'])
 
         return angle, out_url
 
@@ -142,7 +136,7 @@ class OnlineEvaluation(object):
         r_angle = int(r_angle)
         angel_old, _ = OnlineEvaluation.process_url(url, mode="v3")
         angel_old = int(angel_old)
-        angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4")
+        angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4-test")
         angel_new = int(angel_new)
         print('[Info] idx: {},  r_angle: {}, angel_v3: {}, angel_v4: {}'
               .format(idx, r_angle, angel_old, angel_new))
@@ -153,10 +147,17 @@ class OnlineEvaluation(object):
                              str(is_old), str(is_new), str(is_diff)])
         write_line(out_file, out_line)
         if write_dir:
-            is_ok, img_bgr = download_url_img(out_v4_url)
-            img_name = url.split('?')[0].split('/')[-1]
-            write_path = os.path.join(write_dir, img_name)
-            cv2.imwrite(write_path, img_bgr)  # 写入图像
+            if out_v4_url:
+                is_ok, img_bgr = download_url_img(out_v4_url)
+                img_name = url.split('?')[0].split('/')[-1]
+                write_path = os.path.join(write_dir, img_name)
+                cv2.imwrite(write_path, img_bgr)  # 写入图像
+            else:
+                is_ok, img_bgr = download_url_img(url)
+                img_rotated = rotate_img_for_4angle(img_bgr, angel_new)
+                img_name = url.split('?')[0].split('/')[-1]
+                write_path = os.path.join(write_dir, img_name)
+                cv2.imwrite(write_path, img_rotated)  # 写入图像
 
     def evaluate_csv_right(self):
         """
@@ -207,8 +208,8 @@ class OnlineEvaluation(object):
             # 方案2
             url, r_angle = data_line, 0
 
-            pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-            # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+            # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+            OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
         pool.close()
         pool.join()
