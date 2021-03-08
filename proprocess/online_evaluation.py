@@ -179,7 +179,7 @@ class OnlineEvaluation(object):
         print('[Info] in_file: {}'.format(in_file))
 
         data_lines = read_file(in_file)
-        print('[Info] 样本数量: {}'.format(len(data_lines)))
+        print('[Info] 样本总量: {}'.format(len(data_lines)))
         if len(data_lines) == 0:
             print('[Info] 文件路径错误: {}'.format(in_file))
             return
@@ -190,6 +190,7 @@ class OnlineEvaluation(object):
             random.shuffle(data_lines)  # 随机生成
             data_lines = data_lines[:2000]
 
+        print('[Info] 样本数量: {}'.format(len(data_lines)))
         time_str = get_current_time_str()
         out_name = 'check_{}.{}.csv'.format(in_file_name, time_str)
         out_dir = os.path.join(DATA_DIR, "check_dir_20210308")
