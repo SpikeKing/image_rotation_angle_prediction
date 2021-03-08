@@ -184,11 +184,11 @@ class OnlineEvaluation(object):
             print('[Info] 文件路径错误: {}'.format(in_file))
             return
 
-        if len(data_lines) > 1000:
+        if len(data_lines) > 2000:
             # random.seed(47)
             random.seed(89)
             random.shuffle(data_lines)  # 随机生成
-            data_lines = data_lines[:1000]
+            data_lines = data_lines[:2000]
 
         time_str = get_current_time_str()
         out_name = 'check_{}.{}.csv'.format(in_file_name, time_str)
