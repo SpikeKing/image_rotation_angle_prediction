@@ -189,11 +189,12 @@ class OnlineEvaluation(object):
             random.shuffle(data_lines)  # 随机生成
             data_lines = data_lines[:1000]
 
-        out_name = 'check_{}.{}.csv'.format(in_file_name, get_current_time_str())
+        time_str = get_current_time_str()
+        out_name = 'check_{}.{}.csv'.format(in_file_name, time_str)
         out_dir = os.path.join(DATA_DIR, "check_dir_20210308")
         mkdir_if_not_exist(out_dir)
         out_file = os.path.join(out_dir, out_name)
-        write_dir = os.path.join(DATA_DIR, 'write_dir_20210308')
+        write_dir = os.path.join(out_dir, 'write_dir_{}'.format(time_str))
         mkdir_if_not_exist(write_dir)
 
         pool = Pool(processes=80)
