@@ -208,8 +208,8 @@ class OnlineEvaluation(object):
             # 方案2
             url, r_angle = data_line, 0
 
-            # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-            OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+            pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+            # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
         pool.close()
         pool.join()
