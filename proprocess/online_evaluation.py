@@ -184,7 +184,8 @@ class OnlineEvaluation(object):
             return
 
         if len(data_lines) > 1000:
-            random.seed(47)
+            # random.seed(47)
+            random.seed(89)
             random.shuffle(data_lines)  # 随机生成
             data_lines = data_lines[:1000]
 
