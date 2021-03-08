@@ -38,10 +38,10 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
-                 random_angle=8,  # 随机10度
+                 random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
-                 is_random_crop=False  # 随机高度剪裁
+                 is_random_crop=True  # 随机高度剪裁
                  ):
 
         self.mode = mode  # 训练模式
@@ -147,8 +147,8 @@ class ProblemTrainer(object):
 
     def load_train_and_test_dataset(self):
         # 7.3w 题库修改数据
-        dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_formula')
-        train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path)
+        # dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_formula')
+        # train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path)
 
         # 14w query数据
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
@@ -182,13 +182,13 @@ class ProblemTrainer(object):
         test_val_filenames = self.get_total_datasets(dataset_val_path)
 
         # 全部数据集
-        train_filenames = train1_filenames + train2_filenames + train3_filenames * 2 + \
-                          train4_filenames + train5_filenames + train6_filenames * 4 + \
-                          train7_filenames + train8_filenames + test_val_filenames * 4
+        train_filenames = train1_filenames + train2_filenames + train3_filenames + \
+                          train4_filenames + train5_filenames + train6_filenames + \
+                          train7_filenames + test_val_filenames * 4
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
-                         test7_filenames + test8_filenames + test_val_filenames * 4
+                         test7_filenames + test_val_filenames * 4
 
         train_filenames = train_filenames + test_filenames
 
