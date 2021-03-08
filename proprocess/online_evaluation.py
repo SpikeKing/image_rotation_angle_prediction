@@ -132,7 +132,7 @@ class OnlineEvaluation(object):
         """
         多进程处理，有正确角度
         """
-        print('[Info] url: {}'.format(url))
+        # print('[Info] idx: {}, url: {}'.format(idx, url))
         r_angle = int(r_angle)
         angel_old, _ = OnlineEvaluation.process_url(url, mode="v3")
         angel_old = int(angel_old)
