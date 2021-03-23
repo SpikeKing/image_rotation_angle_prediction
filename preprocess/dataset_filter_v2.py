@@ -13,7 +13,7 @@ p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
 
-from root_dir import DATA_DIR
+from root_dir import DATA_DIR, ROOT_DIR
 from multiprocessing.pool import Pool
 from myutils.project_utils import *
 
@@ -23,13 +23,14 @@ class DatasetFilterV2(object):
         name = "angle_ds_solution_20210323"
         self.ds_path = os.path.join(DATA_DIR, '{}.txt'.format(name))
         self.filter_path = os.path.join(DATA_DIR, '{}.filter.txt'.format(name))
-        create_file(self.filter_path)
 
     def process(self):
         """
         写入文件ß
         :return:
         """
+        create_file(self.filter_path)
+
         data_lines = read_file(self.ds_path)
         out_urls = []
         for data_line in data_lines:
@@ -63,8 +64,8 @@ class DatasetFilterV2(object):
         print('[Info] {} 处理完成: {}'.format(idx, path))
 
     def filter(self):
-        self.imgs_dir = os.path.join(DATA_DIR, 'angle_ds_answer_20210323')
-        self.out_dir = os.path.join(DATA_DIR, 'angle_ds_answer_20210323_x')
+        self.imgs_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_answer_20210323')
+        self.out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_answer_20210323_x')
         mkdir_if_not_exist(self.out_dir)
         paths_list, names_list = traverse_dir_files(self.imgs_dir)
         print('[Info] 待处理文件数: {}'.format(len(paths_list)))
