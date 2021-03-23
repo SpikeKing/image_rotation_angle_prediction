@@ -145,10 +145,38 @@ class ProblemTrainer(object):
 
         return model_name, model
 
+    def get_xiaotu_filenames(self, prob=0.95):
+        """
+        小图数据集
+        """
+        xt_dataset1 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_answer_20210323_x')
+        xt_dataset2 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_question_20210323_x')
+        xt_dataset3 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_solution_20210323_x')
+        xt1_paths, _ = traverse_dir_files(xt_dataset1)
+        xt2_paths, _ = traverse_dir_files(xt_dataset2)
+        xt3_paths, _ = traverse_dir_files(xt_dataset3)
+
+        image_paths = xt1_paths + xt2_paths + xt3_paths
+        random.shuffle(image_paths)
+
+        n_train_samples = int(len(image_paths) * prob)  # 数据总量
+        train_filenames = image_paths[:n_train_samples]
+        test_filenames = image_paths[n_train_samples:]
+
+        if len(test_filenames) > 10000:
+            test_filenames = test_filenames[:10000]
+
+        print('[Info] ' + '-' * 50)
+        print('[Info] img_dir: {} {} {}'.format(xt_dataset1, xt_dataset2, xt_dataset3))
+        print('[Info] 数据总量: {}, 训练集: {}, 验证集: {}'
+              .format(n_train_samples, len(train_filenames), len(test_filenames)))
+        print('[Info] ' + '-' * 50)
+
+        return train_filenames, test_filenames
+
     def load_train_and_test_dataset(self):
-        # 7.3w 题库修改数据
-        # dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_formula')
-        # train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path)
+        # 30w小图数据集
+        train8_filenames, test8_filenames = self.get_xiaotu_filenames()
 
         # 14w query数据, 已验证
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
@@ -184,11 +212,11 @@ class ProblemTrainer(object):
         # 全部数据集
         train_filenames = train1_filenames + train2_filenames + train3_filenames + \
                           train4_filenames + train5_filenames + train6_filenames + \
-                          train7_filenames + test_val_filenames * 4
+                          train7_filenames + train8_filenames + test_val_filenames * 4
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
-                         test7_filenames + test_val_filenames * 4
+                         test7_filenames + test8_filenames + test_val_filenames * 4
 
         train_filenames = train_filenames
 

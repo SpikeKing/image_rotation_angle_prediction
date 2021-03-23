@@ -83,8 +83,8 @@ class DatasetFilterV2(object):
 
 def main():
     df2 = DatasetFilterV2()
-    df2.process()
-    # df2.filter()
+    # df2.process()
+    df2.filter()
 
 
 if __name__ == '__main__':
