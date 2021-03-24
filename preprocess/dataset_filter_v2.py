@@ -64,8 +64,8 @@ class DatasetFilterV2(object):
         print('[Info] {} 处理完成: {}'.format(idx, path))
 
     def filter(self):
-        self.imgs_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_question_20210323')
-        self.out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_question_20210323_x')
+        self.imgs_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_solution_20210323')
+        self.out_dir = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_solution_20210323_x')
         mkdir_if_not_exist(self.out_dir)
         paths_list, names_list = traverse_dir_files(self.imgs_dir)
         print('[Info] 待处理文件数: {}'.format(len(paths_list)))
