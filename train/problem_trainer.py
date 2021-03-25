@@ -63,8 +63,8 @@ class ProblemTrainer(object):
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
         elif mode == "resnet50":
-            self.batch_size = 32  # batch size, v100
-            # self.batch_size = 16  # batch size, v2080
+            # self.batch_size = 32  # batch size, v100
+            self.batch_size = 16  # batch size, v2080
         else:
             self.batch_size = 100
 
