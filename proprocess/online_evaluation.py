@@ -219,8 +219,8 @@ class OnlineEvaluation(object):
                   "datasets/{}_x/{}.jpg".format(file_name_x, name)
 
             try:
-                # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
             except Exception as e:
                 continue
 
