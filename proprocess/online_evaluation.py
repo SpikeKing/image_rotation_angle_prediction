@@ -185,8 +185,8 @@ class OnlineEvaluation(object):
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
         # in_file_name = "angle_ds_answer_20210323.filter"
-        in_file_name = "angle_ds_question_20210323.filter"
-        # in_file_name = "angle_ds_solution_20210323.filter"
+        # in_file_name = "angle_ds_question_20210323.filter"
+        in_file_name = "angle_ds_solution_20210323.filter"
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
