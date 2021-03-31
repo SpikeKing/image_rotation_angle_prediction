@@ -16,7 +16,7 @@ from root_dir import DATA_DIR
 from myutils.project_utils import *
 from myutils.cv_utils import *
 from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service, \
-    get_rotation_service_v3, get_rotation_service_v4, get_ocr_angle_service_v4
+    get_rotation_service_v3, get_rotation_service_v4, get_ocr_angle_service_v4, get_rotation_service_v4_1
 
 
 class OnlineEvaluation(object):
@@ -33,10 +33,11 @@ class OnlineEvaluation(object):
         elif mode == "v4":
             res_dict = get_rotation_service_v4(img_url)
             angle = int(res_dict['data']['angle'])
-            out_url = res_dict['data']['image_oss_url']
-        elif mode == "v4-test":
-            res_dict = get_ocr_angle_service_v4(img_url)
-            angle = int(res_dict['data']['data']['angle'])
+            out_url = res_dict['data']['rotated_image_url']
+        elif mode == "v4.1":
+            res_dict = get_rotation_service_v4_1(img_url)
+            angle = int(res_dict['data']['angle'])
+            out_url = res_dict['data']['rotated_image_url']
 
         return angle, out_url
 
@@ -134,9 +135,9 @@ class OnlineEvaluation(object):
         """
         # print('[Info] idx: {}, url: {}'.format(idx, url))
         r_angle = int(r_angle)
-        angel_old, _ = OnlineEvaluation.process_url(url, mode="v3")
+        angel_old, _ = OnlineEvaluation.process_url(url, mode="v4")
         angel_old = int(angel_old)
-        angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4-test")
+        angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4.1")
         angel_new = int(angel_new)
         print('[Info] idx: {},  r_angle: {}, angel_v3: {}, angel_v4: {}'
               .format(idx, r_angle, angel_old, angel_new))
@@ -165,8 +166,8 @@ class OnlineEvaluation(object):
         """
         # in_file_name = 'test_400_right'     # 测试400
         # in_file_name = 'test_1000_right'    # 测试1000
-        in_file_name = 'random_1w_urls'    # 测试1w
-        in_file = os.path.join(DATA_DIR, 'test_urls_files', in_file_name + ".csv")
+        # in_file_name = 'random_1w_urls'    # 测试1w
+        # in_file = os.path.join(DATA_DIR, 'test_urls_files', in_file_name + ".csv")
 
         # in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
         # in_file_name = "dump纯手写图片公式文本标注.out"
@@ -174,7 +175,10 @@ class OnlineEvaluation(object):
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        # in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
+        # in_file_name = "angle_ds_answer_20210323.filter"
+        # in_file_name = "angle_ds_question_20210323.filter"
+        in_file_name = "angle_ds_solution_20210323.filter"
+        in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
 
@@ -193,12 +197,12 @@ class OnlineEvaluation(object):
         print('[Info] 样本数量: {}'.format(len(data_lines)))
         time_str = get_current_time_str()
         out_name = 'check_{}.{}.csv'.format(in_file_name, time_str)
-        out_dir = os.path.join(DATA_DIR, "check_dir_20210308")
+        out_dir = os.path.join(DATA_DIR, "check_dir_20210329")
         mkdir_if_not_exist(out_dir)
         out_file = os.path.join(out_dir, out_name)
-        write_dir = os.path.join(out_dir, 'write_dir_{}'.format(time_str))
-        mkdir_if_not_exist(write_dir)
-
+        # write_dir = os.path.join(out_dir, 'write_dir_{}'.format(time_str))
+        # mkdir_if_not_exist(write_dir)
+        write_dir = None
         pool = Pool(processes=80)
         for idx, data_line in enumerate(data_lines):
             # 方案1
@@ -209,8 +213,11 @@ class OnlineEvaluation(object):
             # 方案2
             url, r_angle = data_line, 0
 
-            pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-            # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+            # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+            try:
+                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+            except Exception as e:
+                continue
 
         pool.close()
         pool.join()

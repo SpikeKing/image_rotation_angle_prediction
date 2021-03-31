@@ -26,18 +26,13 @@ from utils import angle_error, rotate
 
 class ImgPredictor(object):
     def __init__(self):
-        # self.model_name = "problem_rotnet_mobilenetv2_20w_20201121.hdf5"
-        # self.model_name = "rotnet_v3_mobilenetv2_448_20201213_2.1.hdf5"
-        self.model_name = "rotnet_v3_resnet50_best_20210301.hdf5"
+        # self.model_name = "rotnet_v3_resnet50_best_20210301.hdf5"
+        self.model_name = "rotnet_v3_resnet50_best_20210329.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
 
     def save_pb_model(self, model):
-        # saved_out_path = os.path.join(DATA_DIR, 'saved_models-{}'.format(get_current_time_str()))
-        # model.save(saved_out_path)
-        # print('[Info] 存储saved模型完成! {}'.format(saved_out_path))
-
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
 
@@ -83,7 +78,7 @@ class ImgPredictor(object):
                           name=f"{frozen_graph_filename}.pbtxt",
                           as_text=True)
 
-        print('[Info] 存储PB模型完成! {}'.format(frozen_out_path))
+        print('[Info] 存储PB模型完成! {}, {}'.format(frozen_out_path, frozen_graph_filename))
 
     def load_model(self):
         """
