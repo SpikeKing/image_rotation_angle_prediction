@@ -213,9 +213,14 @@ class OnlineEvaluation(object):
             # 方案2
             url, r_angle = data_line, 0
 
+            name = url.split('/')[-1].split('.')[0]
+            file_name_x = in_file_name.split('.')[0]
+            url = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/" \
+                  "datasets/{}_x/{}.jpg".format(file_name_x, name)
+
             try:
-                pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
             except Exception as e:
                 continue
 
