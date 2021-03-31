@@ -175,9 +175,9 @@ class OnlineEvaluation(object):
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        # in_file_name = "angle_ds_answer_20210323.filter"
+        in_file_name = "angle_ds_answer_20210323.filter"
         # in_file_name = "angle_ds_question_20210323.filter"
-        in_file_name = "angle_ds_solution_20210323.filter"
+        # in_file_name = "angle_ds_solution_20210323.filter"
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
@@ -213,9 +213,9 @@ class OnlineEvaluation(object):
             # 方案2
             url, r_angle = data_line, 0
 
-            # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
             try:
-                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
             except Exception as e:
                 continue
 
