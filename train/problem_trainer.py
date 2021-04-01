@@ -149,9 +149,9 @@ class ProblemTrainer(object):
         """
         小图数据集
         """
-        xt_dataset1 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_answer_20210323_x')
-        xt_dataset2 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_question_20210323_x')
-        xt_dataset3 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_solution_20210323_x')
+        xt_dataset1 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_answer_20210323_good')
+        xt_dataset2 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_question_20210323_good')
+        xt_dataset3 = os.path.join(ROOT_DIR, '..', 'datasets', 'angle_ds_solution_20210323_good')
         xt1_paths, _ = traverse_dir_files(xt_dataset1)
         xt2_paths, _ = traverse_dir_files(xt_dataset2)
         xt3_paths, _ = traverse_dir_files(xt_dataset3)
@@ -178,48 +178,45 @@ class ProblemTrainer(object):
         # 30w小图数据集
         train8_filenames, test8_filenames = self.get_xiaotu_filenames()
 
-        train_filenames = train8_filenames
-        test_filenames = test8_filenames
+        # 14w query数据, 已验证
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
+        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
 
-        # # 14w query数据, 已验证
-        # dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
-        # train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
-        #
-        # # 12w query数据
-        # dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
-        # train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
-        #
-        # # 5k 题库数据, 已验证
-        # dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
-        # train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
-        #
-        # # 2w 题库数据, 已验证
-        # dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_2w')
-        # train4_filenames, test4_filenames = self.get_split_datasets(dataset4_path)
-        #
-        # # 4w 手写数据, 已验证
-        # dataset5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write_4w')
-        # train5_filenames, test5_filenames = self.get_split_datasets(dataset5_path)
-        #
-        # # 3w Query数据, 已验证
-        # dataset6_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write2_3w')
-        # train6_filenames, test6_filenames = self.get_split_datasets(dataset6_path)
-        #
-        # # 2.2w 题库修改数据, 已验证
-        # dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
-        # train7_filenames, test7_filenames = self.get_split_datasets(dataset7_path)
-        #
-        # dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
-        # test_val_filenames = self.get_total_datasets(dataset_val_path)
-        #
-        # # 全部数据集
-        # train_filenames = train1_filenames + train2_filenames + train3_filenames + \
-        #                   train4_filenames + train5_filenames + train6_filenames + \
-        #                   train7_filenames + train8_filenames + test_val_filenames * 4
-        #
-        # test_filenames = test1_filenames + test2_filenames + test3_filenames + \
-        #                  test4_filenames + test5_filenames + test6_filenames + \
-        #                  test7_filenames + test8_filenames + test_val_filenames * 4
+        # 12w query数据
+        dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
+        train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path)
+
+        # 5k 题库数据, 已验证
+        dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
+        train3_filenames, test3_filenames = self.get_split_datasets(dataset3_path)
+
+        # 2w 题库数据, 已验证
+        dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_2w')
+        train4_filenames, test4_filenames = self.get_split_datasets(dataset4_path)
+
+        # 4w 手写数据, 已验证
+        dataset5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write_4w')
+        train5_filenames, test5_filenames = self.get_split_datasets(dataset5_path)
+
+        # 3w Query数据, 已验证
+        dataset6_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write2_3w')
+        train6_filenames, test6_filenames = self.get_split_datasets(dataset6_path)
+
+        # 2.2w 题库修改数据, 已验证
+        dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
+        train7_filenames, test7_filenames = self.get_split_datasets(dataset7_path)
+
+        dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
+        test_val_filenames = self.get_total_datasets(dataset_val_path)
+
+        # 全部数据集
+        train_filenames = train1_filenames + train2_filenames + train3_filenames + \
+                          train4_filenames + train5_filenames + train6_filenames + \
+                          train7_filenames + train8_filenames + test_val_filenames * 4
+
+        test_filenames = test1_filenames + test2_filenames + test3_filenames + \
+                         test4_filenames + test5_filenames + test6_filenames + \
+                         test7_filenames + test8_filenames + test_val_filenames * 4
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
