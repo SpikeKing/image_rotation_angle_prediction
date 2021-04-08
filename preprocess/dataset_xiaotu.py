@@ -38,6 +38,8 @@ class DatasetXiaotu(object):
             label_prob = float(x[0][1])
             if label == 0 and label_prob == 1.0:
                 write_line(self.out_file, url)
+            else:
+                print('[Info] error idx: {}'.format(idx))
             if idx % 10000 == 0:
                 print('[Info] idx: {}'.format(idx))
 

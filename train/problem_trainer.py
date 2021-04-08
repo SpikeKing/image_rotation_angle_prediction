@@ -146,7 +146,7 @@ class ProblemTrainer(object):
         return model_name, model
 
     def load_train_and_test_dataset(self):
-        # 25w小图数据集
+        # 22w小图数据集
         dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w')
         train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path)
 
@@ -170,7 +170,7 @@ class ProblemTrainer(object):
         dataset5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write_4w')
         train5_filenames, test5_filenames = self.get_split_datasets(dataset5_path)
 
-        # 3w Query数据, 已验证
+        # 3w 手写数据, 已验证
         dataset6_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write2_3w')
         train6_filenames, test6_filenames = self.get_split_datasets(dataset6_path)
 
