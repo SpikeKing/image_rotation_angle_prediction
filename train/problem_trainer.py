@@ -63,8 +63,8 @@ class ProblemTrainer(object):
         if mode == "mobilenetv2":
             self.batch_size = 64  # batch size, v100
         elif mode == "resnet50":
-            # self.batch_size = 32  # batch size, v100
-            self.batch_size = 16  # batch size, v2080
+            self.batch_size = 32  # batch size, v100
+            # self.batch_size = 16  # batch size, v2080
         else:
             self.batch_size = 100
 
@@ -189,6 +189,8 @@ class ProblemTrainer(object):
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
                          test7_filenames + test8_filenames + test_val_filenames * 4
+
+        train_filenames = train_filenames + test_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
