@@ -184,9 +184,7 @@ class OnlineEvaluation(object):
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        # in_file_name = "angle_ds_answer_20210323.filter"
-        # in_file_name = "angle_ds_question_20210323.filter"
-        in_file_name = "angle_ds_solution_20210323.filter"
+        in_file_name = "xiaotu_labeled_25w_165512"
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
@@ -198,26 +196,27 @@ class OnlineEvaluation(object):
             return
 
         # 测试文件
-        # if len(data_lines) > 2000:
-        #     random.seed(47)
-        #     # random.seed(89)
-        #     random.shuffle(data_lines)  # 随机生成
-        #     data_lines = data_lines[:2000]
+        n = 1000
+        if len(data_lines) > n:
+            random.seed(47)
+            # random.seed(89)
+            random.shuffle(data_lines)  # 随机生成
+            data_lines = data_lines[:n]
 
         print('[Info] 样本数量: {}'.format(len(data_lines)))
 
         # 测试文件
-        # time_str = get_current_time_str()
-        # out_name = 'check_{}.{}.csv'.format(in_file_name, time_str)
-        # out_dir = os.path.join(DATA_DIR, "check_dir_20210329")
-        # mkdir_if_not_exist(out_dir)
-        # out_file = os.path.join(out_dir, out_name)
+        time_str = get_current_time_str()
+        out_name = 'check_{}.{}.csv'.format(in_file_name, time_str)
+        out_dir = os.path.join(DATA_DIR, "check_dir_20210329")
+        mkdir_if_not_exist(out_dir)
+        out_file = os.path.join(out_dir, out_name)
 
         # 筛选文件
-        out_dir = os.path.join(DATA_DIR, "xiaotu_dir")
-        in_file_name = '{}_good.txt'.format(in_file_name)
-        mkdir_if_not_exist(out_dir)
-        out_file = os.path.join(out_dir, in_file_name)
+        # out_dir = os.path.join(DATA_DIR, "xiaotu_dir")
+        # in_file_name = '{}_good.txt'.format(in_file_name)
+        # mkdir_if_not_exist(out_dir)
+        # out_file = os.path.join(out_dir, in_file_name)
 
         # write_dir = os.path.join(out_dir, 'write_dir_{}'.format(time_str))
         # mkdir_if_not_exist(write_dir)
@@ -233,17 +232,17 @@ class OnlineEvaluation(object):
             # 方案2
             url, r_angle = data_line, 0
 
-            name = url.split('/')[-1].split('.')[0]
-            file_name_x = in_file_name.split('.')[0]
-            url = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/" \
-                  "datasets/{}_x/{}.jpg".format(file_name_x, name)
+            # name = url.split('/')[-1].split('.')[0]
+            # file_name_x = in_file_name.split('.')[0]
+            # url = "https://sm-transfer.oss-cn-hangzhou.aliyuncs.com/zhengsheng.wcl/problems_rotation/" \
+            #       "datasets/{}_x/{}.jpg".format(file_name_x, name)
 
             try:
                 # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
                 # 筛选图像
-                pool.apply_async(OnlineEvaluation.process_save_img_url, (idx, url, r_angle, out_file, write_dir))
+                # pool.apply_async(OnlineEvaluation.process_save_img_url, (idx, url, r_angle, out_file, write_dir))
                 # OnlineEvaluation.process_save_img_url(idx, url, r_angle, out_file, write_dir)
             except Exception as e:
                 continue
