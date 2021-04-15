@@ -7,10 +7,13 @@ Created by C. L. Wang on 11.11.20
 import os
 import sys
 
+import coremltools
 import tensorflow as tf
 import tensorflow.python.keras.backend as K
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+from tensorflow_core.python.keras.engine.input_layer import InputLayer, Input
+from tensorflow_core.python.keras.models import Model
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
@@ -27,26 +30,30 @@ from utils import angle_error, rotate
 class ImgPredictor(object):
     def __init__(self):
         # self.model_name = "rotnet_v3_resnet50_best_20210301.hdf5"
-        self.model_name = "rotnet_v3_resnet50_best_20210329.hdf5"
+        # self.model_name = "rotnet_v3_resnet50_best_20210329.hdf5"
+        self.model_name = "rotnet_v3_resnet50_best_20210412.hdf5"
         print('[Info] model name: {}'.format(self.model_name))
         self.model = self.load_model()
         pass
 
     def save_pb_model(self, model):
+        saved_path = os.path.join(DATA_DIR, 'saved_models', 'model_{}'.format(get_current_time_str()))
+        model.save(saved_path)
+
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
 
         # batch_size 16
-        # inputs_shape = model.inputs[0].shape
-        # print('[Info] inputs_shape: {}'.format(inputs_shape))
-        # inputs_shape_x = tf.TensorShape((16, 448, 448, 3))
-        # print('[Info] inputs_shape_x: {}'.format(inputs_shape_x))
-        # full_model = full_model.get_concrete_function(
-        #     [tf.TensorSpec(inputs_shape_x, model.inputs[0].dtype)])
+        inputs_shape = model.inputs[0].shape
+        print('[Info] inputs_shape: {}'.format(inputs_shape))
+        inputs_shape_x = tf.TensorShape((16, 448, 448, 3))
+        print('[Info] inputs_shape_x: {}'.format(inputs_shape_x))
+        full_model = full_model.get_concrete_function(
+            [tf.TensorSpec(inputs_shape_x, model.inputs[0].dtype)])
 
         # batch_size 1
-        full_model = full_model.get_concrete_function(
-            [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype)])
+        # full_model = full_model.get_concrete_function(
+        #     [tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype)])
 
         # Get frozen ConcreteFunction
         frozen_func = convert_variables_to_constants_v2(full_model)
@@ -73,10 +80,10 @@ class ImgPredictor(object):
                           name=f"{frozen_graph_filename}.pb",
                           as_text=False)
         # Save its text representation
-        tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
-                          logdir=frozen_out_path,
-                          name=f"{frozen_graph_filename}.pbtxt",
-                          as_text=True)
+        # tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+        #                   logdir=frozen_out_path,
+        #                   name=f"{frozen_graph_filename}.pbtxt",
+        #                   as_text=True)
 
         print('[Info] 存储PB模型完成! {}, {}'.format(frozen_out_path, frozen_graph_filename))
 

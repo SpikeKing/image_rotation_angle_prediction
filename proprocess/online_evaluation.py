@@ -15,8 +15,8 @@ if p not in sys.path:
 from root_dir import DATA_DIR
 from myutils.project_utils import *
 from myutils.cv_utils import *
-from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service, \
-    get_rotation_service_v3, get_rotation_service_v4, get_ocr_angle_service_v4, get_rotation_service_v4_1
+from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service\
+    , get_rotation_service_v4, get_ocr_angle_service_v4, get_rotation_service_v4_1
 
 
 class OnlineEvaluation(object):
@@ -27,10 +27,7 @@ class OnlineEvaluation(object):
     def process_url(img_url, mode="trt"):
         angle = -1
         out_url = ""
-        if mode == "v3":
-            res_dict = get_rotation_service_v3(img_url)
-            angle = int(res_dict['data']['angle'])
-        elif mode == "v4":
+        if mode == "v4":
             res_dict = get_rotation_service_v4(img_url)
             angle = int(res_dict['data']['angle'])
             out_url = res_dict['data']['rotated_image_url']
@@ -184,7 +181,7 @@ class OnlineEvaluation(object):
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        in_file_name = "xiaotu_labeled_25w_165512"
+        in_file_name = "zjw_url"
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
@@ -238,8 +235,8 @@ class OnlineEvaluation(object):
             #       "datasets/{}_x/{}.jpg".format(file_name_x, name)
 
             try:
-                # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
                 # 筛选图像
                 # pool.apply_async(OnlineEvaluation.process_save_img_url, (idx, url, r_angle, out_file, write_dir))
