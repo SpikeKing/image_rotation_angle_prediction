@@ -181,7 +181,8 @@ class OnlineEvaluation(object):
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        in_file_name = "zjw_url"
+        # in_file_name = "zjw_url"
+        in_file_name = "xiaotu_labeled_25w_165512"
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
