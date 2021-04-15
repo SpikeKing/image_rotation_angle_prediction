@@ -176,8 +176,8 @@ class OnlineEvaluation(object):
         # in_file = os.path.join(DATA_DIR, 'test_urls_files', in_file_name + ".csv")
 
         # in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"  # 整页影印
-        in_file_name = "dump_write_pure.out"  # 纯手写
-        # in_file_name = "7_train_原始图像.out"
+        # in_file_name = "dump_write_pure.out"  # 纯手写
+        in_file_name = "7_train_ori.out"
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
