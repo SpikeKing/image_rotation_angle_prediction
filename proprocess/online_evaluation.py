@@ -175,14 +175,14 @@ class OnlineEvaluation(object):
         # in_file_name = 'random_1w_urls'    # 测试1w
         # in_file = os.path.join(DATA_DIR, 'test_urls_files', in_file_name + ".csv")
 
-        # in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"
+        in_file_name = "sanghu.zj_question_cut_sampled_jueying_url_5k_1229"  # 整页
         # in_file_name = "dump纯手写图片公式文本标注.out"
         # in_file_name = "7_train_原始图像.out"
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        # in_file_name = "zjw_url"
-        in_file_name = "xiaotu_labeled_25w_165512"
+        # in_file_name = "zjw_url"  # 小图
+        # in_file_name = "xiaotu_labeled_25w_165512"  # 小图
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
