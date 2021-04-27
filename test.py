@@ -7,7 +7,6 @@ Created by C. L. Wang on 26.11.20
 
 import base64
 import logging
-import os
 from io import BytesIO
 
 import cv2
@@ -15,10 +14,9 @@ import numpy as np
 import requests
 from PIL import Image, ImageSequence, ExifTags
 from cairosvg import svg2png
-from turbojpeg import TurboJPEG, TJPF_RGB
+from turbojpeg import TJPF_RGB
 
 from myutils.cv_utils import show_img_bgr
-from root_dir import DATA_DIR
 
 IMAGE_ORIENTATION_TL = 1  # Horizontal (normal)
 IMAGE_ORIENTATION_TR = 2  # Mirrored horizontal
@@ -29,8 +27,6 @@ IMAGE_ORIENTATION_RT = 6  # Rotate 90 CW
 IMAGE_ORIENTATION_RB = 7  # Mirrored horizontal & rotate 90 CW
 IMAGE_ORIENTATION_LB = 8  # Rotate 270 CW
 
-logger = logging.getLogger()
-
 
 class DecodeQuarkEducationImage(object):
     def __init__(self):
@@ -38,7 +34,6 @@ class DecodeQuarkEducationImage(object):
         for self.orientation in ExifTags.TAGS.keys():
             if ExifTags.TAGS[self.orientation] == 'Orientation':
                 break
-        # self.jpeg = TurboJPEG()
 
     @staticmethod
     def _process_rgba(img):
