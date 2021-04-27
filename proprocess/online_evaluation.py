@@ -16,7 +16,7 @@ from root_dir import DATA_DIR
 from myutils.project_utils import *
 from myutils.cv_utils import *
 from x_utils.vpf_utils import get_trt_rotation_vpf_service, get_dmy_rotation_vpf_service, get_uc_rotation_vpf_service\
-    , get_rotation_service_v4, get_ocr_angle_service_v4, get_rotation_service_v4_1
+    , get_rotation_service_v4, get_ocr_angle_service_v4, get_rotation_service_v4_2
 
 
 class OnlineEvaluation(object):
@@ -31,8 +31,8 @@ class OnlineEvaluation(object):
             res_dict = get_rotation_service_v4(img_url)
             angle = int(res_dict['data']['angle'])
             out_url = res_dict['data']['rotated_image_url']
-        elif mode == "v4.1":
-            res_dict = get_rotation_service_v4_1(img_url)
+        elif mode == "v4.2":
+            res_dict = get_rotation_service_v4_2(img_url)
             angle = int(res_dict['data']['angle'])
             out_url = res_dict['data']['rotated_image_url']
 
@@ -134,7 +134,7 @@ class OnlineEvaluation(object):
         r_angle = int(r_angle)
         angel_old, _ = OnlineEvaluation.process_url(url, mode="v4")
         angel_old = int(angel_old)
-        angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4.1")
+        angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4.2")
         angel_new = int(angel_new)
         print('[Info] idx: {},  r_angle: {}, angel_v3: {}, angel_v4: {}'
               .format(idx, r_angle, angel_old, angel_new))
