@@ -181,9 +181,11 @@ class OnlineEvaluation(object):
         # in_file_name = "HW_TRAIN.out"
         # in_file_name = "biaozhu_fix.check"
         # in_file_name = "biaozhu_csv_out"
-        in_file_name = "random_1w_urls"  # 普通query
+        # in_file_name = "random_1w_urls"  # 普通query
         # in_file_name = "zjw_url"  # 小图
         # in_file_name = "xiaotu_labeled_25w_165512"  # 小图
+        in_file_name = "zjw_imgs_20210427_urls"  # 小图
+
         in_file = os.path.join(DATA_DIR, 'page_dataset_files', in_file_name+".txt")  # 输入文件
 
         print('[Info] in_file: {}'.format(in_file))
@@ -195,7 +197,7 @@ class OnlineEvaluation(object):
             return
 
         # 测试文件
-        n = 1000
+        n = 10000
         if len(data_lines) > n:
             random.seed(47)
             # random.seed(89)
