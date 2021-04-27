@@ -132,7 +132,7 @@ class OnlineEvaluation(object):
         """
         # print('[Info] idx: {}, url: {}'.format(idx, url))
         r_angle = int(r_angle)
-        angel_old, _ = OnlineEvaluation.process_url(url, mode="v4")
+        angel_old, _ = OnlineEvaluation.process_url(url, mode="v4.2")
         angel_old = int(angel_old)
         angel_new, out_v4_url = OnlineEvaluation.process_url(url, mode="v4.2")
         angel_new = int(angel_new)
@@ -239,14 +239,17 @@ class OnlineEvaluation(object):
             #       "datasets/{}_x/{}.jpg".format(file_name_x, name)
 
             try:
-                pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
                 # 筛选图像
                 # pool.apply_async(OnlineEvaluation.process_save_img_url, (idx, url, r_angle, out_file, write_dir))
                 # OnlineEvaluation.process_save_img_url(idx, url, r_angle, out_file, write_dir)
             except Exception as e:
+                print('[Info] Error URL: {}'.format(url))
                 continue
+            # print('[Info] URL: {}'.format(url))
+            # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
         pool.close()
         pool.join()
