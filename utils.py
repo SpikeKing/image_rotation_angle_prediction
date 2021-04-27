@@ -370,7 +370,7 @@ class RotNetDataGenerator(Iterator):
                         if is_color:
                             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     except Exception as e:
-                        print('[Warning] 兼容模式 image path: {}'.format(self.filenames[j]))
+                        # print('[Warning] 兼容模式 image path: {}'.format(self.filenames[j]))
                         from myutils.img_compat import ImgCompatBGR
                         image = ImgCompatBGR.imread(self.filenames[j])
                         if is_color:
