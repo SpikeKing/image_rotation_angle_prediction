@@ -239,8 +239,8 @@ class OnlineEvaluation(object):
             #       "datasets/{}_x/{}.jpg".format(file_name_x, name)
 
             try:
-                # pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
-                OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
+                pool.apply_async(OnlineEvaluation.process_thread_right, (idx, url, r_angle, out_file, write_dir))
+                # OnlineEvaluation.process_thread_right(idx, url, r_angle, out_file, write_dir)
 
                 # 筛选图像
                 # pool.apply_async(OnlineEvaluation.process_save_img_url, (idx, url, r_angle, out_file, write_dir))
