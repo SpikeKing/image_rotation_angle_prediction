@@ -174,7 +174,7 @@ class ImgCompatBGR(object):
             return None
 
         img = img.astype(np.uint8)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # 输出BGR
         return img
 
 
