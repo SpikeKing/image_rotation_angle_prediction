@@ -19,6 +19,23 @@ class ImgCompatBGR(object):
         pass
 
     @staticmethod
+    def check_np_empty(data_np):
+        """
+        检测Numpy是空或者None
+        """
+        none_type = type(None)
+        if isinstance(data_np, np.ndarray):
+            if data_np.size == 0:
+                return True
+        elif isinstance(data_np, none_type):
+            return True
+        elif isinstance(data_np, list):
+            if not data_np:
+                return True
+        else:
+            return False
+
+    @staticmethod
     def _process_rgba(img):
         alpha_channel = img[:, :, 3]
         h, w = alpha_channel.shape
@@ -117,7 +134,7 @@ class ImgCompatBGR(object):
         """
         try:
             img_bgr = cv2.imread(image_path)
-            if img_bgr is not None:
+            if not ImgCompatBGR.check_np_empty(img_bgr):
                 return img_bgr
         except Exception as e:
             pass
