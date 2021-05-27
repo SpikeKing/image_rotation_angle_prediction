@@ -46,7 +46,7 @@ class ImgPredictor(object):
         # batch_size 16
         inputs_shape = model.inputs[0].shape
         print('[Info] inputs_shape: {}'.format(inputs_shape))
-        inputs_shape_x = tf.TensorShape((16, 448, 448, 3))
+        inputs_shape_x = tf.TensorShape((1, 448, 448, 3))
         print('[Info] inputs_shape_x: {}'.format(inputs_shape_x))
         full_model = full_model.get_concrete_function(
             [tf.TensorSpec(inputs_shape_x, model.inputs[0].dtype)])
