@@ -5,6 +5,8 @@ Copyright (c) 2019. All rights reserved.
 Created by C. L. Wang on 2020/3/13
 """
 
+import copy
+
 import cv2
 import numpy as np
 
@@ -13,7 +15,9 @@ def draw_line_len(img_bgr, start_p, v_length, v_arrow, is_new=True, is_show=Fals
     """
     绘制直线
     """
+    import cv2
     import copy
+    import numpy as np
 
     if is_new:
         img_bgr = copy.deepcopy(img_bgr)
@@ -27,18 +31,28 @@ def draw_line_len(img_bgr, start_p, v_length, v_arrow, is_new=True, is_show=Fals
         show_img_bgr(img_bgr, save_name=save_name)  # 显示眼睛
 
 
-def draw_text(img_bgr, text, org=(3, 20), color=(0, 0, 255)):
+def draw_text(img_bgr, text, org=(3, 20), color=(0, 0, 255), scale_x=1, thickness_x=1):
+    """
+    绘制文字，自动调整文字大小
+    """
+    import cv2
     h, w, _ = img_bgr.shape
-    m = max(h, w)
+    m = h * w
     text = str(text)
 
     font = cv2.FONT_HERSHEY_SIMPLEX
-    fontScale = m / float(1000)
-    thickness = m // 200
+
+    font_scale = m / 8000000
+    font_scale = max(font_scale, 0.5)
+    font_scale *= scale_x
+
+    thickness = m // 4000000
+    thickness = max(thickness, 1)
+    thickness *= thickness_x
+    # print('[Info] font_scale: {}, thickness: {}, max: {}, x: {}'.format(font_scale, thickness, m, h*w))
     lineType = 2
 
-    img_bgr = cv2.putText(img_bgr, text, org, font,
-                          fontScale, color, thickness, lineType)
+    img_bgr = cv2.putText(img_bgr, text, org, font, font_scale, color, thickness, lineType)
     return img_bgr
 
 
@@ -46,7 +60,9 @@ def draw_eyes(img_bgr, eyes_landmarks, radius, offsets_list, is_new=True, is_sho
     """
     绘制图像
     """
+    import cv2
     import copy
+    import numpy as np
 
     if is_new:
         img_bgr = copy.deepcopy(img_bgr)
@@ -107,7 +123,32 @@ def draw_eyes(img_bgr, eyes_landmarks, radius, offsets_list, is_new=True, is_sho
     return img_bgr
 
 
-def draw_box(img_bgr, box, color=(0, 0, 255), is_show=True, is_new=True):
+def draw_box(img_bgr, box, color=(0, 0, 255), is_show=True, is_new=True, tk=None, save_name=None):
+    """
+    绘制box
+    """
+    if is_new:
+        img_bgr = copy.deepcopy(img_bgr)
+
+    x_min, y_min, x_max, y_max = box
+    x_min, y_min, x_max, y_max = int(x_min), int(y_min), int(x_max), int(y_max)
+
+    ih, iw, _ = img_bgr.shape
+    if not tk:
+        m = ih * iw
+        tk = m // 4000000
+        tk = max(tk, 1)
+    else:
+        tk = tk
+    cv2.rectangle(img_bgr, (x_min, y_min), (x_max, y_max), color, tk)
+
+    if is_show:
+        show_img_bgr(img_bgr, save_name)
+
+    return img_bgr
+
+
+def draw_4p_rec(img_bgr, rec, color=(0, 0, 255), is_show=True, is_new=True):
     """
     绘制box
     """
@@ -117,15 +158,12 @@ def draw_box(img_bgr, box, color=(0, 0, 255), is_show=True, is_new=True):
     if is_new:
         img_bgr = copy.deepcopy(img_bgr)
 
-    x_min, y_min, x_max, y_max = box
-    x_min, y_min, x_max, y_max = int(x_min), int(y_min), int(x_max), int(y_max)
-    # print(x_min, y_min, x_max, y_max)
-
     ih, iw, _ = img_bgr.shape
     # color = (0, 0, 255)
     tk = max(min(ih, iw) // 200, 2)
 
-    cv2.rectangle(img_bgr, (x_min, y_min), (x_max, y_max), color, tk)
+    rec_arr = np.array(rec)
+    cv2.fillPoly(img_bgr, [rec_arr], color)
 
     if is_show:
         img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
@@ -139,6 +177,7 @@ def draw_points(img_bgr, points, is_new=True, save_name=None):
     """
     绘制多个点
     """
+    import cv2
     import copy
     import matplotlib.pyplot as plt
 
@@ -198,7 +237,7 @@ def draw_pie(labels, sizes):
     plt.show()
 
 
-def point2box(point, radius):
+def point_radius2box(point, radius):
     """
     点到矩形
     :param point: 点
@@ -244,7 +283,7 @@ def get_polygon_size(box):
     return area
 
 
-def get_patch(img, box):
+def get_cropped_patch(img, box):
     """
     获取Img的Patch
     :param img: 图像
@@ -286,6 +325,25 @@ def expand_box(img, box, x):
     y_max = int(min(box[3] + x, h))
 
     return [x_min, y_min, x_max, y_max]
+
+
+def merge_boxes(box_list):
+    """
+    合并多个Box
+    """
+    x_list, y_list = [], []
+
+    for box in box_list:
+        x_min, y_min, x_max, y_max = box
+        x_list.append(x_min)
+        x_list.append(x_max)
+        y_list.append(y_min)
+        y_list.append(y_max)
+    x_min, x_max = min(x_list), max(x_list)
+    y_min, y_max = min(y_list), max(y_list)
+
+    large_box = [x_min, y_min, x_max, y_max]
+    return large_box
 
 
 def merge_two_box(box_a, box_b):
@@ -332,17 +390,18 @@ def mid_point(p1, p2):
     return [x, y]
 
 
-def generate_colors(n_colors):
+def generate_colors(n_colors, seed=47):
     """
     随机生成颜色
     """
     import numpy as np
 
-    np.random.seed(37)
+    np.random.seed(seed)
     color_list = []
     for i in range(n_colors):
-        color = (np.random.random((1, 3)) * 0.8 + 0.2).tolist()[0]
+        color = (np.random.random((1, 3)) * 0.8).tolist()[0]
         color = [int(j * 255) for j in color]
+        # color = list(np.clip(color, 0, 255))
         color_list.append(color)
 
     return color_list
@@ -353,6 +412,7 @@ def show_img_bgr(img_bgr, save_name=None):
     展示BGR彩色图
     """
     import cv2
+    # matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
 
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
@@ -375,6 +435,37 @@ def show_img_gray(img_gray, save_name=None):
     if save_name:
         print('[Info] 存储图像: {}'.format(save_name))
         plt.imsave(save_name, img_gray)
+
+
+def cvt_2_heatmap_img(img_01):
+    """
+    将0-1图像转换为彩色图像
+    """
+    img = (np.clip(img_01, 0, 1) * 255).astype(np.uint8)
+    img = cv2.applyColorMap(img, cv2.COLORMAP_JET)
+    return img
+
+
+def show_img_mask(img_bgr, img_mask01, save_name=None):
+    """
+    展示Mask涂层，img_mask01是0-1的Mask图
+    """
+    import matplotlib.pyplot as plt
+
+    img_copy = copy.copy(img_bgr)
+    h, w, _ = img_copy.shape
+
+    img_mask = cvt_2_heatmap_img(img_mask01)
+    img_mask = cv2.resize(img_mask, (w, h))
+
+    img_out = cv2.addWeighted(img_copy, 0.5, img_mask, 0.5, 0)
+    img_out = np.clip(img_out, 0, 255)
+
+    plt.imshow(img_out)
+    plt.show()
+    if save_name:
+        print('[Info] 存储图像: {}'.format(save_name))
+        plt.imsave(save_name, img_out)
 
 
 def init_vid(vid_path):
@@ -488,9 +579,10 @@ def merge_imgs(imgs, cols=6, rows=6, is_h=True):
         raise Exception('[Exception] 合并图像的输入为空!')
 
     img_shape = imgs[0].shape
-    h, w, _ = img_shape
+    h, w, c = img_shape
 
-    large_imgs = np.ones((rows * h, cols * w, 3)) * 255  # 大图
+    large_imgs = np.ones((rows * h, cols * w, c)) * 255  # 大图
+    large_imgs = large_imgs.astype(np.uint8)
 
     if is_h:
         for j in range(rows):
@@ -531,17 +623,21 @@ def merge_two_imgs(img1, img2):
 
     large_img = np.ones((h, n_w1 + n_w2, 3)) * 255
     large_img[:, 0: n_w1] = n_img1
-    large_img[:, n_w1: n_w1+n_w2] = n_img2
+    large_img[:, n_w1: n_w1 + n_w2] = n_img2
     large_img = large_img.astype(np.uint8)
 
     return large_img
 
 
-def rotate_img_with_bound(img_np, angle):
+def rotate_img_with_bound(img_np, angle, border_value=(0, 0, 0)):
     """
     旋转图像角度
     注意angle是顺时针还是逆时针
     """
+    import cv2
+    import numpy as np
+
+    angle *= -1
     # grab the dimensions of the image and then determine the
     # center
     (h, w) = img_np.shape[:2]
@@ -560,7 +656,8 @@ def rotate_img_with_bound(img_np, angle):
     M[0, 2] += (nW / 2) - cX
     M[1, 2] += (nH / 2) - cY
     # perform the actual rotation and return the image
-    return cv2.warpAffine(img_np, M, (nW, nH))
+    img_rotated = cv2.warpAffine(img_np, M, (nW, nH), borderValue=border_value)
+    return img_rotated, M
 
 
 def resize_img_fixed(img, x, is_height=True):
@@ -577,7 +674,7 @@ def resize_img_fixed(img, x, is_height=True):
         nw = x
         nh = int(h * nw / w)
 
-    img_r = cv2.resize(img, (nw, nh))
+    img_r = cv2.resize(img, (nw, nh), interpolation=cv2.INTER_AREA)
     return img_r
 
 
@@ -588,13 +685,13 @@ def random_crop(img, height, width, sh=0, sw=0):
     import random
     # print(sh, img.shape[0] - height - sh)
     h, w, _ = img.shape
-    img = img[sh:h-sh, sw:w-sw]
+    img = img[sh:h - sh, sw:w - sw]
     h, w, _ = img.shape
 
     y = random.randint(0, h - height)
     x = random.randint(0, w - width)
 
-    img = img[y:y+height, x:x+width]
+    img = img[y:y + height, x:x + width]
     return img
 
 
@@ -614,30 +711,28 @@ def format_angle(angle):
     return r_angle
 
 
-def resize_image_with_padding(img_bgr, desired_size=224):
+def resize_with_padding(img_bgr, size, padding_bgr=None):
     """
-    padding resize 方法
+    先放大，再resize图像(方图)
     """
-    import cv2
+    h, w, c = img_bgr.shape
+    if h > w:
+        new_h = size
+        new_w = int(size / h * w)
+    else:
+        new_h = int(size / w * h)
+        new_w = size
+    img_resize = cv2.resize(img_bgr, (new_w, new_h))
+    img_new = np.ones((size, size, 3), dtype=np.uint8) * 255
 
-    old_size = img_bgr.shape[:2]  # old_size is in (height, width) format
+    if padding_bgr:  # 设置颜色
+        color = tuple(padding_bgr)
+        img_new[:] = color
 
-    ratio = float(desired_size) / max(old_size)
-    new_size = tuple([int(x * ratio) for x in old_size])
-
-    # new_size should be in (width, height) format
-
-    img_bgr = cv2.resize(img_bgr, (new_size[1], new_size[0]))
-
-    delta_w = desired_size - new_size[1]
-    delta_h = desired_size - new_size[0]
-    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
-    left, right = delta_w // 2, delta_w - (delta_w // 2)
-
-    color = [255, 255, 255]
-    new_im = cv2.copyMakeBorder(img_bgr, top, bottom, left, right, cv2.BORDER_CONSTANT,
-                                value=color)
-    return new_im
+    sh = (size - new_h) // 2
+    sw = (size - new_w) // 2
+    img_new[sh:new_h + sh, sw:new_w + sw] = img_resize
+    return img_new
 
 
 def rotate_img_for_4angle(img_bgr, angle):
@@ -658,6 +753,511 @@ def rotate_img_for_4angle(img_bgr, angle):
     else:
         img_rotated = img_bgr
     return img_rotated
+
+
+def rec2bbox(rec):
+    """
+    多边形(多点)转换为xyxy
+    """
+    x_list, y_list = [], []
+    for pnt in rec:
+        x_list.append(pnt[0])
+        y_list.append(pnt[1])
+    x_min, x_max = min(x_list), max(x_list)
+    y_min, y_max = min(y_list), max(y_list)
+    box = [x_min, y_min, x_max, y_max]
+    box = [int(x) for x in box]
+    return box
+
+
+def bbox2rec(bbox):
+    """
+    [x_min, y_min, x_max, y_max]转换为4点的rec
+    """
+    x_min, y_min, x_max, y_max = bbox
+    p1 = [x_min, y_min]
+    p2 = [x_max, y_min]
+    p3 = [x_max, y_max]
+    p4 = [x_min, y_max]
+    rec = [p1, p2, p3, p4]
+    return rec
+
+
+def get_box_center(box):
+    """
+    获取bbox的中心
+    """
+    x_min, y_min, x_max, y_max = box
+    x = (x_min + x_max) // 2
+    y = (y_min + y_max) // 2
+    return x, y
+
+
+def get_rec_center(rec):
+    """
+    获取四点矩形的中心
+    """
+    x_list, y_list = [], []
+    for pnt in rec:
+        x_list.append(pnt[0])
+        y_list.append(pnt[1])
+    x_min, y_min, x_max, y_max = min(x_list), min(y_list), max(x_list), max(y_list)
+    x = (x_min + x_max) // 2
+    y = (y_min + y_max) // 2
+    return x, y
+
+
+def draw_box_list(img_bgr, box_list, thickness=-1, color=None,
+                  is_overlap=True, is_arrow=False, is_text=True, is_show=False, is_new=False, save_name=None):
+    """
+    绘制矩形列表
+    """
+    if is_new:
+        img_bgr = copy.deepcopy(img_bgr)
+
+    n_box = len(box_list)
+    if not color:
+        color_list = generate_colors(n_box)  # 随机生成颜色
+    else:
+        color_list = [color] * n_box  # 颜色范围
+    ori_img = copy.copy(img_bgr)
+    img_copy = copy.copy(img_bgr)
+
+    # 绘制颜色块
+    for idx, (box, color) in enumerate(zip(box_list, color_list)):
+        # rec_arr = np.array(box)
+        # ori_img = cv2.fillPoly(ori_img, [rec_arr], color_list[idx])
+        x_min, y_min, x_max, y_max = box
+        ori_img = cv2.rectangle(ori_img, pt1=(x_min, y_min), pt2=(x_max, y_max), color=color, thickness=thickness)
+
+    if is_overlap:
+        ori_img = cv2.addWeighted(ori_img, 0.5, img_copy, 0.5, 0)
+    ori_img = np.clip(ori_img, 0, 255)
+
+    # 绘制方向和序号
+    pre_point, next_point = None, None
+    pre_color = None
+    for idx, box in enumerate(box_list):
+        x_min, y_min, x_max, y_max = box
+        point = ((x_min + x_max) // 2, (y_min + y_max) // 2)
+        if is_arrow:
+            pre_point = point
+            if pre_point and next_point:  # 绘制箭头
+                cv2.arrowedLine(ori_img, next_point, pre_point, pre_color, thickness=5,
+                                line_type=cv2.LINE_4, shift=0, tipLength=0.05)
+            next_point = point
+            pre_color = color_list[idx]
+        if is_text:
+            draw_text(ori_img, str(idx), point)  # 绘制序号
+
+    if is_show or save_name:
+        show_img_bgr(ori_img, save_name=save_name)
+    return ori_img
+
+
+def draw_rec_box(img_bgr, rec_box, color=None, thickness=-1,
+                 is_show=False, is_new=False, save_name=None):
+    """
+    绘制4点的四边形
+    """
+    if is_new:
+        img_bgr = copy.deepcopy(img_bgr)
+
+    if not color:
+        color = (0, 0, 255)  # 默认使用红色
+
+    ori_img = copy.copy(img_bgr)
+    img_copy = copy.copy(img_bgr)
+
+    # 绘制颜色块
+    rec_arr = np.array(rec_box, dtype=np.int32)
+    if thickness == -1:
+        ori_img = cv2.fillPoly(ori_img, [rec_arr], color)
+    else:
+        ori_img = cv2.polylines(ori_img, [rec_arr], True, tuple(color), thickness=thickness)
+    ori_img = np.clip(ori_img, 0, 255)
+
+    if thickness == -1:
+        ori_img = cv2.addWeighted(ori_img, 0.4, img_copy, 0.6, 0)
+
+    if is_show or save_name:
+        show_img_bgr(ori_img, save_name=save_name)
+    return ori_img
+
+
+def draw_rec_list(img_bgr, rec_list, color=None, thickness=-1,
+                  is_text=False, is_show=False, is_new=False, save_name=None):
+    """
+    绘制4点的四边形
+    """
+    if is_new:
+        img_bgr = copy.deepcopy(img_bgr)
+
+    n_box = len(rec_list)
+    if not color:
+        color_list = generate_colors(n_box)  # 随机生成颜色
+    else:
+        color_list = [color] * n_box  # 颜色范围
+
+    ori_img = copy.copy(img_bgr)
+    img_copy = copy.copy(img_bgr)
+
+    # 绘制颜色块
+    for idx, (rec, color) in enumerate(zip(rec_list, color_list)):
+        rec_arr = np.array(rec, dtype=np.int32)
+        if thickness == -1:
+            ori_img = cv2.fillPoly(ori_img, [rec_arr], color_list[idx])
+        else:
+            ori_img = cv2.polylines(ori_img, [rec_arr], True, tuple(color_list[idx]), thickness=thickness)
+        ori_img = np.clip(ori_img, 0, 255)
+
+    if thickness == -1:
+        ori_img = cv2.addWeighted(ori_img, 0.4, img_copy, 0.6, 0)
+
+    # 绘制方向和序号
+    for idx, rec in enumerate(rec_list):
+        point = get_rec_center(rec)
+        if is_text:
+            draw_text(ori_img, str(idx), point)  # 绘制序号
+
+    if is_show or save_name:
+        show_img_bgr(ori_img, save_name=save_name)
+    return ori_img
+
+
+def draw_rec_list_np(img_bgr, rec_np, color=None, is_text=True, is_show=False, is_new=False, save_name=None):
+    """
+    绘制rec列表，np格式[Nx4x2]，即N个框
+    """
+    rec_np = rec_np.astype(np.int32)
+    rec_list = rec_np.tolist()
+    img_out = draw_rec_list(
+        img_bgr, rec_list, color=color, is_text=is_text, is_show=is_show, is_new=is_new, save_name=save_name)
+    return img_out
+
+
+def scale_contour(cnt, scale):
+    """
+    缩放contour值
+    :param cnt: contour
+    :param scale: 缩放值
+    :return: 新的contour
+    """
+    points = cnt.reshape((-1, 2))
+    if points.shape[0] < 4:
+        return cnt
+    M = cv2.moments(cnt)
+    cx = int(M['m10']/M['m00'])
+    cy = int(M['m01']/M['m00'])
+
+    cnt_norm = cnt - [cx, cy]
+    cnt_scaled = cnt_norm * scale
+    cnt_scaled = cnt_scaled + [cx, cy]
+    cnt_scaled = cnt_scaled.astype(np.int32)
+
+    return cnt_scaled
+
+
+def safe_div(x, y):
+    """
+    安全除法
+    :param x: 分子
+    :param y: 分母
+    :return: 除法
+    """
+    x = float(x)
+    y = float(y)
+    if y == 0.0:
+        return 0.0
+    return x / y
+
+
+def check_line_intersect(line1, line2, thr=0.33):
+    """
+    检测连线是不是交叉
+    """
+    line1_x, line2_x = sorted((line1, line2))
+    diff = line1_x[1] - line2_x[0]
+    r = safe_div(diff, min(line1_x[1] - line1_x[0], line2_x[1] - line2_x[0]))
+    if r > thr:
+        return True, r
+    else:
+        return False, r
+
+
+def sorted_boxes_by_col(boxes, img_bgr=None):
+    """
+    根据位置, 按列排序boxes
+    """
+    if len(boxes) == 1:
+        return [boxes], [[0]], 1
+
+    x_min_list, y_min_list, s_min_list = [], [], []
+
+    # 从左到右(lr)、从上到下(ud)排序
+    for box in boxes:
+        x_min_list.append((box[0] + box[2]) // 2)
+        y_min_list.append((box[1] + box[3]) // 2)
+
+    box_ud_idxes = np.argsort(y_min_list)
+    box_lr_idxes = np.argsort(x_min_list)
+    sorted_boxes, sorted_idxes = [], []  # 最终的box结果
+    num_row = 0
+
+    n_boxes = len(boxes)
+    idx_flag = [False] * len(boxes)
+
+    for i in range(n_boxes):
+        line_boxes = list()
+        line_idxes = list()
+
+        box_idx = box_ud_idxes[i]
+        if idx_flag[box_idx]:
+            continue
+        idx_flag[box_idx] = True
+
+        target_box = boxes[box_idx]
+
+        target_height = [target_box[1], target_box[3]]
+        target_width = [target_box[0], target_box[2]]
+
+        lr_idx = np.where(box_lr_idxes == box_idx)[0]
+        lr_idx = int(lr_idx)
+
+        line_boxes.append(target_box)
+        line_idxes.append(box_idx)
+
+        for l_i in range(lr_idx - 1, -1, -1):  # 从当前框，向上查找
+            tmp_box_idx = box_lr_idxes[l_i]
+            if idx_flag[tmp_box_idx]:
+                continue
+            tmp_box = boxes[tmp_box_idx]
+
+            tmp_height = [tmp_box[1], tmp_box[3]]
+            tmp_width = [tmp_box[0], tmp_box[2]]
+
+            is_height_intersect, r_height = check_line_intersect(target_height, tmp_height)
+            is_width_intersect, r_width = check_line_intersect(target_width, tmp_width)
+
+            if is_width_intersect and r_height < 0.6:
+                idx_flag[tmp_box_idx] = True
+                if r_width < 1:
+                    target_height = [tmp_box[1], tmp_box[3]]
+                line_boxes.append(tmp_box)
+                line_idxes.append(tmp_box_idx)
+
+        line_boxes.reverse()
+        line_idxes.reverse()
+
+        target_height = [target_box[1], target_box[3]]
+        target_width = [target_box[0], target_box[2]]
+
+        for r_i in range(lr_idx + 1, len(box_lr_idxes)):
+            tmp_box_idx = box_lr_idxes[r_i]
+            if idx_flag[tmp_box_idx]:
+                continue
+            tmp_box = boxes[tmp_box_idx]
+            tmp_height = [tmp_box[1], tmp_box[3]]
+            tmp_width = [tmp_box[0], tmp_box[2]]
+
+            is_height_intersect, r_height = check_line_intersect(target_height, tmp_height)
+            is_width_intersect, r_width = check_line_intersect(target_width, tmp_width)
+
+            if is_width_intersect and (r_height < 0.6 or r_width > 0.8):
+                idx_flag[tmp_box_idx] = True
+                if r_width < 1:
+                    target_height = [tmp_box[1], tmp_box[3]]
+                line_boxes.append(tmp_box)
+                line_idxes.append(tmp_box_idx)
+
+        y_list = [box[1] for box in line_boxes]
+        line_tuple = zip(y_list, line_boxes, line_idxes)
+        sorted_tuple = sorted(line_tuple)  # 排序idxes
+        y_list, line_boxes, line_idxes = zip(*sorted_tuple)
+
+        sorted_boxes.append(list(line_boxes))
+        sorted_idxes.append(list(line_idxes))
+        num_row += 1
+
+    return sorted_boxes, sorted_idxes, num_row
+
+
+def sorted_boxes_by_row(boxes, img_bgr=None):
+    """
+    根据位置, 按行排序boxes
+    """
+    if len(boxes) == 1:
+        return [boxes], [[0]], 1
+
+    x_min_list, y_min_list, s_min_list = [], [], []
+    n_boxes = len(boxes)
+    idx_flag = [False] * len(boxes)
+
+    # 从左到右(lr)、从上到下(ud)排序
+    for box in boxes:
+        x_min_list.append((box[0] + box[2]) // 2)
+        y_min_list.append((box[1] + box[3]) // 2)
+
+    box_ud_idxes = np.argsort(y_min_list)
+    box_lr_idxes = np.argsort(x_min_list)
+
+    sorted_boxes, sorted_idxes = [], []  # 最终的box结果
+
+    num_row = 0
+
+    for i in range(n_boxes):
+        line_boxes = list()
+        line_idxes = list()
+
+        box_idx = box_ud_idxes[i]
+        if idx_flag[box_idx]:
+            continue
+        idx_flag[box_idx] = True
+
+        target_box = boxes[box_idx]
+
+        target_height = [target_box[1], target_box[3]]
+        target_width = [target_box[0], target_box[2]]
+
+        ud_idx = np.where(box_lr_idxes == box_idx)[0]
+        ud_idx = int(ud_idx)
+
+        line_boxes.append(target_box)
+        line_idxes.append(box_idx)
+
+        for l_i in range(ud_idx - 1, -1, -1):
+            tmp_box_idx = box_lr_idxes[l_i]
+            if idx_flag[tmp_box_idx]:
+                continue
+            tmp_box = boxes[tmp_box_idx]
+            tmp_height = [tmp_box[1], tmp_box[3]]
+            tmp_width = [tmp_box[0], tmp_box[2]]
+
+            is_height_intersect, r_height = check_line_intersect(target_height, tmp_height)
+            is_width_intersect, r_width = check_line_intersect(target_width, tmp_width)
+
+            if is_height_intersect and r_width < 0.6:
+                idx_flag[tmp_box_idx] = True
+                if r_height < 1:
+                    target_height = [tmp_box[1], tmp_box[3]]
+                line_boxes.append(tmp_box)
+                line_idxes.append(tmp_box_idx)
+
+        line_boxes.reverse()
+        line_idxes.reverse()
+
+        target_height = [target_box[1], target_box[3]]
+        target_width = [target_box[0], target_box[2]]
+
+        for r_i in range(ud_idx + 1, len(box_lr_idxes)):
+            tmp_box_idx = box_lr_idxes[r_i]
+            if idx_flag[tmp_box_idx]:
+                continue
+            tmp_box = boxes[tmp_box_idx]
+            tmp_height = [tmp_box[1], tmp_box[3]]
+            tmp_width = [tmp_box[0], tmp_box[2]]
+
+            is_height_intersect, r_height = check_line_intersect(target_height, tmp_height)
+            is_width_intersect, r_width = check_line_intersect(target_width, tmp_width)
+
+            if is_height_intersect and r_width < 0.6:
+                idx_flag[tmp_box_idx] = True
+                if r_height < 1:
+                    target_height = [tmp_box[1], tmp_box[3]]
+                line_boxes.append(tmp_box)
+                line_idxes.append(tmp_box_idx)
+
+        x_list = [box[0] for box in line_boxes]
+        line_tuple = zip(x_list, line_boxes, line_idxes)
+        sorted_tuple = sorted(line_tuple)  # 排序idxes
+        x_list, line_boxes, line_idxes = zip(*sorted_tuple)
+
+        sorted_boxes.append(list(line_boxes))
+        sorted_idxes.append(list(line_idxes))
+        num_row += 1
+
+    return sorted_boxes, sorted_idxes, num_row
+
+
+def filer_boxes_by_size(boxes, r_thr=0.4):
+    """
+    根据是否重叠过滤包含在内部的框
+    """
+    if not boxes:
+        return boxes, [i for i in range(len(boxes))]
+
+    size_list = []
+    idx_list = []
+    for idx, box in enumerate(boxes):
+        size_list.append(get_box_size(box))
+        idx_list.append(idx)
+
+    def sort_three_list(list1, list2, list3, reverse=False):
+        list1, list2, list3 = \
+            (list(t) for t in zip(*sorted(zip(list1, list2, list3), reverse=reverse)))
+        return list1, list2, list3
+
+    size_list, sorted_idxes, sorted_boxes = \
+        sort_three_list(size_list, idx_list, boxes, reverse=True)
+
+    n_box = len(sorted_boxes)  # box的数量
+    flag_list = [True] * n_box
+
+    for i in range(n_box):
+        if not flag_list[i]:
+            continue
+        x_boxes = [sorted_boxes[i]]
+        for j in range(i + 1, n_box):
+            box1 = sorted_boxes[i]
+            box2 = sorted_boxes[j]
+            r_iou = min_iou(box1, box2)
+            if r_iou > r_thr:
+                flag_list[j] = False
+                x_boxes.append(box2)
+        sorted_boxes[i] = merge_boxes(x_boxes)
+
+    new_boxes, new_idxes = [], []
+    for i in range(n_box):
+        if flag_list[i]:
+            new_boxes.append(sorted_boxes[i])
+            new_idxes.append(sorted_idxes[i])
+
+    return new_boxes, new_idxes
+
+
+def check_point_in_box(pnt, box):
+    """
+    判断点是否在box中
+    """
+    p_x, p_y = pnt
+    x_min, y_min, x_max, y_max = box
+    if x_min < p_x < x_max and y_min < p_y < y_max:
+        return True
+    else:
+        return False
+
+
+def image_to_base64(image_np, ext='.jpg'):
+    """
+    image转换为base64, ext是编码格式，'.jpg'和'.png'都支持
+    """
+    import base64
+
+    image = cv2.imencode(ext, image_np)[1]
+    image_code = str(base64.b64encode(image))[2:-1]  # 生成编码
+    return image_code
+
+
+def base64_2_image(image_encode):
+    """
+    base64转换为image
+    """
+    import base64
+
+    image_content = base64.urlsafe_b64decode(image_encode)
+    np_arr = np.asarray(bytearray(image_content)).reshape(1, -1)
+    image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    return image
 
 
 def main():

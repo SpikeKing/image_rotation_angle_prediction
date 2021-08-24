@@ -11,8 +11,8 @@ def draw_plt_histograms(data_list, label_list, title=""):
     import numpy as np
     import matplotlib.pyplot as plt
 
-    plt.rcParams['font.family'] = ['sans-serif']
-    plt.rcParams['font.sans-serif'] = ['SimHei']
+    # plt.rcParams['font.family'] = ['sans-serif']
+    # plt.rcParams['font.sans-serif'] = ['SimHei']
 
     # Fake dataset
     height = data_list

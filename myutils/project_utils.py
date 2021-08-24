@@ -10,19 +10,19 @@ Created by C. L. Wang on 2018/7/9
 # from __future__ import absolute_import
 
 import collections
-import os
 import io
-from io import open
+import os
 import random
 import shutil
 import sys
 import time
-import numpy as np
 from datetime import timedelta, datetime
-
+from io import open
 # reload(sys)  # 重置系统参数
 # sys.setdefaultencoding('utf8')  # 避免编码错误
 from itertools import chain
+
+import numpy as np
 
 p = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 if p not in sys.path:
@@ -183,7 +183,7 @@ def create_file(file_name):
         print("文件存在，删除文件：%s" % file_name)
         os.remove(file_name)  # 删除已有文件
     if not os.path.exists(file_name):
-        print("文件不存在，创建文件：%s" % file_name)
+        # print("文件不存在，创建文件：%s" % file_name)
         open(file_name, 'a').close()
 
 
@@ -234,13 +234,16 @@ def merge_files(folder, merge_file):
                     outfile.write(line)
 
 
-def random_pick(some_list, probabilities):
+def random_pick(some_list, probabilities=None):
     """
     根据概率随机获取元素
     :param some_list: 元素列表
     :param probabilities: 概率列表
     :return: 当前元素
     """
+    if not probabilities:
+        probabilities = [float(1) / float(len(some_list))] * len(some_list)
+
     x = random.uniform(0, 1)
     cumulative_probability = 0.0
     item = some_list[0]
@@ -312,6 +315,16 @@ def sort_dict_by_value(dict_, reverse=True):
     :return: 排序后的字典
     """
     return sorted(dict_.items(), key=operator.itemgetter(1), reverse=reverse)
+
+
+def sort_dict_by_key(dict_, reverse=False):
+    """
+    按照values排序字典
+    :param dict_: 待排序字典
+    :param reverse: 默认从大到小
+    :return: 排序后的字典
+    """
+    return sorted(dict_.items(), key=operator.itemgetter(0), reverse=reverse)
 
 
 def get_current_time_str():
@@ -431,7 +444,7 @@ def read_file(data_file, mode='more'):
     :return: 单行或数组
     """
     try:
-        with open(data_file, 'r') as f:
+        with open(data_file, 'r', errors='ignore') as f:
             if mode == 'one':
                 output = f.read()
                 return output
@@ -483,6 +496,24 @@ def read_file_gb2312(data_file, mode='more'):
                 return list()
     except IOError:
         return list()
+
+
+def read_excel_file(file_path):
+    """
+    读取excel文件
+    """
+    import xlrd
+    print('[Info] excel file: {}'.format(file_path))
+    book = xlrd.open_workbook(file_path)
+    sheet = book.sheet_by_index(0)
+    data_lines = []
+    for row in range(0, sheet.nrows):
+        line_data = []
+        for column in range(0, sheet.ncols):
+            val = sheet.cell(row, column).value
+            line_data.append(val)
+        data_lines.append(line_data)
+    return data_lines  # 二维数组
 
 
 def find_word_position(original, word):
@@ -720,7 +751,7 @@ def download_url_img(url):
     import cv2
     import requests
     try:
-        response = requests.get(url, timeout=3)
+        response = requests.get(url, timeout=3, verify=False)
     except Exception as e:
         print(str(e))
         return False, []
@@ -747,9 +778,10 @@ def download_url_txt(url, is_split=False):
     if response is not None and response.status_code == 200:
         text_data = response.content
         if not is_split:
-            return True, text_data
+            return True, text_data.decode()
         else:
-            return True, text_data.splitlines()
+            text_list = text_data.decode().splitlines()
+            return True, text_list
     else:
         return False, []
 
@@ -834,3 +866,30 @@ def random_prob(prob):
     """
     x = random.choices([True, False], [prob, 1-prob])
     return x[0]
+
+
+def filter_list_by_idxes(data_list, idx_list):
+    """
+    通过索引过滤list, 兼容1~2层list
+    """
+    res_list = []
+    for idx in idx_list:
+        if not isinstance(idx, list):
+            res_list.append(data_list[idx])
+        else:
+            sub_list = []
+            for i in idx:
+                sub_list.append(data_list[i])
+            res_list.append(sub_list)
+    return res_list
+
+
+def check_english_str(string):
+    """
+    检测英文字符串
+    """
+    pattern = re.compile('^[A-Za-z0-9.,:;!?()_*"\'，。 ]+$')
+    if pattern.fullmatch(string):
+        return True
+    else:
+        return False
