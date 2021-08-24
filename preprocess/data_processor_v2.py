@@ -8,13 +8,13 @@ Created by C. L. Wang on 24.8.21
 import os
 import sys
 
-from root_dir import DATA_DIR
 from multiprocessing.pool import Pool
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
 
+from root_dir import DATA_DIR
 from myutils.cv_utils import *
 from myutils.project_utils import *
 from x_utils.vpf_sevices import *
