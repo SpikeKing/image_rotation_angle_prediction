@@ -750,6 +750,9 @@ def download_url_img(url):
     """
     import cv2
     import requests
+    from requests.packages.urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
     try:
         response = requests.get(url, timeout=3, verify=False)
     except Exception as e:
