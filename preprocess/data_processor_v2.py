@@ -80,7 +80,7 @@ class DataProcessorV2(object):
         print('[Info] 样本数: {}'.format(len(data_lines)))
         pool = Pool(processes=100)
         for img_idx, item_data in enumerate(data_lines):
-            print(item_data)
+            # print(item_data)
             data_dict = json.loads(item_data.replace("'", "\""))
             img_url = data_dict["url"]
             pool.apply_async(DataProcessorV2.process_line, (img_idx, img_url, self.out_file_name))
