@@ -22,9 +22,16 @@ from x_utils.vpf_sevices import *
 
 class DataProcessorV2(object):
     def __init__(self):
-        self.file_name = os.path.join(DATA_DIR, "files", "10w_online_query_0823.txt")
-        self.out_file_name = os.path.join(DATA_DIR, "files",
-                                          "10w_online_query_0823.out-{}.txt".format(get_current_time_str()))
+        # v1
+        # self.file_name = os.path.join(DATA_DIR, "files", "10w_online_query_0823.txt")
+        # self.out_file_name = os.path.join(DATA_DIR, "files",
+        #                                   "10w_online_query_0823.out-{}.txt".format(get_current_time_str()))
+
+        # v2
+        self.file_name = os.path.join(DATA_DIR, "files", "general_detect_url_watermark_1w_3w_dump.txt")  # v2
+        self.out_file_name = os.path.join(
+            DATA_DIR, "files",  "general_detect_url_watermark_1w_3w_dump.out-{}.txt".format(get_current_time_str()))
+
 
     @staticmethod
     def get_rotation_from_service(img_url):
@@ -62,6 +69,21 @@ class DataProcessorV2(object):
         for img_idx, img_url in enumerate(data_lines):
             # DataProcessorV2.process_line(img_idx, img_url, self.out_file_name)
             pool.apply_async(DataProcessorV2.process_line, (img_idx, img_url, self.out_file_name))
+            break
+        pool.close()
+        pool.join()
+        print('[Info] 处理完成: {}'.format(self.out_file_name))
+
+    def process_v2(self):
+        data_lines = read_file(self.file_name)
+        print('[Info] 文件: {}'.format(self.file_name))
+        print('[Info] 样本数: {}'.format(len(data_lines)))
+        pool = Pool(processes=100)
+        for img_idx, item_data in enumerate(data_lines):
+            print(item_data)
+            data_dict = json.loads(item_data.replace("'", "\""))
+            img_url = data_dict["url"]
+            pool.apply_async(DataProcessorV2.process_line, (img_idx, img_url, self.out_file_name))
         pool.close()
         pool.join()
         print('[Info] 处理完成: {}'.format(self.out_file_name))
@@ -69,7 +91,7 @@ class DataProcessorV2(object):
 
 def main():
     dp2 = DataProcessorV2()
-    dp2.process()
+    dp2.process_v2()
 
 
 if __name__ == '__main__':
