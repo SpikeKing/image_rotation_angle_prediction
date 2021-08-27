@@ -23,8 +23,8 @@ from x_utils.vpf_sevices import *
 class DataProcessorV2(object):
     def __init__(self):
         # v1
-        self.file_name = os.path.join(DATA_DIR, "files", "dump表格第四批3月.txt")
-        self.out_file_name = os.path.join(DATA_DIR, "files", "dump表格第四批3月.out-{}.txt".format(get_current_time_str()))
+        self.file_name = os.path.join(DATA_DIR, "files", "dump_table_no4_3yue.txt")
+        self.out_file_name = os.path.join(DATA_DIR, "files", "dump_table_no4_3yue.out-{}.txt".format(get_current_time_str()))
 
         # v2
         # self.file_name = os.path.join(DATA_DIR, "files", "general_detect_url_watermark_1w_3w_dump.txt")  # v2
