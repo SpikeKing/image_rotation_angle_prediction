@@ -458,6 +458,23 @@ def read_file(data_file, mode='more'):
         return list()
 
 
+def read_csv_file(data_file, num=-1):
+    """
+    读取CSV文件
+    """
+    import pandas
+    df = pandas.read_csv(data_file)
+    row_list = []
+    column_names = list(df.columns)
+    for idx, row in df.iterrows():
+        if idx == num:
+            break
+        row_list.append(dict(row))
+        if idx != 0 and idx % 20000 == 0:
+            print('[Info] idx: {}'.format(idx))
+    return column_names, row_list
+
+
 def read_file_utf8(data_file, mode='more', encoding='utf8'):
     """
     读文件, 原文件和数据文件

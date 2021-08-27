@@ -23,14 +23,22 @@ from x_utils.vpf_sevices import *
 class DataProcessorV2(object):
     def __init__(self):
         # v1
-        # self.file_name = os.path.join(DATA_DIR, "files", "10w_online_query_0823.txt")
-        # self.out_file_name = os.path.join(DATA_DIR, "files",
-        #                                   "10w_online_query_0823.out-{}.txt".format(get_current_time_str()))
+        self.file_name = os.path.join(DATA_DIR, "files", "dump表格第四批3月.txt")
+        self.out_file_name = os.path.join(DATA_DIR, "files", "dump表格第四批3月.out-{}.txt".format(get_current_time_str()))
 
         # v2
-        self.file_name = os.path.join(DATA_DIR, "files", "general_detect_url_watermark_1w_3w_dump.txt")  # v2
-        self.out_file_name = os.path.join(
-            DATA_DIR, "files",  "general_detect_url_watermark_1w_3w_dump.out-{}.txt".format(get_current_time_str()))
+        # self.file_name = os.path.join(DATA_DIR, "files", "general_detect_url_watermark_1w_3w_dump.txt")  # v2
+        # self.out_file_name = os.path.join(
+        #     DATA_DIR, "files",  "general_detect_url_watermark_1w_3w_dump.out-{}.txt".format(get_current_time_str()))
+
+        # 验证数据
+        # self.file1_name = os.path.join(DATA_DIR, "files", "0cda042c-91df-436f-a97d-777219ce0cd6_166501.csv")
+        # self.file2_name = os.path.join(DATA_DIR, "files", "4ba5fa95-4148-4379-b9b9-b700b7c22e2c_166501.csv")
+        # time_str = get_current_time_str()
+
+        # self.out_file_right_name = os.path.join(DATA_DIR, "files", "url_0_nat_right.{}.txt".format(time_str))
+        # self.out_file_error_name = os.path.join(DATA_DIR, "files", "url_1_nat_err.{}.txt".format(time_str))
+        # self.out_file_unknown_name = os.path.join(DATA_DIR, "files", "url_2_nat_unknown.{}.txt".format(time_str))
 
 
     @staticmethod
@@ -88,10 +96,42 @@ class DataProcessorV2(object):
         pool.join()
         print('[Info] 处理完成: {}'.format(self.out_file_name))
 
+    def process_data(self):
+        print('[Info] 处理文件: {}'.format(self.file1_name))
+        column_names, row_list = read_csv_file(self.file1_name)
+        print('[Info] column_names: {}'.format(column_names))
+        print('[Info] row_list: {}'.format(len(row_list)))
+        url_dict = collections.defaultdict(list)
+        for row in row_list:
+            url = json.loads(row["问题内容"])[0]
+            label_str = json.loads(row["回答内容"])["radio_1"]
+            url_dict[url].append(label_str)
+        print('[Info] 图像数: {}'.format(len(url_dict.keys())))
+
+        for url in url_dict.keys():
+            label_list = url_dict[url]
+            if "2" in label_list:
+                write_line(self.out_file_unknown_name, "{}\t{}".format(url, "+".join(label_list)))
+            elif "1" in label_list:
+                write_line(self.out_file_error_name, "{}\t{}".format(url, "+".join(label_list)))
+            else:
+                label_list = list(set(label_list))
+                if len(label_list) == 1 and label_list[0] == "0":
+                    write_line(self.out_file_right_name, "{}\t{}".format(url, "+".join(label_list)))
+        print('[Info] 写入完成! {}'.format(self.out_file_right_name))
+
+
+    def spilt_url(self):
+        data_lines = read_file(os.path.join(DATA_DIR, "files", "url_2.txt"))
+        out_file = os.path.join(DATA_DIR, "files", "url_2_x.txt")
+        for data_line in data_lines:
+            url = data_line.split("\t")[0]
+            write_line(out_file, url)
+
 
 def main():
     dp2 = DataProcessorV2()
-    dp2.process_v2()
+    dp2.process()
 
 
 if __name__ == '__main__':
