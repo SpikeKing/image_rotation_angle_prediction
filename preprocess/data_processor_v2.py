@@ -75,8 +75,8 @@ class DataProcessorV2(object):
         print('[Info] 样本数: {}'.format(len(data_lines)))
         pool = Pool(processes=100)
         for img_idx, img_url in enumerate(data_lines):
-            # DataProcessorV2.process_line(img_idx, img_url, self.out_file_name)
-            pool.apply_async(DataProcessorV2.process_line, (img_idx, img_url, self.out_file_name))
+            DataProcessorV2.process_line(img_idx, img_url, self.out_file_name)
+            # pool.apply_async(DataProcessorV2.process_line, (img_idx, img_url, self.out_file_name))
             break
         pool.close()
         pool.join()
@@ -131,7 +131,7 @@ class DataProcessorV2(object):
 
 def main():
     dp2 = DataProcessorV2()
-    dp2.process()
+    dp2.process_v2()
 
 
 if __name__ == '__main__':
