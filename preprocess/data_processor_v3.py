@@ -22,17 +22,17 @@ class DataProcessorV3(object):
         # self.label_file = os.path.join(DATA_DIR, "files", "18c8e245-da79-4b94-9311-02914430035a_166499.csv")
         # self.relabel_file = os.path.join(DATA_DIR, "files", "02c0bb86-ebc3-4f99-8759-25178d5aba33_166505.csv")
 
-        self.label_file = os.path.join(DATA_DIR, "files", "0cda042c-91df-436f-a97d-777219ce0cd6_166501.csv")
+        self.label_file = os.path.join(DATA_DIR, "files", "6d6895c2-6071-42cc-927f-a84fa6df3c10_166511.csv")
         self.relabel_file = self.label_file
 
         time_str = get_current_time_str()
 
         self.out_file_right_name = \
-            os.path.join(DATA_DIR, "files", "url_0_nat_right.{}.txt".format(time_str))
+            os.path.join(DATA_DIR, "files", "url_0_table_right.{}.txt".format(time_str))
         self.out_file_error_name = \
-            os.path.join(DATA_DIR, "files", "url_1_nat_err.{}.txt".format(time_str))
+            os.path.join(DATA_DIR, "files", "url_1_table_err.{}.txt".format(time_str))
         self.out_file_unknown_name = \
-            os.path.join(DATA_DIR, "files", "url_2_nat_unknown.{}.txt".format(time_str))
+            os.path.join(DATA_DIR, "files", "url_2_table_unknown.{}.txt".format(time_str))
 
     def process(self):
         print('[Info] 标注文件: {}'.format(self.label_file))

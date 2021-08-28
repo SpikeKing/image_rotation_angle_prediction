@@ -84,7 +84,7 @@ class ProblemTrainer(object):
         print('[Info] ' + "-" * 50)
 
         self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
-        self.train_data, self.test_data = self.load_train_and_test_dataset()  # 加载训练和测试数据
+        self.train_data, self.test_data = self.load_train_and_test_dataset_v2()  # 加载训练和测试数据
 
         mkdir_if_not_exist(self.output_dir)
 
@@ -145,7 +145,7 @@ class ProblemTrainer(object):
 
         return model_name, model
 
-    def load_train_and_test_dataset(self):
+    def load_train_and_test_dataset_v1(self):
         # 其他图像
         dataset9_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_other')
         train9_filenames, test9_filenames = self.get_split_datasets(dataset9_path)
@@ -195,6 +195,60 @@ class ProblemTrainer(object):
                          test7_filenames + test8_filenames + test9_filenames + test_val_filenames * 4
 
         train_filenames = train_filenames + test_filenames
+
+        random.shuffle(train_filenames)
+        random.shuffle(test_filenames)
+        print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
+
+        return train_filenames, test_filenames
+
+    def load_train_and_test_dataset_v2(self):
+        """
+        自然翻译
+        """
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_trans_20210828', 'train')
+        print('[Info] 数据集: {}'.format(dataset1_path))
+        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
+
+        # 全部数据集
+        train_filenames = train1_filenames
+        test_filenames = test1_filenames
+
+        random.shuffle(train_filenames)
+        random.shuffle(test_filenames)
+        print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
+
+        return train_filenames, test_filenames
+
+    def load_train_and_test_dataset_v3(self):
+        """
+        自然翻译
+        """
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828', 'train')
+        print('[Info] 数据集: {}'.format(dataset1_path))
+        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
+
+        # 全部数据集
+        train_filenames = train1_filenames
+        test_filenames = test1_filenames
+
+        random.shuffle(train_filenames)
+        random.shuffle(test_filenames)
+        print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
+
+        return train_filenames, test_filenames
+
+    def load_train_and_test_dataset_v4(self):
+        """
+        自然翻译
+        """
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_table_20210828', 'train')
+        print('[Info] 数据集: {}'.format(dataset1_path))
+        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
+
+        # 全部数据集
+        train_filenames = train1_filenames
+        test_filenames = test1_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)

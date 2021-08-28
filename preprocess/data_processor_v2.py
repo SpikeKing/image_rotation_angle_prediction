@@ -120,18 +120,51 @@ class DataProcessorV2(object):
                     write_line(self.out_file_right_name, "{}\t{}".format(url, "+".join(label_list)))
         print('[Info] 写入完成! {}'.format(self.out_file_right_name))
 
-
-    def spilt_url(self):
+    @staticmethod
+    def spilt_url():
         data_lines = read_file(os.path.join(DATA_DIR, "files", "url_2.txt"))
         out_file = os.path.join(DATA_DIR, "files", "url_2_x.txt")
         for data_line in data_lines:
             url = data_line.split("\t")[0]
             write_line(out_file, url)
 
+    @staticmethod
+    def pure_urls():
+        file_path = os.path.join(DATA_DIR, "files", "url_0_table_right.txt")
+        print('[Info] 文件路径: {}'.format(file_path))
+
+        train_file_path = os.path.join(DATA_DIR, "files", "table_train_urls.txt")
+        print('[Info] 训练输出文件路径: {}'.format(train_file_path))
+        val_file_path = os.path.join(DATA_DIR, "files", "table_val_urls.txt")
+        print('[Info] 验证输出文件路径: {}'.format(val_file_path))
+
+        data_lines = read_file(file_path)
+        gap = len(data_lines) // 20
+        train_lines = data_lines[:gap*19]
+        val_lines = data_lines[gap*19:]
+        print("[Info] 训练: {}, 验证: {}".format(len(train_lines), len(val_lines)))
+        print('[Info] 文本行数: {}'.format(len(data_lines)))
+
+        url_list = []
+        for data_line in train_lines:
+            items = data_line.split("\t")
+            url = items[0]
+            url_list.append(url)
+        write_list_to_file(train_file_path, url_list)
+        print('[Info] 写入完成: {}'.format(train_file_path))
+
+        url_list = []
+        for data_line in val_lines:
+            items = data_line.split("\t")
+            url = items[0]
+            url_list.append(url)
+        write_list_to_file(val_file_path, url_list)
+        print('[Info] 写入完成: {}'.format(val_file_path))
+
 
 def main():
     dp2 = DataProcessorV2()
-    dp2.process_v2()
+    dp2.pure_urls()
 
 
 if __name__ == '__main__':
