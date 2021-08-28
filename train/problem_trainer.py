@@ -4,7 +4,7 @@
 Copyright (c) 2020. All rights reserved.
 Created by C. L. Wang on 2.12.20
 """
-
+import argparse
 import os
 import random
 import sys
@@ -13,7 +13,7 @@ import sys
 import tensorflow as tf
 
 config = tf.compat.v1.ConfigProto()
-config.gpu_options.visible_device_list = '0'
+config.gpu_options.visible_device_list = '0,1'
 config.gpu_options.allow_growth = True
 sess = tf.compat.v1.Session(config=config)
 
@@ -41,7 +41,8 @@ class ProblemTrainer(object):
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
-                 is_random_crop=False  # 随机高度剪裁
+                 is_random_crop=False,  # 随机高度剪裁
+                 version="v2"  # 版本
                  ):
 
         self.mode = mode  # 训练模式
@@ -51,6 +52,8 @@ class ProblemTrainer(object):
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.nb_epoch = nb_epoch  # epoch
         self.is_random_crop = is_random_crop  # 随机高度剪裁
+
+        self.version = version
 
         self.model_path = None
         if self.mode == "mobilenetv2":
@@ -69,7 +72,7 @@ class ProblemTrainer(object):
             self.batch_size = 100
 
         # 输出文件夹
-        self.output_dir = "model_{}_{}_{}".format(self.mode, self.input_shape[0], get_current_time_str())
+        self.output_dir = "model_{}_{}_{}_{}".format(self.version, self.mode, self.input_shape[0], get_current_time_str())
 
         print('[Info] ' + "-" * 50)
         print('[Info] 训练参数: ')
@@ -81,10 +84,17 @@ class ProblemTrainer(object):
         print('[Info] random_angle: {}'.format(self.random_angle))
         print('[Info] is_random_crop_h: {}'.format(self.is_random_crop))
         print('[Info] output_dir: {}'.format(self.output_dir))
+        print('[Info] version: {}'.format(self.version))
         print('[Info] ' + "-" * 50)
 
         self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
-        self.train_data, self.test_data = self.load_train_and_test_dataset_v2()  # 加载训练和测试数据
+        if self.version == "v2":
+            self.train_data, self.test_data = self.load_train_and_test_dataset_v2()  # 加载训练和测试数据
+        elif self.version == "v3":
+            self.train_data, self.test_data = self.load_train_and_test_dataset_v3()  # 加载训练和测试数据
+        elif self.version == "v4":
+            self.train_data, self.test_data = self.load_train_and_test_dataset_v4()  # 加载训练和测试数据
+
 
         mkdir_if_not_exist(self.output_dir)
 
@@ -351,8 +361,34 @@ class ProblemTrainer(object):
         )
 
 
+# def main():
+#     pt = ProblemTrainer()
+#     pt.train()
+
+def parse_args():
+    """
+    处理脚本参数，支持相对路径
+    img_file 文件路径，默认文件夹：img_downloader/urls
+    out_folder 输出文件夹，默认文件夹：img_data
+    :return: arg_img，文件路径；out_folder，输出文件夹
+    """
+    parser = argparse.ArgumentParser(description='训练数据')
+    parser.add_argument('-v', dest='version', required=True, help='模型版本', type=str)
+
+    args = parser.parse_args()
+
+    arg_version = args.version
+    print("version：%s" % arg_version)
+
+    return arg_version
+
+
 def main():
-    pt = ProblemTrainer()
+    """
+    入口函数
+    """
+    arg_version = parse_args()
+    pt = ProblemTrainer(version=arg_version)
     pt.train()
 
 
