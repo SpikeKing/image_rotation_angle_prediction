@@ -30,8 +30,8 @@ class PbSaver(object):
         """
         存储PB模型
         """
-        # saved_path = out_pb_path
-        # model.save(saved_path)
+        saved_path = os.path.join(pb_dir, "{}".format(pb_name.split(".")[0]))
+        model.save(saved_path)
 
         # Convert Keras model to ConcreteFunction
         full_model = tf.function(lambda x: model(x))
