@@ -72,7 +72,8 @@ class ProblemTrainer(object):
             self.batch_size = 100
 
         # 输出文件夹
-        self.output_dir = "model_{}_{}_{}_{}".format(self.version, self.mode, self.input_shape[0], get_current_time_str())
+        self.output_dir = os.path.join(
+            DATA_DIR, "models", "model_{}_{}_{}_{}".format(self.version, self.mode, self.input_shape[0], get_current_time_str()))
 
         print('[Info] ' + "-" * 50)
         print('[Info] 训练参数: ')
@@ -94,7 +95,6 @@ class ProblemTrainer(object):
             self.train_data, self.test_data = self.load_train_and_test_dataset_v3()  # 加载训练和测试数据
         elif self.version == "v4":
             self.train_data, self.test_data = self.load_train_and_test_dataset_v4()  # 加载训练和测试数据
-
 
         mkdir_if_not_exist(self.output_dir)
 
