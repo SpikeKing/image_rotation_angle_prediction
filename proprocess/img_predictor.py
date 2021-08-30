@@ -7,13 +7,10 @@ Created by C. L. Wang on 11.11.20
 import os
 import sys
 
-import coremltools
 import tensorflow as tf
 import tensorflow.python.keras.backend as K
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
-from tensorflow_core.python.keras.engine.input_layer import InputLayer, Input
-from tensorflow_core.python.keras.models import Model
 
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
@@ -21,7 +18,7 @@ if p not in sys.path:
 
 from myutils.cv_utils import *
 from myutils.project_utils import *
-from x_utils.vpf_utils import get_uc_rotation_vpf_service
+# from x_utils.vpf_utils import get_uc_rotation_vpf_service
 
 from root_dir import DATA_DIR
 from utils import angle_error, rotate
@@ -37,6 +34,9 @@ class ImgPredictor(object):
         pass
 
     def save_pb_model(self, model):
+        """
+        存储PB模型
+        """
         saved_path = os.path.join(DATA_DIR, 'saved_models', 'model_{}'.format(get_current_time_str()))
         model.save(saved_path)
 
@@ -98,7 +98,7 @@ class ImgPredictor(object):
         model_path = os.path.join(DATA_DIR, 'models', self.model_name)
         model = tf.keras.models.load_model(model_path, custom_objects=dependencies, compile=False)
 
-        self.save_pb_model(model)  # 存储pb模型
+        # self.save_pb_model(model)  # 存储pb模型
 
         return model
 
