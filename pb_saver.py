@@ -118,7 +118,7 @@ def parse_args():
     args = parser.parse_args()
 
     arg_model = args.model
-    arg_model = os.path.join(DATA_DIR, "models", "rotnet_resnet50_trans_best_20210830.hdf5")
+    # arg_model = os.path.join(DATA_DIR, "models", "rotnet_resnet50_trans_best_20210830.hdf5")
     print("模型路径: {}".format(arg_model))
 
     arg_outdir = args.outdir
