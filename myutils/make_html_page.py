@@ -20,8 +20,8 @@ def make_html_page(html_file, img_data_list, n=1):
     </script>
     <style>
     img{
-        max-height:320px;
-        max-width: 320px;
+        max-height:1200px;
+        max-width: 1200px;
         vertical-align:middle;
     }
     </style>
