@@ -62,6 +62,7 @@ class ServiceTester(object):
         pool.join()
         print('[Info] 处理完成: {}'.format(out_file))
         data_lines = read_file(out_file)
+        print('[Info] 正确率: {}'.format(safe_div(len(paths_list) - len(data_lines), len(paths_list))))
         out_list = []
         for data_line in data_lines:
             img_url, angle = data_line.split("\t")
