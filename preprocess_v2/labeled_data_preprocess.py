@@ -96,7 +96,7 @@ class LabeledDataPreprocess(object):
         print('[Info] 数据行数: {}'.format(len(data_lines)))
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
-            LabeledDataPreprocess.process_item(data_idx, data_line, self.pre_urls_file)
+            # LabeledDataPreprocess.process_item(data_idx, data_line, self.pre_urls_file)
             pool.apply_async(LabeledDataPreprocess.process_item, (data_idx, data_line, self.pre_urls_file))
         pool.close()
         pool.join()
