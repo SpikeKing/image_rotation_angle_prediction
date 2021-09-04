@@ -42,7 +42,8 @@ class ProblemTrainer(object):
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
                  is_random_crop=False,  # 随机高度剪裁
-                 version="v2"  # 版本
+                 version="v2",  # 版本
+                 batch_size=32  # batch_size
                  ):
 
         self.mode = mode  # 训练模式
@@ -52,6 +53,7 @@ class ProblemTrainer(object):
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.nb_epoch = nb_epoch  # epoch
         self.is_random_crop = is_random_crop  # 随机高度剪裁
+        self.batch_size = int(batch_size)  # batch size
 
         self.version = version
 
@@ -70,6 +72,7 @@ class ProblemTrainer(object):
             self.batch_size = 16  # batch size, v2080
         else:
             self.batch_size = 100
+        print('[Info] batch_size: {}'.format(self.batch_size))
 
         # 输出文件夹
         self.output_dir = os.path.join(
@@ -396,21 +399,25 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='训练数据')
     parser.add_argument('-v', dest='version', required=True, help='模型版本', type=str)
+    parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
 
     args = parser.parse_args()
 
     arg_version = args.version
-    print("version：%s" % arg_version)
+    print("[Info] version: {}".format(arg_version))
 
-    return arg_version
+    arg_batch_size = int(args.batch_size)
+    print("[Info] batch_size: {}".format(arg_batch_size))
+
+    return arg_version, arg_batch_size
 
 
 def main():
     """
     入口函数
     """
-    arg_version = parse_args()
-    pt = ProblemTrainer(version=arg_version)
+    arg_version, arg_batch_size = parse_args()
+    pt = ProblemTrainer(version=arg_version, batch_size=arg_batch_size)
     pt.train()
 
 
