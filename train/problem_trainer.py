@@ -65,13 +65,14 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210412.hdf5')
 
-        if mode == "mobilenetv2":
-            self.batch_size = 64  # batch size, v100
-        elif mode == "resnet50":
-            # self.batch_size = 32  # batch size, v100
-            self.batch_size = 16  # batch size, v2080
-        else:
-            self.batch_size = 100
+        if self.batch_size <= 0 or not self.batch_size:
+            if mode == "mobilenetv2":
+                self.batch_size = 64  # batch size, v100
+            elif mode == "resnet50":
+                # self.batch_size = 32  # batch size, v100
+                self.batch_size = 16  # batch size, v2080
+            else:
+                self.batch_size = 100
         print('[Info] batch_size: {}'.format(self.batch_size))
 
         # 输出文件夹
