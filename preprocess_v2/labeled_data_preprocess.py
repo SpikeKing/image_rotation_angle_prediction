@@ -24,9 +24,15 @@ class LabeledDataPreprocess(object):
     标注数据预处理
     """
     def __init__(self):
+        ## 第1批
         self.files_folder = os.path.join(DATA_DIR, "nat_url_files")  # 自然场景URL汇总
         self.out_urls_file = os.path.join(DATA_DIR, "files_v2", "nat_urls.{}.txt".format(get_current_day_str()))
+        self.download_urls_file = os.path.join(DATA_DIR, "files_v2", "nat_urls_download.{}.txt".format(get_current_day_str()))
         self.pre_urls_file = os.path.join(DATA_DIR, "files_v2", "nat_urls.{}.prelabeled.txt".format(get_current_day_str()))
+
+        ## 第2批
+        # self.file_path = os.path.join(DATA_DIR, "files_v2", "url_1_nat_err.txt")
+        # self.out_file_path = os.path.join(DATA_DIR, "files_v2", "url_1_nat_err.prelabeled.txt")
 
     @staticmethod
     def get_rotation_from_service(img_url):
@@ -46,7 +52,7 @@ class LabeledDataPreprocess(object):
         img_url = save_img_2_oss(img_bgr, img_name, oss_root_dir)
         return img_url
 
-    def process_step1(self):
+    def process_b1_step1(self):
         if is_file_nonempty(self.out_urls_file):
             print('[Info] 文件处理完成: {}'.format(self.out_urls_file))
             return
@@ -73,7 +79,7 @@ class LabeledDataPreprocess(object):
         print('[Info] 图像数: {}'.format(len(urls_list)))
 
     @staticmethod
-    def process_item(data_idx, data_line, out_file):
+    def process_b1_item(data_idx, data_line, out_file):
         try:
             # print('[Info] img_url: {}'.format(data_line))
             img_name = data_line.split("?")[0].split("%2F")[-1].split(".")[0]
@@ -91,21 +97,47 @@ class LabeledDataPreprocess(object):
             print('[Error] data_idx: {} 完成'.format(data_idx))
             print('[Error] e: {} 异常'.format(e))
 
-    def process_step2(self):
+    def process_b1_step2(self):
         data_lines = read_file(self.out_urls_file)
         print('[Info] 数据行数: {}'.format(len(data_lines)))
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
-            # LabeledDataPreprocess.process_item(data_idx, data_line, self.pre_urls_file)
-            pool.apply_async(LabeledDataPreprocess.process_item, (data_idx, data_line, self.pre_urls_file))
+            # LabeledDataPreprocess.process_b1_item(data_idx, data_line, self.pre_urls_file)
+            pool.apply_async(LabeledDataPreprocess.process_b1_item, (data_idx, data_line, self.pre_urls_file))
         pool.close()
         pool.join()
         print('[Info] 处理完成: {}'.format(self.pre_urls_file))
 
+    def process_b1_step3(self):
+        data_lines = read_file(self.out_urls_file)
+        print('[Info] 数据行数: {}'.format(len(data_lines)))
+        out_list = []
+        for data_idx, data_line in enumerate(data_lines):
+            img_name = data_line.split("?")[0].split("%2F")[-1].split(".")[0]
+            img_name = urllib.parse.unquote(img_name)
+            out_img_name = "{}-x-{}.jpg".format(data_idx, img_name)
+            out_list.append("{}<sep>{}".format(data_line, out_img_name))
+        write_list_to_file(self.download_urls_file, out_list)
+        print('[Info] 处理完成: {}'.format(self.download_urls_file))
+
+    @staticmethod
+    def process_b2_item(data_idx, data_line, out_file):
+        print('[Info] data_line: {}'.format(data_line))
+        img_name = data_line.split("/")[-1].split("-angle-")[0]
+        print('[Info] img_name: {}'.format(img_name))
+
+    def process_b2_step1(self):
+        data_lines = read_file(self.file_path)
+        print('[Info] 文件: {}'.format(self.file_path))
+        print('[Info] 文件数: {}'.format(len(data_lines)))
+        for data_idx, data_line in enumerate(data_lines):
+            LabeledDataPreprocess.process_b2_item(data_idx, data_line, self.out_file_path)
+            break
+
 
 def main():
     ldp = LabeledDataPreprocess()
-    ldp.process_step2()
+    ldp.process_b1_step3()
 
 
 if __name__ == '__main__':

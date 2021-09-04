@@ -40,7 +40,6 @@ class DataProcessorV2(object):
         # self.out_file_error_name = os.path.join(DATA_DIR, "files", "url_1_nat_err.{}.txt".format(time_str))
         # self.out_file_unknown_name = os.path.join(DATA_DIR, "files", "url_2_nat_unknown.{}.txt".format(time_str))
 
-
     @staticmethod
     def get_rotation_from_service(img_url):
         res_dict = get_vpf_service(img_url, "mJhcySi7TS3ChV6JWba4pi")

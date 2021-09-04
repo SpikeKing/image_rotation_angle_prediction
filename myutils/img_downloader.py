@@ -69,7 +69,7 @@ def download_imgs_for_mp(img_file, out_folder, n_prc=10):
 
     pool = Pool(processes=n_prc)  # 多线程下载
     for (index, data) in enumerate(data_list):
-        items = data.split(',')
+        items = data.split('<sep>')
         if len(items) == 2:
             path, img_name = items
         else:

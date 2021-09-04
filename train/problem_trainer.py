@@ -89,7 +89,9 @@ class ProblemTrainer(object):
         print('[Info] ' + "-" * 50)
 
         self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
-        if self.version == "v2":
+        if self.version == "v1":
+            self.train_data, self.test_data = self.load_train_and_test_dataset_v1()
+        elif self.version == "v2":
             self.train_data, self.test_data = self.load_train_and_test_dataset_v2()  # 加载训练和测试数据
         elif self.version == "v3":
             self.train_data, self.test_data = self.load_train_and_test_dataset_v3()  # 加载训练和测试数据
@@ -156,6 +158,22 @@ class ProblemTrainer(object):
         return model_name, model
 
     def load_train_and_test_dataset_v1(self):
+        # 自然场景图像, 75680
+        dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829')
+        train13_filenames, test13_filenames = self.get_split_datasets(dataset13_path)
+
+        # 自然场景图像, 14016
+        dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828')
+        train12_filenames, test12_filenames = self.get_split_datasets(dataset12_path)
+
+        # 表格图像, 44842
+        dataset11_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_table_20210828')
+        train11_filenames, test11_filenames = self.get_split_datasets(dataset11_path)
+
+        # 图像翻译图像, 93748
+        dataset10_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_trans_20210828')
+        train10_filenames, test10_filenames = self.get_split_datasets(dataset10_path)
+
         # 其他图像
         dataset9_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_other')
         train9_filenames, test9_filenames = self.get_split_datasets(dataset9_path)
