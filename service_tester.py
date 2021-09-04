@@ -74,9 +74,6 @@ class ServiceTester(object):
 def parse_args():
     """
     处理脚本参数，支持相对路径
-    img_file 文件路径，默认文件夹：img_downloader/urls
-    out_folder 输出文件夹，默认文件夹：img_data
-    :return: arg_img，文件路径；out_folder，输出文件夹
     """
     parser = argparse.ArgumentParser(description='服务测试')
     parser.add_argument('-i', dest='in_folder', required=False, help='测试文件夹', type=str)

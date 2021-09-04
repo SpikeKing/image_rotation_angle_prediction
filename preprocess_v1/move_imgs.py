@@ -8,7 +8,7 @@ Created by C. L. Wang on 28.11.20
 import cv2
 from myutils.project_utils import *
 from myutils.cv_utils import *
-from preprocess.make_image_page import get_image_paths
+from preprocess_v1.make_image_page import get_image_paths
 from root_dir import ROOT_DIR, DATA_DIR
 
 

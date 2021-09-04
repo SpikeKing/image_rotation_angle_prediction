@@ -458,6 +458,17 @@ def read_file(data_file, mode='more'):
         return list()
 
 
+def is_file_nonempty(data_file):
+    """
+    判断文件是否非空
+    """
+    data_lines = read_file(data_file)
+    if len(data_lines) > 0:
+        return True
+    else:
+        return False
+
+
 def read_csv_file(data_file, num=-1):
     """
     读取CSV文件
