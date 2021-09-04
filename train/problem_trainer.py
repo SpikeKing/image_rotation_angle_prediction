@@ -216,11 +216,15 @@ class ProblemTrainer(object):
         # 全部数据集
         train_filenames = train1_filenames + train2_filenames + train3_filenames + \
                           train4_filenames + train5_filenames + train6_filenames + \
-                          train7_filenames + train8_filenames + train9_filenames + test_val_filenames * 4
+                          train7_filenames + train8_filenames + train9_filenames + \
+                          train10_filenames + train11_filenames + train12_filenames + \
+                          train13_filenames + test_val_filenames * 4
 
         test_filenames = test1_filenames + test2_filenames + test3_filenames + \
                          test4_filenames + test5_filenames + test6_filenames + \
-                         test7_filenames + test8_filenames + test9_filenames + test_val_filenames * 4
+                         test7_filenames + test8_filenames + test9_filenames + \
+                         test10_filenames + test11_filenames + test12_filenames + \
+                         test13_filenames + test_val_filenames * 4
 
         train_filenames = train_filenames + test_filenames
 
