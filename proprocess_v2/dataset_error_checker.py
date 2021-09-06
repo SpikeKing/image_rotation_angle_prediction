@@ -32,7 +32,7 @@ class DatasetErrorChecker(object):
         paths_list, names_list = traverse_dir_files(folder_path)
         print('[Info] 读取完成: {}'.format(len(paths_list)))
         write_list_to_file(out_file, paths_list)
-        print('[Info] 写入完成: {}, 样本数: {}'.format(out_file, len(paths_list)))
+        print('[Info] 写入完成: {}, 样本数: {}'.format(folder_path, len(paths_list)))
 
     def load_dataset(self):
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829')
@@ -81,10 +81,10 @@ class DatasetErrorChecker(object):
         angle = int(angle)
         if angle != 0:
             items = img_path.split("/")
-            img_name = "{}-f-{}.jpg".format(items[-2], items[-1])
+            img_name = "{}-f-{}.jpg".format(items[-2], items[-1].split(".")[0])
             img_url = DatasetErrorChecker.save_img_path(img_bgr, img_name)
             write_line(out_file, "{}\t{}".format(img_url, angle))
-            print('[Info] 处理完成: {}, angle: {}'.format(img_idx, angle))
+            print('[Info] {} 处理完成: {}, angle: {}'.format(img_idx, img_url, angle))
 
     def check(self):
         data_lines = read_file(self.out_img_paths_file_x)
