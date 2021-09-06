@@ -36,7 +36,7 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="densenet121",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="densenet201",  # 训练模式, 支持mobilenetv2和resnet50
                  nb_classes=4,
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
@@ -68,7 +68,7 @@ class ProblemTrainer(object):
         if self.batch_size <= 0 or not self.batch_size:
             if mode == "mobilenetv2":
                 self.batch_size = 64  # batch size, v100
-            elif mode == "resnet50" or mode == "densenet121":
+            elif mode == "resnet50" or mode == "densenet201":
                 # self.batch_size = 32  # batch size, v100
                 self.batch_size = 16  # batch size, v2080
             else:
@@ -122,10 +122,10 @@ class ProblemTrainer(object):
             from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
             model_name = 'rotnet_v3_mobilenetv2_{epoch:02d}_{val_acc:.4f}.hdf5'
             base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=self.input_shape)
-        elif mode == "densenet121":
-            from tensorflow.python.keras.applications.densenet import DenseNet121
+        elif mode == "densenet201":
+            from tensorflow.python.keras.applications.densenet import DenseNet201
             model_name = 'rotnet_v3_densenet121_{epoch:02d}_{val_acc:.4f}.hdf5'
-            base_model = DenseNet121(weights='imagenet', include_top=False, input_shape=self.input_shape)
+            base_model = DenseNet201(weights='imagenet', include_top=False, input_shape=self.input_shape)
         else:
             raise Exception("[Exception] mode {} 不支持!!".format(mode))
 
