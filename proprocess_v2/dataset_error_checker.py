@@ -8,6 +8,8 @@ Created by C. L. Wang on 6.9.21
 import os
 import sys
 
+from multiprocessing.pool import Pool
+
 p = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if p not in sys.path:
     sys.path.append(p)
@@ -48,8 +50,12 @@ class DatasetErrorChecker(object):
                             dataset6_path, dataset7_path, dataset8_path, dataset9_path, dataset10_path,
                             dataset11_path, dataset12_path, dataset13_path, dataset_val_path]
 
+        pool = Pool(processes=100)
         for folder_path in folder_path_list:
-            DatasetErrorChecker.process_line(folder_path, self.out_img_paths_file)
+            # DatasetErrorChecker.process_line(folder_path, self.out_img_paths_file)
+            pool.apply_async(DatasetErrorChecker.process_line, (folder_path, self.out_img_paths_file))
+        pool.close()
+        pool.join()
         print('[Info] 写入完成: {}'.format(self.out_img_paths_file))
 
     def check(self):
