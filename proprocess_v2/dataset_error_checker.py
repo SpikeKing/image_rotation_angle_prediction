@@ -18,7 +18,15 @@ from myutils.project_utils import *
 
 class DatasetErrorChecker(object):
     def __init__(self):
-        self.out_img_paths = os.path.join(DATA_DIR, "files_v2", "dataset_all_path_{}.txt".format(get_current_time_str()))
+        self.out_img_paths_file = os.path.join(DATA_DIR, "files_v2", "dataset_all_path_{}.txt".format(get_current_time_str()))
+
+    @staticmethod
+    def process_line(folder_path, out_file):
+        print('[Info] 读取路径: {}'.format(folder_path))
+        paths_list, names_list = traverse_dir_files(folder_path)
+        print('[Info] 读取完成: {}'.format(len(paths_list)))
+        write_list_to_file(out_file, paths_list)
+        print('[Info] 写入完成: {}, 样本数: {}'.format(out_file, len(paths_list)))
 
     def load_dataset(self):
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829')
@@ -40,15 +48,9 @@ class DatasetErrorChecker(object):
                             dataset6_path, dataset7_path, dataset8_path, dataset9_path, dataset10_path,
                             dataset11_path, dataset12_path, dataset13_path, dataset_val_path]
 
-        img_paths = []
         for folder_path in folder_path_list:
-            print('[Info] 读取路径: {}'.format(folder_path))
-            paths_list, names_list = traverse_dir_files(folder_path)
-            img_paths += paths_list
-            print('[Info] 读取完成: {}'.format(len(paths_list)))
-
-        write_list_to_file(self.out_img_paths, img_paths)
-        print('[Info] 写入完成: {}, 样本数: {}'.format(self.out_img_paths, len(img_paths)))
+            DatasetErrorChecker.process_line(folder_path, self.out_img_paths_file)
+        print('[Info] 写入完成: {}'.format(self.out_img_paths_file))
 
     def check(self):
         pass
