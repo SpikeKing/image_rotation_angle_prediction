@@ -247,7 +247,7 @@ class ProblemTrainer(object):
                          test10_filenames + test11_filenames + test12_filenames + \
                          test13_filenames + test_val_filenames * 4
 
-        train_filenames = train_filenames + test_filenames
+        train_filenames = train_filenames
 
         random.shuffle(train_filenames)
         random.shuffle(test_filenames)
@@ -420,6 +420,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='训练数据')
     parser.add_argument('-v', dest='version', required=True, help='模型版本', type=str)
     parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
+    parser.add_argument('-m', dest='mode', required=False, default="resnet50", help='模型版本', type=str)
 
     args = parser.parse_args()
 
@@ -429,15 +430,18 @@ def parse_args():
     arg_batch_size = int(args.batch_size)
     print("[Info] batch_size: {}".format(arg_batch_size))
 
-    return arg_version, arg_batch_size
+    arg_mode = args.mode
+    print("[Info] mode: {}".format(arg_mode))
+
+    return arg_version, arg_batch_size, arg_mode
 
 
 def main():
     """
     入口函数
     """
-    arg_version, arg_batch_size = parse_args()
-    pt = ProblemTrainer(version=arg_version, batch_size=arg_batch_size)
+    arg_version, arg_batch_size, arg_mode = parse_args()
+    pt = ProblemTrainer(version=arg_version, batch_size=arg_batch_size, mode=arg_mode)
     pt.train()
 
 
