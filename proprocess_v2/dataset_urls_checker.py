@@ -67,7 +67,7 @@ class DatasetUrlsChecker(object):
         random.seed(47)
         random.shuffle(data_lines)
 
-        data_lines = data_lines[:200]
+        # data_lines = data_lines[:200]
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
         pool = Pool(processes=100)
@@ -78,6 +78,8 @@ class DatasetUrlsChecker(object):
         pool.join()
 
         urls_list = read_file(self.file_txt_path)
+        print('[Info] 输出文件: {}'.format(self.file_txt_path))
+        print('[Info] 样本数: {}'.format(len(urls_list)))
         urls_list = [[x] for x in urls_list]
 
         make_html_page(self.file_html_path, urls_list)
