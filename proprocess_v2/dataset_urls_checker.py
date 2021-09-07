@@ -40,7 +40,7 @@ class DatasetUrlsChecker(object):
         """
         from x_utils.oss_utils import save_img_2_oss
         if not oss_root_dir:
-            oss_root_dir = "zhengsheng.wcl/Image-Rotation/imgs-tmp/{}".format(get_current_day_str())
+            oss_root_dir = "zhengsheng.wcl/problems_segmentation/homework-english/datasets/{}".format(get_current_day_str())
         img_url = save_img_2_oss(img_bgr, img_name, oss_root_dir)
         return img_url
 
@@ -54,7 +54,8 @@ class DatasetUrlsChecker(object):
             print('[Info] data_line: {}'.format(data_line))
             img_bgr = rotate_img_for_4angle(img_bgr, angle)
 
-        img_name = "{}-{}.jpg".format(data_idx, get_current_time_str())
+        img_x = data_line.split("/")[-1].split(".")[0]
+        img_name = "{}-x-{}-x-{}.jpg".format(data_idx, img_x, str(angle))
         img_url = DatasetUrlsChecker.save_img_path(img_bgr, img_name)
         write_line(out_path, img_url)
         print('[Info] data_idx: {}'.format(data_idx))
@@ -64,13 +65,13 @@ class DatasetUrlsChecker(object):
         print('[Info] 处理文件: {}'.format(self.file_path))
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
-        random.seed(47)
-        random.shuffle(data_lines)
+        # random.seed(47)
+        # random.shuffle(data_lines)
 
         # data_lines = data_lines[:200]
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
-        pool = Pool(processes=200)
+        pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
             # DatasetUrlsChecker.process_item(data_idx, data_line, self.file_txt_path)
             pool.apply_async(DatasetUrlsChecker.process_item, (data_idx, data_line, self.file_txt_path))
