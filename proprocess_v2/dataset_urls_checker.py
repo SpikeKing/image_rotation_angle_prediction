@@ -23,7 +23,7 @@ from x_utils.vpf_sevices import get_vpf_service
 class DatasetUrlsChecker(object):
     def __init__(self):
         self.file_path = os.path.join(DATA_DIR, "files_v2", "k12_urls_english.txt")
-        self.file_txt_path = os.path.join(DATA_DIR, "files_v2", "k12_urls_english.check.txt")
+        self.file_txt_path = os.path.join(DATA_DIR, "files_v2", "k12_urls_english.check.{}.txt".format(get_current_time_str()))
         self.file_html_path = os.path.join(DATA_DIR, "files_v2", "k12_urls_english.check.html")
 
     @staticmethod
