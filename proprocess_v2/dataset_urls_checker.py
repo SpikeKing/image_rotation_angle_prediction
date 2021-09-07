@@ -70,10 +70,10 @@ class DatasetUrlsChecker(object):
         # data_lines = data_lines[:200]
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
-        pool = Pool(processes=100)
+        pool = Pool(processes=200)
         for data_idx, data_line in enumerate(data_lines):
-            DatasetUrlsChecker.process_item(data_idx, data_line, self.file_txt_path)
-            # pool.apply_async(DatasetUrlsChecker.process_item, (data_idx, data_line, self.file_txt_path))
+            # DatasetUrlsChecker.process_item(data_idx, data_line, self.file_txt_path)
+            pool.apply_async(DatasetUrlsChecker.process_item, (data_idx, data_line, self.file_txt_path))
         pool.close()
         pool.join()
 
