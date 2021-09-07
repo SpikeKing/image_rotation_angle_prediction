@@ -28,7 +28,7 @@ class DatasetUrlsChecker(object):
 
     @staticmethod
     def call_service(img_url):
-        service = "RZQqg7HkMMFf5A2CKtoVB3"
+        service = "mJhcySi7TS3ChV6JWba4pi"
         res_dict = get_vpf_service(img_url=img_url, service_name=service)  # 表格
         angle = res_dict["data"]["angle"]
         return angle
