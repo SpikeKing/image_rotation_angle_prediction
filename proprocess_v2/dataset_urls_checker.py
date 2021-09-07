@@ -17,7 +17,7 @@ from myutils.cv_utils import *
 from myutils.make_html_page import make_html_page
 from myutils.project_utils import *
 from root_dir import DATA_DIR
-from x_utils.vpf_sevices import get_vpf_service
+from x_utils.vpf_sevices import get_vpf_service, get_vpf_service_np
 
 
 class DatasetUrlsChecker(object):
@@ -27,9 +27,9 @@ class DatasetUrlsChecker(object):
         self.file_html_path = os.path.join(DATA_DIR, "files_v2", "k12_urls_english.check.html")
 
     @staticmethod
-    def call_service(img_url):
+    def call_service(img_bgr):
         service = "mJhcySi7TS3ChV6JWba4pi"
-        res_dict = get_vpf_service(img_url=img_url, service_name=service)  # 表格
+        res_dict = get_vpf_service_np(img_np=img_bgr, service_name=service)  # 表格
         angle = res_dict["data"]["angle"]
         return angle
 
@@ -46,9 +46,9 @@ class DatasetUrlsChecker(object):
 
     @staticmethod
     def process_item(data_idx, data_line, out_path):
-        angle = DatasetUrlsChecker.call_service(data_line)
-        angle = int(angle)
         _, img_bgr = download_url_img(data_line)
+        angle = DatasetUrlsChecker.call_service(img_bgr)
+        angle = int(angle)
         if angle != 0:
             print('[Info] angle: {}'.format(angle))
             print('[Info] data_line: {}'.format(data_line))
