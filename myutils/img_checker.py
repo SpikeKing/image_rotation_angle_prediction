@@ -5,12 +5,11 @@ Copyright (c) 2020. All rights reserved.
 Created by C. L. Wang on 10.11.20
 """
 
+import argparse
 import os
-import shutil
 from multiprocessing import Pool
 
 import cv2
-import argparse
 
 
 def sort_two_list(list1, list2):
@@ -22,28 +21,6 @@ def sort_two_list(list1, list2):
     """
     list1, list2 = (list(t) for t in zip(*sorted(zip(list1, list2))))
     return list1, list2
-
-
-def mkdir_if_not_exist(dir_name, is_delete=False):
-    """
-    创建文件夹
-    :param dir_name: 文件夹
-    :param is_delete: 是否删除
-    :return: 是否成功
-    """
-    try:
-        if is_delete:
-            if os.path.exists(dir_name):
-                shutil.rmtree(dir_name)
-                print('[Info] 文件夹 "%s" 存在, 删除文件夹.' % dir_name)
-
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-            print('[Info] 文件夹 "%s" 不存在, 创建文件夹.' % dir_name)
-        return True
-    except Exception as e:
-        print('[Exception] %s' % e)
-        return False
 
 
 def traverse_dir_files(root_dir, ext=None):
@@ -73,21 +50,29 @@ def traverse_dir_files(root_dir, ext=None):
 
 
 def check_img(path, size):
+    """
+    检查图像
+    """
     is_good = True
     try:
         img_bgr = cv2.imread(path)
         h, w, _ = img_bgr.shape
         if h < size or w < size:
             is_good = False
-        img_re = cv2.resize(img_bgr, (224, 224))
+        _ = cv2.resize(img_bgr, (size, size))
     except Exception as e:
         is_good = False
+
+    if path.endswith("jpg"):
+        with open(path, 'rb') as f:
+            check_chars = f.read()[-2:]
+        if check_chars != b'\xff\xd9':
+            print('[Info] Not complete jpg image')
+            is_good = False
 
     if not is_good:
         print('[Info] error path: {}'.format(path))
         os.remove(path)
-    # else:
-    #     print('[Info] path: {}'.format(path))
 
 
 def check_error(img_dir, n_prc, size):
@@ -100,7 +85,6 @@ def check_error(img_dir, n_prc, size):
 
     pool = Pool(processes=n_prc)  # 多线程下载
     for idx, path in enumerate(paths_list):
-        # check_img(path, size)
         pool.apply_async(check_img, (path, size))
         if (idx+1) % 1000 == 0:
             print('[Info] idx: {}'.format(idx+1))
@@ -118,7 +102,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='压缩图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
-    parser.add_argument('-p', dest='n_prc', required=False, default=40, help='进程数', type=str)
+    parser.add_argument('-p', dest='n_prc', required=False, default=100, help='进程数', type=str)
     parser.add_argument('-s', dest='size', required=False, default=50, help='最小边长', type=str)
     args = parser.parse_args()
 
