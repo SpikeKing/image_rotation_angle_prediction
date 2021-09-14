@@ -15,7 +15,6 @@ if p not in sys.path:
 
 from myutils.project_utils import *
 from root_dir import DATA_DIR, ROOT_DIR
-from train.problem_trainer import ProblemTrainer
 
 
 class DatasetSaver(object):
@@ -26,10 +25,11 @@ class DatasetSaver(object):
         self.data_file = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_{}.txt".format(get_current_day_str()))
 
     @staticmethod
-    def process_line(folder_path, out_file):
+    def process_line(folder_path, num, out_file):
         print('[Info] 读取路径: {}'.format(folder_path))
         paths_list, names_list = traverse_dir_files(folder_path)
         print('[Info] 读取完成: {}'.format(len(paths_list)))
+        paths_list = format_samples_num(paths_list, num)
         write_list_to_file(out_file, paths_list)
         print('[Info] 写入完成: {}, 样本数: {}'.format(folder_path, len(paths_list)))
 

@@ -924,3 +924,18 @@ def check_english_str(string):
         return True
     else:
         return False
+
+
+def format_samples_num(a_list, num=20000):
+    """
+    固定数量的样本
+    """
+    if num <= 0:
+        return a_list
+    a_n = len(a_list)
+    n_piece = num // a_n + 1
+    x_list = a_list * n_piece
+    random.seed(47)
+    random.shuffle(x_list)
+    x_list = x_list[:num]
+    return x_list
