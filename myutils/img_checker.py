@@ -12,17 +12,6 @@ from multiprocessing import Pool
 import cv2
 
 
-def sort_two_list(list1, list2):
-    """
-    排序两个列表
-    :param list1: 列表1
-    :param list2: 列表2
-    :return: 排序后的两个列表
-    """
-    list1, list2 = (list(t) for t in zip(*sorted(zip(list1, list2))))
-    return list1, list2
-
-
 def traverse_dir_files(root_dir, ext=None):
     """
     列出文件夹中的文件, 深度遍历
@@ -43,9 +32,6 @@ def traverse_dir_files(root_dir, ext=None):
             else:
                 names_list.append(name)
                 paths_list.append(os.path.join(parent, name))
-    if not names_list:  # 文件夹为空
-        return paths_list, names_list
-    paths_list, names_list = sort_two_list(paths_list, names_list)
     return paths_list, names_list
 
 
@@ -98,9 +84,9 @@ def check_error(img_dir, n_prc, size):
 def parse_args():
     """
     处理脚本参数，支持相对路径
-    :return: in_folder 输入文件夹, out_folder 输出文件夹, size 尺寸, n_prc 进程数
+    :return: in_folder 输入文件夹, size 尺寸, n_prc 进程数
     """
-    parser = argparse.ArgumentParser(description='压缩图片脚本')
+    parser = argparse.ArgumentParser(description='检查图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
     parser.add_argument('-p', dest='n_prc', required=False, default=100, help='进程数', type=str)
     parser.add_argument('-s', dest='size', required=False, default=50, help='最小边长', type=str)
