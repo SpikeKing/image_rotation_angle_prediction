@@ -27,7 +27,7 @@ class DatasetSaver(object):
     @staticmethod
     def process_line(folder_path, num, out_file):
         print('[Info] 读取路径: {}'.format(folder_path))
-        paths_list, names_list = traverse_dir_files(folder_path, ext="jpg", is_sorted=False)
+        paths_list, names_list = traverse_dir_files(folder_path, is_sorted=False)
         print('[Info] 读取完成: {}'.format(len(paths_list)))
         paths_list = format_samples_num(paths_list, num)
         write_list_to_file(out_file, paths_list)
