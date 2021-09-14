@@ -58,7 +58,7 @@ def traverse_dir_files(root_dir, ext=None, is_sorted=True):
         if name.startswith('.'):  # 去除隐藏文件
             continue
         if ext:  # 根据后缀名搜索
-            if name.endswith(tuple(ext)):
+            if name.endswith(ext):
                 names_list.append(name)
                 paths_list.append(path)
         else:
