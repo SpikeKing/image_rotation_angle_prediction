@@ -65,7 +65,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210914.hdf5')
         elif self.mode == "densenet121":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210910.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210914.hdf5')
 
         if self.batch_size <= 0 or not self.batch_size:
             if mode == "mobilenetv2":
