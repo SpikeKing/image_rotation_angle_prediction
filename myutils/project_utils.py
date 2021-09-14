@@ -51,10 +51,7 @@ def traverse_dir_files(root_dir, ext=None, is_sorted=True):
     """
     names_list = []
     paths_list = []
-    raw_paths_list = pathlib.Path(root_dir).rglob("*")
-    if not raw_paths_list:  # 文件夹为空
-        return paths_list, names_list
-    for path in raw_paths_list:
+    for path in pathlib.Path(root_dir).rglob("*"):
         path = str(path)
         name = path.split("/")[-1]
         if name.startswith('.') or "." not in name:  # 去除隐藏文件
@@ -66,6 +63,8 @@ def traverse_dir_files(root_dir, ext=None, is_sorted=True):
         else:
             names_list.append(name)
             paths_list.append(path)
+    if not names_list:  # 文件夹为空
+        return paths_list, names_list
     if is_sorted:
         paths_list, names_list = sort_two_list(paths_list, names_list)
     return paths_list, names_list
