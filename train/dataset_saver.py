@@ -44,11 +44,11 @@ class DatasetSaver(object):
         dataset10_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_trans_20210828')
         # 其他图像, 2060
         dataset9_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_other_1024')
-        # 22w小图数据集
+        # 24w小图数据集, 238927
         dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w')
-        # 14w query数据, 已验证
+        # 14w query数据, 已验证, 147756
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
-        # 12w query数据
+        # 12w query数据, 130989
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         # 5k 题库数据, 4714
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
