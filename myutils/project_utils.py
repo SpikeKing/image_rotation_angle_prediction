@@ -51,7 +51,7 @@ def traverse_dir_files(root_dir, ext=None, is_sorted=True):
     """
     names_list = []
     paths_list = []
-    for path in pathlib.Path(root_dir).rglob("*"):
+    for path in list(pathlib.Path(root_dir).rglob("*")):
         path = str(path)
         name = path.split("/")[-1]
         if name.startswith('.') or "." not in name:  # 去除隐藏文件
