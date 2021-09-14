@@ -203,15 +203,15 @@ class ProblemTrainer(object):
 
         # 22w小图数据集
         dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w')
-        train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path, num=-1)
+        train8_filenames, test8_filenames = self.get_split_datasets(dataset8_path, num=100000)
 
         # 14w query数据, 已验证
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
-        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path, num=-1)
+        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path, num=100000)
 
         # 12w query数据
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
-        train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path, num=-1)
+        train2_filenames, test2_filenames = self.get_split_datasets(dataset2_path, num=100000)
 
         # 5k 题库数据, 已验证
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
