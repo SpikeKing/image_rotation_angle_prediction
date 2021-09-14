@@ -9,6 +9,7 @@ Created by C. L. Wang on 2018/7/9
 
 # from __future__ import absolute_import
 
+import pathlib
 import glob
 import collections
 import io
@@ -50,12 +51,13 @@ def traverse_dir_files(root_dir, ext=None, is_sorted=True):
     """
     names_list = []
     paths_list = []
-    raw_paths_list = glob.glob(root_dir+"/*")
+    raw_paths_list = pathlib.Path(root_dir).rglob("*")
     if not raw_paths_list:  # 文件夹为空
         return paths_list, names_list
     for path in raw_paths_list:
+        path = str(path)
         name = path.split("/")[-1]
-        if name.startswith('.'):  # 去除隐藏文件
+        if name.startswith('.') or "." not in name:  # 去除隐藏文件
             continue
         if ext:  # 根据后缀名搜索
             if name.endswith(ext):
