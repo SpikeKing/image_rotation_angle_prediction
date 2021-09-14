@@ -9,6 +9,7 @@ Created by C. L. Wang on 2018/7/9
 
 # from __future__ import absolute_import
 
+import glob
 import collections
 import io
 import os
@@ -49,6 +50,36 @@ def traverse_dir_files(root_dir, ext=None, is_sorted=True):
     """
     names_list = []
     paths_list = []
+    raw_paths_list = glob.glob(root_dir+"/*")
+    if not raw_paths_list:  # 文件夹为空
+        return paths_list, names_list
+    for path in raw_paths_list:
+        name = path.split("/")[-1]
+        if name.startswith('.'):  # 去除隐藏文件
+            continue
+        if ext:  # 根据后缀名搜索
+            if name.endswith(tuple(ext)):
+                names_list.append(name)
+                paths_list.append(path)
+        else:
+            names_list.append(name)
+            paths_list.append(path)
+    if is_sorted:
+        paths_list, names_list = sort_two_list(paths_list, names_list)
+    return paths_list, names_list
+
+
+def traverse_dir_files_pre(root_dir, ext=None, is_sorted=True):
+    """
+    列出文件夹中的文件, 深度遍历
+    :param root_dir: 根目录
+    :param ext: 后缀名
+    :param is_sorted: 是否排序，耗时较长
+    :return: [文件路径列表, 文件名称列表]
+    """
+    names_list = []
+    paths_list = []
+    paths_list = glob.glob(root_dir+"/*")
     for parent, _, fileNames in os.walk(root_dir):
         for name in fileNames:
             if name.startswith('.'):  # 去除隐藏文件
