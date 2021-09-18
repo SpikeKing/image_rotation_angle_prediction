@@ -206,7 +206,6 @@ class ProblemTrainer(object):
         print('[Info] ' + '-' * 50)
         return train_filenames, test_filenames
 
-
     @staticmethod
     def load_train_and_test_dataset_v1():
         # 自然场景图像, 75680
@@ -285,13 +284,14 @@ class ProblemTrainer(object):
 
         return train_filenames, test_filenames
 
-    def load_train_and_test_dataset_v2(self):
+    @staticmethod
+    def load_train_and_test_dataset_v2():
         """
         自然翻译
         """
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_trans_20210828', 'train')
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'text_line_v1_200w')
         print('[Info] 数据集: {}'.format(dataset1_path))
-        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
+        train1_filenames, test1_filenames = ProblemTrainer.get_split_datasets(dataset1_path)
 
         # 全部数据集
         train_filenames = train1_filenames

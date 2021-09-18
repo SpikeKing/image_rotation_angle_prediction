@@ -80,7 +80,6 @@ def traverse_dir_files_pre(root_dir, ext=None, is_sorted=True):
     """
     names_list = []
     paths_list = []
-    paths_list = glob.glob(root_dir+"/*")
     for parent, _, fileNames in os.walk(root_dir):
         for name in fileNames:
             if name.startswith('.'):  # 去除隐藏文件

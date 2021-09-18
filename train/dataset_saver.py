@@ -33,7 +33,7 @@ class DatasetSaver(object):
         write_list_to_file(out_file, paths_list)
         print('[Info] 写入完成: {}, 样本数: {}'.format(folder_path, len(paths_list)))
 
-    def load_dataset(self):
+    def load_dataset_mul_file(self):
         # 自然场景图像, 71885
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829_1024')
         # 自然场景图像, 13315
@@ -73,10 +73,22 @@ class DatasetSaver(object):
         pool.join()
         print('[Info] 写入完成: {}'.format(self.data_file))
 
+    @staticmethod
+    def load_dataset_one_file():
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'text_line_v1_200w')
+        print('[Info] 处理文件夹: {}'.format(dataset1_path))
+        out_file = os.path.join(DATA_DIR, "files_v2", "text_line_v1_200w_path.txt")
+        print('[Info] 输出文件: {}'.format(out_file))
+        s_time = time.time()
+        paths_list, names_list = traverse_dir_files(dataset1_path, is_sorted=False)
+        print("[Info] time: {}".format(time_elapsed(s_time, time.time())))
+        write_list_to_file(out_file, paths_list)
+        print('[Info] 写入文件: {}'.format(out_file))
+
 
 def main():
     ds = DatasetSaver()
-    ds.load_dataset()
+    ds.load_dataset_one_file()
 
 
 if __name__ == '__main__':
