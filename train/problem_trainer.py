@@ -37,6 +37,7 @@ from root_dir import ROOT_DIR, DATA_DIR
 class ProblemTrainer(object):
     def __init__(self,
                  mode="densenet121",  # 训练模式, 支持mobilenetv2和resnet50
+                 file_path="",
                  nb_classes=4,
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
@@ -56,6 +57,7 @@ class ProblemTrainer(object):
         self.batch_size = int(batch_size)  # batch size
 
         self.version = version
+        self.file_path = file_path
 
         self.model_path = None
         if self.mode == "mobilenetv2":
@@ -97,7 +99,10 @@ class ProblemTrainer(object):
         self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
 
         if self.version == "v1":
-            all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210914.txt")
+            if self.file_path:
+                all_data_path = self.file_path
+            else:
+                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210920.txt")
             print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
             if not os.path.exists(all_data_path):
                 self.train_data, self.test_data = self.load_train_and_test_dataset_v1()
@@ -105,7 +110,10 @@ class ProblemTrainer(object):
                 print('[Info] 读取: {}'.format(all_data_path))
                 self.train_data, self.test_data = self.load_train_and_test_dataset_quick(all_data_path, is_val=True)
         elif self.version == "v2":
-            all_data_path = os.path.join(DATA_DIR, "files_v2", "text_line_v1_200w_path.txt")
+            if self.file_path:
+                all_data_path = self.file_path
+            else:
+                all_data_path = os.path.join(DATA_DIR, "files_v2", "text_line_v1_200w_path.txt")
             print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
             if not os.path.exists(all_data_path):
                 self.train_data, self.test_data = self.load_train_and_test_dataset_v2()
@@ -459,6 +467,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='训练数据')
     parser.add_argument('-v', dest='version', required=True, help='模型版本', type=str)
+    parser.add_argument('-f', dest='file_path', required=True, help='数据路径', type=str)
     parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
     parser.add_argument('-m', dest='mode', required=False, default="resnet50", help='模型版本', type=str)
 
@@ -467,20 +476,23 @@ def parse_args():
     arg_version = args.version
     print("[Info] version: {}".format(arg_version))
 
+    arg_file_path = args.file_path
+    print("[Info] file_path: {}".format(arg_file_path))
+
     arg_batch_size = int(args.batch_size)
     print("[Info] batch_size: {}".format(arg_batch_size))
 
     arg_mode = args.mode
     print("[Info] mode: {}".format(arg_mode))
 
-    return arg_version, arg_batch_size, arg_mode
+    return arg_version, arg_file_path, arg_batch_size, arg_mode
 
 
 def main():
     """
     入口函数
     """
-    arg_version, arg_batch_size, arg_mode = parse_args()
+    arg_version, arg_file_path, arg_batch_size, arg_mode = parse_args()
     pt = ProblemTrainer(version=arg_version, batch_size=arg_batch_size, mode=arg_mode)
     pt.train()
 
