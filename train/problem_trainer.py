@@ -194,7 +194,7 @@ class ProblemTrainer(object):
         return x_list
 
     @staticmethod
-    def load_train_and_test_dataset_quick(path, prob=0.98, is_val=False):
+    def load_train_and_test_dataset_quick(path, prob=0.95, is_val=False):
         image_paths = read_file(path)
         if is_val:  # 加载验证
             dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
@@ -203,6 +203,8 @@ class ProblemTrainer(object):
 
         random.seed(47)
         random.shuffle(image_paths)
+        image_paths = image_paths[:400000]  # 只用40万
+
         n_train_samples = int(len(image_paths) * prob)  # 数据总量
         train_filenames = image_paths[:n_train_samples]
         test_filenames = image_paths[n_train_samples:]
