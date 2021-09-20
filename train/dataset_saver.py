@@ -62,8 +62,8 @@ class DatasetSaver(object):
         dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
 
         dataset_num_list = \
-            [[dataset13_path, -1], [dataset12_path, -1], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
-             [dataset8_path, 100000], [dataset1_path, 100000], [dataset2_path, 100000], [dataset3_path, -1],
+            [[dataset13_path, 150000], [dataset12_path, 30000], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
+             [dataset8_path, 50000], [dataset1_path, 50000], [dataset2_path, 50000], [dataset3_path, -1],
              [dataset4_path, -1], [dataset5_path, -1], [dataset6_path, -1], [dataset7_path, -1]]
 
         pool = Pool(processes=100)
@@ -89,7 +89,7 @@ class DatasetSaver(object):
 
 def main():
     ds = DatasetSaver()
-    ds.load_dataset_one_file()
+    ds.load_dataset_mul_file()
 
 
 if __name__ == '__main__':
