@@ -81,6 +81,7 @@ class DatasetSaver(object):
         print('[Info] 输出文件: {}'.format(out_file))
         s_time = time.time()
         paths_list, names_list = traverse_dir_files(dataset1_path, is_sorted=False)
+        print('[Info] 文件行数: {}'.format(len(paths_list)))
         print("[Info] time: {}".format(time_elapsed(s_time, time.time())))
         write_list_to_file(out_file, paths_list)
         print('[Info] 写入文件: {}'.format(out_file))

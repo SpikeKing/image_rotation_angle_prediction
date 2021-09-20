@@ -63,7 +63,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210914.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210918.hdf5')
         elif self.mode == "densenet121":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210914.hdf5')
 
@@ -96,17 +96,22 @@ class ProblemTrainer(object):
 
         self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
 
-        all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210914.txt")
-        print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
-
         if self.version == "v1":
+            all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210914.txt")
+            print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
             if not os.path.exists(all_data_path):
                 self.train_data, self.test_data = self.load_train_and_test_dataset_v1()
             else:
                 print('[Info] 读取: {}'.format(all_data_path))
-                self.train_data, self.test_data = self.load_load_train_and_test_dataset_quick(all_data_path)
+                self.train_data, self.test_data = self.load_train_and_test_dataset_quick(all_data_path, is_val=True)
         elif self.version == "v2":
-            self.train_data, self.test_data = self.load_train_and_test_dataset_v2()  # 加载训练和测试数据
+            all_data_path = os.path.join(DATA_DIR, "files_v2", "text_line_v1_200w_path.txt")
+            print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
+            if not os.path.exists(all_data_path):
+                self.train_data, self.test_data = self.load_train_and_test_dataset_v2()
+            else:
+                print('[Info] 读取: {}'.format(all_data_path))
+                self.train_data, self.test_data = self.load_train_and_test_dataset_quick(all_data_path, is_val=False)
         elif self.version == "v3":
             self.train_data, self.test_data = self.load_train_and_test_dataset_v3()  # 加载训练和测试数据
         elif self.version == "v4":
@@ -189,18 +194,21 @@ class ProblemTrainer(object):
         return x_list
 
     @staticmethod
-    def load_load_train_and_test_dataset_quick(path, prob=0.95):
+    def load_train_and_test_dataset_quick(path, prob=0.98, is_val=False):
         image_paths = read_file(path)
-        dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
-        test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
+        if is_val:  # 加载验证
+            dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
+            test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
+            image_paths += test_val_filenames
 
         random.seed(47)
         random.shuffle(image_paths)
         n_train_samples = int(len(image_paths) * prob)  # 数据总量
         train_filenames = image_paths[:n_train_samples]
-        test_filenames = image_paths[n_train_samples:] + test_val_filenames
+        test_filenames = image_paths[n_train_samples:]
 
-        train_filenames = train_filenames + test_filenames
+        # train_filenames = train_filenames + test_filenames
+        train_filenames = train_filenames
         print('[Info] ' + '-' * 50)
         print('[Info] 数据总量: {}, 训练集: {}, 验证集: {}'.format(n_train_samples, len(train_filenames), len(test_filenames)))
         print('[Info] ' + '-' * 50)
@@ -338,7 +346,6 @@ class ProblemTrainer(object):
         print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
 
         return train_filenames, test_filenames
-
 
     @staticmethod
     def get_split_datasets(img_dir, prob=0.95, num=20000):
