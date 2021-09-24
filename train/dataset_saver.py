@@ -47,7 +47,7 @@ class DatasetSaver(object):
         # 其他图像, 2060
         dataset9_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_other_1024')
         # 24w小图数据集, 238927
-        dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w')
+        dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w_512')
         # 14w query数据, 已验证, 147756
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
         # 12w query数据, 130989

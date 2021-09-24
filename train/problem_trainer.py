@@ -233,7 +233,7 @@ class ProblemTrainer(object):
         train13_filenames, test13_filenames = ProblemTrainer.get_split_datasets(dataset13_path, num=-1)
 
         # 自然场景图像, 14016
-        dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828')
+        dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828_1024')
         train12_filenames, test12_filenames = ProblemTrainer.get_split_datasets(dataset12_path, num=-1)
 
         # 表格图像, 44842
@@ -249,7 +249,7 @@ class ProblemTrainer(object):
         train9_filenames, test9_filenames = ProblemTrainer.get_split_datasets(dataset9_path, num=-1)
 
         # 22w小图数据集
-        dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w')
+        dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w_512')
         train8_filenames, test8_filenames = ProblemTrainer.get_split_datasets(dataset8_path, num=100000)
 
         # 14w query数据, 已验证
