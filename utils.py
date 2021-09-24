@@ -331,13 +331,13 @@ class RotNetDataGenerator(Iterator):
         避免图像的比例失衡
         """
         h, w, _ = img_bgr.shape
-        if h // w > 3:
+        if h // w > 4:
             mid = h // 2
-            img_crop = img_bgr[mid - w:mid + w, :, :]
+            img_crop = img_bgr[mid - 2 * w:mid + 2 * w, :, :]
             return img_crop
-        if w // h > 3:
+        if w // h > 4:
             mid = w // 2
-            img_crop = img_bgr[:, mid - h:mid + h, :]
+            img_crop = img_bgr[:, mid - 2 * h:mid + 2 * h, :]
             return img_crop
         else:
             return img_bgr

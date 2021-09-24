@@ -56,7 +56,8 @@ class HardcaseSaver(object):
 
     @staticmethod
     def process_line(data_idx, data_line, folder_path):
-        img_url, _ = data_line.split("\t")
+        items = data_line.split("\t")
+        img_url = items[0]
         _, img_bgr = download_url_img(img_url)
         img_bgr = HardcaseSaver.center_crop_by_hw(img_bgr)  # 取图像中心
         img_bgr = HardcaseSaver.resize_max_fixed(img_bgr)  # 根据最长边resize

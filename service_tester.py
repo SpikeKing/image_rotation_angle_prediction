@@ -47,7 +47,7 @@ class ServiceTester(object):
             # img_name = "{}-{}.jpg".format(get_current_time_str(), time.time())
             img_name = img_path.split("/")[-1]
             img_url = ServiceTester.save_img_path(img_bgr, img_name)
-            write_line(out_file, "{}\t{}".format(img_url, angle))
+            write_line(out_file, "{}\t{}\t{}".format(img_url, angle, img_path))
         if img_idx % 1000 == 0:
             print('[Info] 处理完成: {}, angle: {}'.format(img_idx, angle))
 
@@ -76,8 +76,8 @@ class ServiceTester(object):
         print('[Info] 正确率: {}'.format(safe_div(len(paths_list) - len(data_lines), len(paths_list))))
         out_list = []
         for data_line in data_lines:
-            img_url, angle = data_line.split("\t")
-            out_list.append([img_url, angle])
+            items = data_line.split("\t")
+            out_list.append(items)
         make_html_page(out_html, out_list)
         print('[Info] 处理完成: {}'.format(out_html))
 
