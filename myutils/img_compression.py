@@ -92,14 +92,17 @@ def compress_img(in_path, out_path, size=1024):
         print('[Error] error: {}, {}'.format(in_path, e))
 
 
-def process_folder(in_folder, out_folder, size=1024, n_prc=20):
+def process_folder(in_folder, out_folder, size=1024, n_prc=20, is_new_name=False):
     mkdir_if_not_exist(out_folder)  # 创建文件夹
     path_list, name_list = traverse_dir_files(in_folder)
     print('[Info] 读取图像完成! {}'.format(len(path_list)))
     pool = Pool(processes=n_prc)  # 多线程下载
 
-    for in_path, name in zip(path_list, name_list):
-        out_path = os.path.join(out_folder, name)
+    for name_idx, (in_path, name) in enumerate(zip(path_list, name_list)):
+        if not is_new_name:
+            out_path = os.path.join(out_folder, name)
+        else:
+            out_path = os.path.join(out_folder, "{}.jpg".format(str(name_idx).zfill(7)))
         pool.apply_async(compress_img, (in_path, out_path, size))
 
     pool.close()
@@ -117,7 +120,8 @@ def parse_args():
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
     parser.add_argument('-o', dest='out_folder', required=True, help='输出文件夹', type=str)
     parser.add_argument('-s', dest='size', required=False, default=1024, help='最长边', type=str)
-    parser.add_argument('-p', dest='n_prc', required=False, default=20, help='进程数', type=str)
+    parser.add_argument('-p', dest='n_prc', required=False, default=100, help='进程数', type=str)
+    parser.add_argument('-n', dest='new_name', required=False, default=False, help='是否新的图像', type=bool)
     args = parser.parse_args()
 
     in_folder = args.in_folder
@@ -130,13 +134,15 @@ def parse_args():
 
     print('图片尺寸: {}, 进程数: {}'.format(size, n_prc))
 
-    return in_folder, out_folder, size, n_prc
+    is_new_name = args.new_name
+
+    return in_folder, out_folder, size, n_prc, is_new_name
 
 
 def main():
-    arg_img, arg_out, size, n_prc = parse_args()
+    arg_img, arg_out, size, n_prc, is_new_name = parse_args()
     mkdir_if_not_exist(arg_out)  # 新建文件夹
-    process_folder(arg_img, arg_out, size, n_prc)
+    process_folder(arg_img, arg_out, size, n_prc, is_new_name)
 
 
 if __name__ == '__main__':
