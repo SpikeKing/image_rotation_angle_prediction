@@ -34,6 +34,7 @@ class DatasetSaver(object):
         print('[Info] 写入完成: {}, 样本数: {}'.format(folder_path, len(paths_list)))
 
     def load_dataset_mul_file(self):
+        s_time = time.time()
         # 自然场景图像, 71885
         dataset14_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_hardcase')
         # 自然场景图像, 71885
@@ -75,6 +76,9 @@ class DatasetSaver(object):
         pool.close()
         pool.join()
         print('[Info] 写入完成: {}'.format(self.data_file))
+        elapsed_time = time_elapsed(s_time, time.time())
+        print('[Info] 耗时: {}'.format(elapsed_time))
+
 
     @staticmethod
     def load_dataset_one_file():
