@@ -43,7 +43,7 @@ class ServiceTester(object):
         angle = res_dict["data"]["angle"]
         angle = int(angle)
         if angle != 0:
-            img_bgr = rotate_img_for_4angle(img_bgr, angle)
+            # img_bgr = rotate_img_for_4angle(img_bgr, angle)
             # img_name = "{}-{}.jpg".format(get_current_time_str(), time.time())
             img_name = img_path.split("/")[-1]
             img_url = ServiceTester.save_img_path(img_bgr, img_name)
