@@ -57,6 +57,11 @@ class ServiceTester(object):
         else:
             paths_list, _ = traverse_dir_files(self.in_folder)
         print('[Info] 样本数: {}'.format(len(paths_list)))
+        random.seed(47)
+        random.shuffle(paths_list)
+        if len(paths_list) > 100000:
+            paths_list = paths_list[:100000]
+        print('[Info] 样本数: {}'.format(len(paths_list)))
         time_str = get_current_time_str()
         out_file = os.path.join(self.out_folder, "val_{}.txt".format(time_str))
         out_html = os.path.join(self.out_folder, "val_{}.html".format(time_str))
