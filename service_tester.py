@@ -48,10 +48,15 @@ class ServiceTester(object):
             img_name = img_path.split("/")[-1]
             img_url = ServiceTester.save_img_path(img_bgr, img_name)
             write_line(out_file, "{}\t{}".format(img_url, angle))
-        print('[Info] 处理完成: {}, angle: {}'.format(img_idx, angle))
+        if img_idx % 1000 == 0:
+            print('[Info] 处理完成: {}, angle: {}'.format(img_idx, angle))
 
     def process_folder(self):
-        paths_list, names_list = traverse_dir_files(self.in_folder)
+        if self.in_folder.endswith(".txt"):
+            paths_list = read_file(self.in_folder)
+        else:
+            paths_list, _ = traverse_dir_files(self.in_folder)
+        print('[Info] 样本数: {}'.format(len(paths_list)))
         time_str = get_current_time_str()
         out_file = os.path.join(self.out_folder, "val_{}.txt".format(time_str))
         out_html = os.path.join(self.out_folder, "val_{}.html".format(time_str))
