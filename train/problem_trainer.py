@@ -102,7 +102,7 @@ class ProblemTrainer(object):
             if self.file_path:
                 all_data_path = self.file_path
             else:
-                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210920.txt")
+                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210924.txt")
             print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
             if not os.path.exists(all_data_path):
                 self.train_data, self.test_data = self.load_train_and_test_dataset_v1()
