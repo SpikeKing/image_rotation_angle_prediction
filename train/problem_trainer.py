@@ -181,7 +181,7 @@ class ProblemTrainer(object):
             metrics = ["acc"]
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=SGD(lr=0.004, momentum=0.9),
+                      optimizer=SGD(lr=0.0004, momentum=0.9),
                       metrics=metrics)
         if self.model_path:
             model.load_weights(self.model_path)
