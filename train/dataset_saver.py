@@ -35,6 +35,8 @@ class DatasetSaver(object):
 
     def load_dataset_mul_file(self):
         # 自然场景图像, 71885
+        dataset14_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_hardcase')
+        # 自然场景图像, 71885
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829_1024')
         # 自然场景图像, 13315
         dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828_1024')
@@ -62,7 +64,8 @@ class DatasetSaver(object):
         dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
 
         dataset_num_list = \
-            [[dataset13_path, 150000], [dataset12_path, 30000], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
+            [[dataset14_path, 10000],
+             [dataset13_path, 150000], [dataset12_path, 30000], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
              [dataset8_path, 50000], [dataset1_path, 50000], [dataset2_path, 50000], [dataset3_path, -1],
              [dataset4_path, -1], [dataset5_path, -1], [dataset6_path, -1], [dataset7_path, -1]]
 
