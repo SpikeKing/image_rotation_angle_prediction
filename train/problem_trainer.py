@@ -10,12 +10,11 @@ import random
 import sys
 
 # 增加使用GPU
-import tensorflow as tf
-
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.visible_device_list = '0,1'
-config.gpu_options.allow_growth = True
-sess = tf.compat.v1.Session(config=config)
+# import tensorflow as tf
+# config = tf.compat.v1.ConfigProto()
+# config.gpu_options.visible_device_list = '0'
+# config.gpu_options.allow_growth = True
+# sess = tf.compat.v1.Session(config=config)
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import SGD
@@ -65,7 +64,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210924.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210923.hdf5')
         elif self.mode == "densenet121":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210914.hdf5')
 
