@@ -36,14 +36,14 @@ from root_dir import ROOT_DIR, DATA_DIR
 
 class ProblemTrainer(object):
     def __init__(self,
-                 mode="densenet121",  # 训练模式, 支持mobilenetv2和resnet50
+                 mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  file_path="",
                  nb_classes=4,
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=200,
                  is_random_crop=False,  # 随机高度剪裁
-                 version="v2",  # 版本
+                 version="v1",  # 版本
                  batch_size=32  # batch_size
                  ):
 
@@ -65,7 +65,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210918.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210924.hdf5')
         elif self.mode == "densenet121":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210914.hdf5')
 
