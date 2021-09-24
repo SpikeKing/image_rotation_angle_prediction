@@ -6,6 +6,7 @@ Created by C. L. Wang on 24.9.21
 """
 import argparse
 
+from multiprocessing.pool import Pool
 from myutils.project_utils import *
 from myutils.cv_utils import *
 
@@ -53,6 +54,18 @@ class HardcaseSaver(object):
         img_bgr = cv2.resize(img_bgr, (w, h))
         return img_bgr
 
+    @staticmethod
+    def process_line(data_idx, data_line, folder_path):
+        img_url, _ = data_line.split("\t")
+        _, img_bgr = download_url_img(img_url)
+        img_bgr = HardcaseSaver.center_crop_by_hw(img_bgr)  # 取图像中心
+        img_bgr = HardcaseSaver.resize_max_fixed(img_bgr)  # 根据最长边resize
+        file_name_x = img_url.split("/")[-1].split(".")[0]
+        file_name = "{}-time-{}.jpg".format(file_name_x, get_current_time_str())
+        file_path = os.path.join(folder_path, file_name)
+        cv2.imwrite(file_path, img_bgr)
+        print('[Info] 处理完成: {}'.format(data_idx))
+
     def process(self, file_path):
         print('[Info] 处理文件路径: {}'.format(file_path))
         data_lines = read_file(file_path)
@@ -63,15 +76,11 @@ class HardcaseSaver(object):
         paths_list, names_list = traverse_dir_files(self.dataset_path)
         print('[Info] 数据集样本数: {}'.format(len(names_list)))
 
-        for data_line in data_lines:
-            img_url, _ = data_line.split("\t")
-            _, img_bgr = download_url_img(img_url)
-            img_bgr = HardcaseSaver.center_crop_by_hw(img_bgr)  # 取图像中心
-            img_bgr = HardcaseSaver.resize_max_fixed(img_bgr)  # 根据最长边resize
-            file_name_x = img_url.split("/")[-1].split(".")[0]
-            file_name = "{}-time-{}.jpg".format(file_name_x, get_current_time_str())
-            file_path = os.path.join(folder_path, file_name)
-            cv2.imwrite(file_path, img_bgr)
+        pool = Pool(processes=100)
+        for data_idx, data_line in enumerate(data_lines):
+            pool.apply_async(HardcaseSaver.process_line, (data_idx, data_line, folder_path))
+        pool.close()
+        pool.join()
 
         paths_list, names_list = traverse_dir_files(self.dataset_path)
         print('[Info] 数据集样本数: {}'.format(len(names_list)))
