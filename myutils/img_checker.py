@@ -60,13 +60,35 @@ def check_img(path, size):
         print('[Info] error path: {}'.format(path))
         os.remove(path)
 
+def read_file(data_file, mode='more'):
+    """
+    读文件, 原文件和数据文件
+    :return: 单行或数组
+    """
+    try:
+        with open(data_file, 'r', errors='ignore') as f:
+            if mode == 'one':
+                output = f.read()
+                return output
+            elif mode == 'more':
+                output = f.readlines()
+                output = [o.strip() for o in output]
+                return output
+            else:
+                return list()
+    except IOError:
+        return list()
+
 
 def check_error(img_dir, n_prc, size):
     """
     检查错误图像的数量
     """
     print('[Info] 处理文件夹路径: {}'.format(img_dir))
-    paths_list, names_list = traverse_dir_files(img_dir)
+    if img_dir.endswith(".txt"):
+        paths_list = read_file(img_dir)
+    else:
+        paths_list, names_list = traverse_dir_files(img_dir)
     print('[Info] 数据总量: {}'.format(len(paths_list)))
 
     pool = Pool(processes=n_prc)  # 多线程下载
@@ -89,7 +111,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='检查图片脚本')
     parser.add_argument('-i', dest='in_folder', required=True, help='输入文件夹', type=str)
     parser.add_argument('-p', dest='n_prc', required=False, default=100, help='进程数', type=str)
-    parser.add_argument('-s', dest='size', required=False, default=50, help='最小边长', type=str)
+    parser.add_argument('-s', dest='size', required=False, default=20, help='最小边长', type=str)
     args = parser.parse_args()
 
     in_folder = args.in_folder
