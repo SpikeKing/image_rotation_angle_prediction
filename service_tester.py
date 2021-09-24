@@ -69,6 +69,8 @@ class ServiceTester(object):
         out_html = os.path.join(self.out_folder, "val_{}.html".format(time_str))
         pool = Pool(processes=100)
         for img_idx, img_path in enumerate(paths_list):
+            if "rotation_datasets_hardcase" in img_path:  # 过滤hardcase
+                continue
             # ServiceTester.process_img_path(img_idx, img_path, self.service, out_file)
             pool.apply_async(ServiceTester.process_img_path, (img_idx, img_path, self.service, out_file))
         pool.close()
