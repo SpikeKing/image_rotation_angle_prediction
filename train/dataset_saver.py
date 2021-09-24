@@ -37,7 +37,7 @@ class DatasetSaver(object):
         # 自然场景图像, 71885
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829_1024')
         # 自然场景图像, 13315
-        dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828')
+        dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828_1024')
         # 表格图像, 42579
         dataset11_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_table_20210828')
         # 图像翻译图像, 88986

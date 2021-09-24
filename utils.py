@@ -325,6 +325,23 @@ class RotNetDataGenerator(Iterator):
 
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
+    @staticmethod
+    def center_crop_by_hw(img_bgr):
+        """
+        避免图像的比例失衡
+        """
+        h, w, _ = img_bgr.shape
+        if h // w > 3:
+            mid = h // 2
+            img_crop = img_bgr[mid - w:mid + w, :, :]
+            return img_crop
+        if w // h > 3:
+            mid = w // 2
+            img_crop = img_bgr[:, mid - h:mid + h, :]
+            return img_crop
+        else:
+            return img_bgr
+
     def process_img(self, image):
         if self.rotate:  # 随机旋转
             if self.is_train and random_prob(0.5):
@@ -335,6 +352,8 @@ class RotNetDataGenerator(Iterator):
             rotation_angle = (rotation_angle + offset_angle) % 360
         else:
             rotation_angle = 0
+
+        image = RotNetDataGenerator.center_crop_by_hw(image)
 
         # generate the rotated image
         image, angle, rhw_ratio = generate_rotated_image(
