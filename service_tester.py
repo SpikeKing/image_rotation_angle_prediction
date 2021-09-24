@@ -16,13 +16,15 @@ from x_utils.vpf_sevices import get_vpf_service, get_vpf_service_np
 
 
 class ServiceTester(object):
-    def __init__(self, in_folder, service, out_folder):
+    def __init__(self, in_folder, service, out_folder, max_num):
         self.in_folder = in_folder
         self.out_folder = out_folder
         self.service = service
+        self.max_num = max_num
         print('[Info] 输入文件夹: {}'.format(self.in_folder))
         print('[Info] 服务: {}'.format(self.service))
         print('[Info] 输出文件夹: {}'.format(self.out_folder))
+        print('[Info] 最大测试量: {}'.format(self.max_num))
 
     @staticmethod
     def save_img_path(img_bgr, img_name, oss_root_dir=""):
@@ -59,8 +61,8 @@ class ServiceTester(object):
         print('[Info] 样本数: {}'.format(len(paths_list)))
         random.seed(47)
         random.shuffle(paths_list)
-        if len(paths_list) > 100000:
-            paths_list = paths_list[:100000]
+        if len(paths_list) > self.max_num:
+            paths_list = paths_list[:self.max_num]
         print('[Info] 样本数: {}'.format(len(paths_list)))
         time_str = get_current_time_str()
         out_file = os.path.join(self.out_folder, "val_{}.txt".format(time_str))
@@ -90,6 +92,7 @@ def parse_args():
     parser.add_argument('-i', dest='in_folder', required=False, help='测试文件夹', type=str)
     parser.add_argument('-s', dest='service', required=False, help='服务', type=str)
     parser.add_argument('-o', dest='out_folder', required=False, help='输出文件夹', type=str)
+    parser.add_argument('-m', dest='max_num', required=False, help='最大测试量', type=int)
 
     args = parser.parse_args()
 
@@ -104,12 +107,15 @@ def parse_args():
     print("输出文件夹: {}".format(arg_out_folder))
     mkdir_if_not_exist(arg_out_folder)
 
-    return arg_in_folder, arg_service, arg_out_folder
+    arg_max_num = int(args.max_num)
+    print("最大测试量: {}".format(arg_max_num))
+
+    return arg_in_folder, arg_service, arg_out_folder, arg_max_num
 
 
 def main():
-    arg_in_folder, arg_service, arg_out_folder = parse_args()
-    st = ServiceTester(arg_in_folder, arg_service, arg_out_folder)
+    arg_in_folder, arg_service, arg_out_folder, arg_max_num = parse_args()
+    st = ServiceTester(arg_in_folder, arg_service, arg_out_folder, arg_max_num)
     st.process_folder()
 
 
