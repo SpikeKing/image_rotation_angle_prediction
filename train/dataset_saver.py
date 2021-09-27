@@ -37,6 +37,7 @@ class DatasetSaver(object):
             mkdir_if_not_exist(out_folder)
             folder_name = folder_path.split("/")[-1]
             file_path = os.path.join(out_folder, "{}_{}.txt".format(folder_name, get_current_day_str()))
+            create_file(file_path)  # 避免重复写入
             write_list_to_file(file_path, paths_list)
         print('[Info] 写入完成: {}, 样本数: {}'.format(folder_path, len(paths_list)))
 
@@ -71,10 +72,16 @@ class DatasetSaver(object):
         # 2.2w 题库修改数据, 21169
         dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
 
+        # dataset_num_list = \
+        #     [[dataset14_path, 10000],
+        #      [dataset13_path, 150000], [dataset12_path, 30000], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
+        #      [dataset8_path, 50000], [dataset1_path, 50000], [dataset2_path, 50000], [dataset3_path, -1],
+        #      [dataset4_path, -1], [dataset5_path, -1], [dataset6_path, -1], [dataset7_path, -1]]
+
         dataset_num_list = \
-            [[dataset14_path, 10000],
-             [dataset13_path, 150000], [dataset12_path, 30000], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
-             [dataset8_path, 50000], [dataset1_path, 50000], [dataset2_path, 50000], [dataset3_path, -1],
+            [[dataset14_path, -1],
+             [dataset13_path, -1], [dataset12_path, -1], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
+             [dataset8_path, -1], [dataset1_path, -1], [dataset2_path, -1], [dataset3_path, -1],
              [dataset4_path, -1], [dataset5_path, -1], [dataset6_path, -1], [dataset7_path, -1]]
 
         pool = Pool(processes=100)
