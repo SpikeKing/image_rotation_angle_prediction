@@ -23,19 +23,26 @@ class DatasetSaver(object):
     """
     def __init__(self):
         self.data_file = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_{}.txt".format(get_current_day_str()))
+        self.data_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_{}".format(get_current_day_str()))
 
     @staticmethod
-    def process_line(folder_path, num, out_file):
+    def process_line(folder_path, num, out_file=None, out_folder=None):
         print('[Info] 读取路径: {}'.format(folder_path))
-        paths_list, names_list = traverse_dir_files(folder_path, is_sorted=False)
+        paths_list, names_list = traverse_dir_files(folder_path, is_sorted=False, ext="jpg")
         print('[Info] 读取完成: {}'.format(len(paths_list)))
         paths_list = format_samples_num(paths_list, num)
-        write_list_to_file(out_file, paths_list)
+        if out_file:
+            write_list_to_file(out_file, paths_list)
+        else:
+            mkdir_if_not_exist(out_folder)
+            folder_name = folder_path.split("/")[-1]
+            file_path = os.path.join(out_folder, "{}_{}.txt".format(folder_name, get_current_day_str()))
+            write_list_to_file(file_path, paths_list)
         print('[Info] 写入完成: {}, 样本数: {}'.format(folder_path, len(paths_list)))
 
     def load_dataset_mul_file(self):
         s_time = time.time()
-        # 自然场景图像, 71885
+        # hardcase, 1500
         dataset14_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_hardcase')
         # 自然场景图像, 71885
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829_1024')
@@ -50,12 +57,12 @@ class DatasetSaver(object):
         # 24w小图数据集, 238927
         dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w_512')
         # 14w query数据, 已验证, 147756
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4')
         # 12w query数据, 130989
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
         # 5k 题库数据, 4714
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
-        # 2w 题库数据, 21248
+        # 2w 整页拍数据, 21248
         dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_2w')
         # 4w 手写数据, 37548
         dataset5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write_4w')
@@ -72,13 +79,14 @@ class DatasetSaver(object):
 
         pool = Pool(processes=100)
         for folder_path, num in dataset_num_list:
-            pool.apply_async(DatasetSaver.process_line, (folder_path, num, self.data_file))
+            # pool.apply_async(DatasetSaver.process_line, (folder_path, num, out_file=self.data_file))  # 处理文件
+            # pool.apply_async(DatasetSaver.process_line, (folder_path, num, self.data_file, None))
+            pool.apply_async(DatasetSaver.process_line, (folder_path, num, None, self.data_folder))  # 使用folder
         pool.close()
         pool.join()
         print('[Info] 写入完成: {}'.format(self.data_file))
         elapsed_time = time_elapsed(s_time, time.time())
         print('[Info] 耗时: {}'.format(elapsed_time))
-
 
     @staticmethod
     def load_dataset_one_file():
