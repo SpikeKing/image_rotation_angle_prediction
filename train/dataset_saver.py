@@ -43,17 +43,17 @@ class DatasetSaver(object):
 
     def load_dataset_mul_file(self):
         s_time = time.time()
-        # hardcase, 1500
+        # hardcase, 112
         dataset14_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_hardcase')
         # 自然场景图像, 71885
         dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829_1024')
-        # 自然场景图像, 13315
+        # 自然场景图像, 13961
         dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828_1024')
         # 表格图像, 42579
         dataset11_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_table_20210828')
         # 图像翻译图像, 88986
         dataset10_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_trans_20210828')
-        # 其他图像, 2060
+        # 其他图像, 2168
         dataset9_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_other_1024')
         # 24w小图数据集, 238927
         dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w_512')
@@ -61,7 +61,7 @@ class DatasetSaver(object):
         dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4')
         # 12w query数据, 130989
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
-        # 5k 题库数据, 4714
+        # 5k 题库数据, 4963
         dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
         # 2w 整页拍数据, 21248
         dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_2w')
