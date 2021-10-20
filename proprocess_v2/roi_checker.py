@@ -103,7 +103,7 @@ class RoiChecker(object):
         random.shuffle(data_lines)
         # data_lines = data_lines[:1000]
         print('[Info] 样本数: {}'.format(len(data_lines)))
-        pool = Pool(processes=100)
+        pool = Pool(processes=20)
         for data_idx, data_line in enumerate(data_lines):
             # RoiChecker.process_line_roi(data_idx, data_line, out_file_path)
             pool.apply_async(RoiChecker.process_line_roi, (data_idx, data_line, out_file_path))
