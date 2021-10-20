@@ -68,10 +68,13 @@ class RoiChecker(object):
 
     def process(self):
         # img_url = "https://113633.oss-cn-hangzhou-zmf.aliyuncs.com/IMG_20210929_100042.jpg"
-        file_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.txt")
+        # name = "nat_dataset_urls_20211020"
+        # name = "nat_all"
+        name = "doc_all"
+        file_path = os.path.join(DATA_DIR, "{}.txt".format(name))
         print("[Info] 输入文件: {}".format(file_path))
-        out_file_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.out.{}.txt".format(get_current_time_str()))
-        out_html_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.out.html")
+        out_file_path = os.path.join(DATA_DIR, "{}.out.{}.txt".format(name, get_current_time_str()))
+        out_html_path = os.path.join(DATA_DIR, "{}.out.html".format(name))
         data_lines = read_file(file_path)
         random.seed(47)
         random.shuffle(data_lines)
