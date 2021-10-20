@@ -56,7 +56,7 @@ class RoiChecker(object):
         angle_roi, image_roi_url = RoiChecker.call_angle_roi_service(img_url, box)
         angle = RoiChecker.call_angle_service(img_url)
         if angle_roi != angle:
-            print('[Info] {}, {}, {}, {}'.format(img_url, image_roi_url, angle, angle_roi))
+            print('[Info] {}, {}, {}, {}, {}'.format(img_idx, img_url, image_roi_url, angle, angle_roi))
             out_line = "\t".join([img_url, image_roi_url, str(angle), str(angle_roi)])
             write_line(out_file_path, out_line)
         if img_idx % 1000 == 0:
@@ -70,13 +70,14 @@ class RoiChecker(object):
         out_file_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.out.{}.txt".format(get_current_time_str()))
         out_html_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.out.html")
         data_lines = read_file(file_path)
+        print('[Info] 样本数: {}'.format(len(data_lines)))
         random.seed(47)
         random.shuffle(data_lines)
-        # data_lines = data_lines[:5]
+        data_lines = data_lines[:1000]
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
-            # RoiChecker.process_line(data_idx, data_line, out_file_path)
-            pool.apply_async(RoiChecker.process_line, (data_idx, data_line, out_file_path))
+            RoiChecker.process_line(data_idx, data_line, out_file_path)
+            # pool.apply_async(RoiChecker.process_line, (data_idx, data_line, out_file_path))
         pool.close()
         pool.join()
         print('[Info] 写入完成: {}'.format(out_file_path))
