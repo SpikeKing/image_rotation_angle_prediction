@@ -66,11 +66,34 @@ class RoiChecker(object):
             print('[Info] img_idx: {}'.format(img_idx))
         return
 
+    @staticmethod
+    def save_img_path(img_bgr, img_name, oss_root_dir=""):
+        """
+        上传图像
+        """
+        from x_utils.oss_utils import save_img_2_oss
+        if not oss_root_dir:
+            oss_root_dir = "zhengsheng.wcl/Image-Rotation/imgs-tmp/{}".format(get_current_day_str())
+        img_url = save_img_2_oss(img_bgr, img_name, oss_root_dir)
+        return img_url
+
+    @staticmethod
+    def process_line_roi(img_idx, img_url, out_file_path):
+        try:
+            box = RoiChecker.call_roi_service(img_url)
+            _, img_bgr = download_url_img(img_url)
+            img_bgr = get_cropped_patch(img_bgr, box)
+            img_name = "{}-{}.jpg".format(img_idx, get_current_time_str())
+            img_ori_url = RoiChecker.save_img_path(img_bgr, img_name)
+            write_line(out_file_path, img_ori_url)
+        except Exception as e:
+            print('[Info] Exception: {}'.format(e))
+        if img_idx % 100 == 0:
+            print('[Info] img_idx: {}'.format(img_idx))
+        return
+
     def process(self):
-        # img_url = "https://113633.oss-cn-hangzhou-zmf.aliyuncs.com/IMG_20210929_100042.jpg"
-        # name = "nat_dataset_urls_20211020"
-        # name = "nat_all"
-        name = "doc_all"
+        name = "nat_main_all_20211020"
         file_path = os.path.join(DATA_DIR, "{}.txt".format(name))
         print("[Info] 输入文件: {}".format(file_path))
         out_file_path = os.path.join(DATA_DIR, "{}.out.{}.txt".format(name, get_current_time_str()))
@@ -78,12 +101,12 @@ class RoiChecker(object):
         data_lines = read_file(file_path)
         random.seed(47)
         random.shuffle(data_lines)
-        data_lines = data_lines[:1000]
+        # data_lines = data_lines[:1000]
         print('[Info] 样本数: {}'.format(len(data_lines)))
-        pool = Pool(processes=20)
+        pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
-            # RoiChecker.process_line(data_idx, data_line, out_file_path)
-            pool.apply_async(RoiChecker.process_line, (data_idx, data_line, out_file_path))
+            # RoiChecker.process_line_roi(data_idx, data_line, out_file_path)
+            pool.apply_async(RoiChecker.process_line_roi, (data_idx, data_line, out_file_path))
         pool.close()
         pool.join()
         print('[Info] 写入完成: {}'.format(out_file_path))
@@ -95,10 +118,21 @@ class RoiChecker(object):
         make_html_page(out_html_path, items_list)
         print('[Info] 写入完成: {}'.format(out_html_path))
 
+    def merge_files(self):
+        file1_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.txt")
+        file2_path = os.path.join(DATA_DIR, "nat_v2.txt")
+        file_path = os.path.join(DATA_DIR, "nat_main_all_20211020.txt")
+        data1_lines = read_file(file1_path)
+        data2_lines = read_file(file2_path)
+        data_lines = data1_lines + data2_lines
+        write_list_to_file(file_path, data_lines)
+
+
 
 def main():
     rc = RoiChecker()
     rc.process()
+    # rc.merge_files()
 
 
 if __name__ == '__main__':
