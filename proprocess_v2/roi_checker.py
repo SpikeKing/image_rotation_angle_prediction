@@ -52,13 +52,16 @@ class RoiChecker(object):
 
     @staticmethod
     def process_line(img_idx, img_url, out_file_path):
-        box = RoiChecker.call_roi_service(img_url)
-        angle_roi, image_roi_url = RoiChecker.call_angle_roi_service(img_url, box)
-        angle = RoiChecker.call_angle_service(img_url)
-        if angle_roi != angle:
-            print('[Info] {}, {}, {}, {}, {}'.format(img_idx, img_url, image_roi_url, angle, angle_roi))
-            out_line = "\t".join([img_url, image_roi_url, str(angle), str(angle_roi)])
-            write_line(out_file_path, out_line)
+        try:
+            box = RoiChecker.call_roi_service(img_url)
+            angle_roi, image_roi_url = RoiChecker.call_angle_roi_service(img_url, box)
+            angle = RoiChecker.call_angle_service(img_url)
+            if angle_roi != angle:
+                print('[Info] {}, {}, {}, {}, {}'.format(img_idx, img_url, image_roi_url, angle, angle_roi))
+                out_line = "\t".join([img_url, image_roi_url, str(angle), str(angle_roi)])
+                write_line(out_file_path, out_line)
+        except Exception as e:
+            print('[Info] Exception: {}'.format(e))
         if img_idx % 1000 == 0:
             print('[Info] img_idx: {}'.format(img_idx))
         return
