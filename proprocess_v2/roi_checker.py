@@ -72,7 +72,7 @@ class RoiChecker(object):
         data_lines = read_file(file_path)
         random.seed(47)
         random.shuffle(data_lines)
-        data_lines = data_lines[:5]
+        # data_lines = data_lines[:5]
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
             # RoiChecker.process_line(data_idx, data_line, out_file_path)
