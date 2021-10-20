@@ -30,7 +30,7 @@ class RoiChecker(object):
         # print('[Info] res_dict: {}'.format(res_dict))
         detect_result_debug = res_dict['data']["detect_result"]
         box = detect_result_debug[0][0]
-        print('[Info] box: {}'.format(box))
+        # print('[Info] box: {}'.format(box))
         return box
 
     @staticmethod
@@ -75,8 +75,8 @@ class RoiChecker(object):
         # data_lines = data_lines[:5]
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
-            # RoiChecker.process_line(data_idx, data_line, out_file_path)
-            pool.apply_async(RoiChecker.process_line, (data_idx, data_line, out_file_path))
+            RoiChecker.process_line(data_idx, data_line, out_file_path)
+            # pool.apply_async(RoiChecker.process_line, (data_idx, data_line, out_file_path))
         pool.close()
         pool.join()
         print('[Info] 写入完成: {}'.format(out_file_path))
