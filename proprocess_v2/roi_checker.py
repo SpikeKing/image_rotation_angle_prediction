@@ -62,7 +62,7 @@ class RoiChecker(object):
                 write_line(out_file_path, out_line)
         except Exception as e:
             print('[Info] Exception: {}'.format(e))
-        if img_idx % 1000 == 0:
+        if img_idx % 100 == 0:
             print('[Info] img_idx: {}'.format(img_idx))
         return
 
@@ -73,10 +73,10 @@ class RoiChecker(object):
         out_file_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.out.{}.txt".format(get_current_time_str()))
         out_html_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.out.html")
         data_lines = read_file(file_path)
-        print('[Info] 样本数: {}'.format(len(data_lines)))
         random.seed(47)
         random.shuffle(data_lines)
         data_lines = data_lines[:1000]
+        print('[Info] 样本数: {}'.format(len(data_lines)))
         pool = Pool(processes=20)
         for data_idx, data_line in enumerate(data_lines):
             # RoiChecker.process_line(data_idx, data_line, out_file_path)
