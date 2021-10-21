@@ -489,7 +489,7 @@ def parse_args():
     arg_mode = args.mode
     print("[Info] mode: {}".format(arg_mode))
 
-    arg_number = args.number
+    arg_number = int(args.number)
     print("[Info] number: {}".format(arg_number))
 
     return arg_version, arg_file_path, arg_batch_size, arg_mode, arg_number
