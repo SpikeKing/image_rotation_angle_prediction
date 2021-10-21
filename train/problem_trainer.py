@@ -37,6 +37,7 @@ class ProblemTrainer(object):
     def __init__(self,
                  mode="resnet50",  # 训练模式, 支持mobilenetv2和resnet50
                  file_path="",
+                 number=-1,
                  nb_classes=4,
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
@@ -57,6 +58,7 @@ class ProblemTrainer(object):
 
         self.version = version
         self.file_path = file_path
+        self.sample_num = number
 
         self.model_path = None
         if self.mode == "mobilenetv2":
@@ -93,6 +95,7 @@ class ProblemTrainer(object):
         print('[Info] is_random_crop_h: {}'.format(self.is_random_crop))
         print('[Info] output_dir: {}'.format(self.output_dir))
         print('[Info] version: {}'.format(self.version))
+        print('[Info] sample_num: {}'.format(self.sample_num))
         print('[Info] ' + "-" * 50)
 
         self.model_name, self.model = self.init_model(self.mode)  # 初始化模型
@@ -104,7 +107,8 @@ class ProblemTrainer(object):
                 all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021.txt")
             print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
             print('[Info] 读取: {}'.format(all_data_path))
-            self.train_data, self.test_data = self.load_train_and_test_dataset_quick(all_data_path, is_val=True)
+            self.train_data, self.test_data = \
+                self.load_train_and_test_dataset_quick(all_data_path, is_val=True, num=self.sample_num)
         elif self.version == "v2":
             if self.file_path:
                 all_data_path = self.file_path
@@ -204,6 +208,7 @@ class ProblemTrainer(object):
         if is_val:  # 加载验证
             dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
             test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
+            test_val_filenames = test_val_filenames * 5  # 扩大5倍
             image_paths += test_val_filenames
 
         random.seed(47)
@@ -468,6 +473,7 @@ def parse_args():
     parser.add_argument('-f', dest='file_path', required=False, help='数据路径', type=str)
     parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
     parser.add_argument('-m', dest='mode', required=False, default="resnet50", help='模型版本', type=str)
+    parser.add_argument('-n', dest='number', required=False, default="-1", help='样本数量', type=str)
 
     args = parser.parse_args()
 
@@ -483,15 +489,19 @@ def parse_args():
     arg_mode = args.mode
     print("[Info] mode: {}".format(arg_mode))
 
-    return arg_version, arg_file_path, arg_batch_size, arg_mode
+    arg_number = args.number
+    print("[Info] number: {}".format(arg_number))
+
+    return arg_version, arg_file_path, arg_batch_size, arg_mode, arg_number
 
 
 def main():
     """
     入口函数
     """
-    arg_version, arg_file_path, arg_batch_size, arg_mode = parse_args()
-    pt = ProblemTrainer(version=arg_version, file_path=arg_file_path, batch_size=arg_batch_size, mode=arg_mode)
+    arg_version, arg_file_path, arg_batch_size, arg_mode, arg_number = parse_args()
+    pt = ProblemTrainer(version=arg_version, file_path=arg_file_path, batch_size=arg_batch_size,
+                        mode=arg_mode, number=arg_number)
     pt.train()
 
 
