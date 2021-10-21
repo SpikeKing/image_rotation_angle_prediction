@@ -72,12 +72,6 @@ class DatasetSaver(object):
         # 2.2w 题库修改数据, 21169
         dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
 
-        # dataset_num_list = \
-        #     [[dataset14_path, 10000],
-        #      [dataset13_path, 150000], [dataset12_path, 30000], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
-        #      [dataset8_path, 50000], [dataset1_path, 50000], [dataset2_path, 50000], [dataset3_path, -1],
-        #      [dataset4_path, -1], [dataset5_path, -1], [dataset6_path, -1], [dataset7_path, -1]]
-
         dataset_num_list = \
             [[dataset14_path, -1],
              [dataset13_path, -1], [dataset12_path, -1], [dataset11_path, -1], [dataset10_path, -1], [dataset9_path, -1],
@@ -86,8 +80,20 @@ class DatasetSaver(object):
 
         pool = Pool(processes=100)
         for folder_path, num in dataset_num_list:
-            # pool.apply_async(DatasetSaver.process_line, (folder_path, num, out_file=self.data_file))  # 处理文件
-            # pool.apply_async(DatasetSaver.process_line, (folder_path, num, self.data_file, None))
+            pool.apply_async(DatasetSaver.process_line, (folder_path, num, None, self.data_folder))  # 使用folder
+        pool.close()
+        pool.join()
+        print('[Info] 写入完成: {}'.format(self.data_file))
+        elapsed_time = time_elapsed(s_time, time.time())
+        print('[Info] 耗时: {}'.format(elapsed_time))
+
+    def load_dataset_mul_file_v2(self):
+        s_time = time.time()
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_nat_roi')
+        dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_nat_tl')
+        dataset_num_list = [[dataset1_path, -1], [dataset2_path, -1]]
+        pool = Pool(processes=100)
+        for folder_path, num in dataset_num_list:
             pool.apply_async(DatasetSaver.process_line, (folder_path, num, None, self.data_folder))  # 使用folder
         pool.close()
         pool.join()
@@ -111,7 +117,7 @@ class DatasetSaver(object):
 
 def main():
     ds = DatasetSaver()
-    ds.load_dataset_mul_file()
+    ds.load_dataset_mul_file_v2()
 
 
 if __name__ == '__main__':

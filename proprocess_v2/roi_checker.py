@@ -119,20 +119,21 @@ class RoiChecker(object):
         print('[Info] 写入完成: {}'.format(out_html_path))
 
     def merge_files(self):
-        file1_path = os.path.join(DATA_DIR, "nat_dataset_urls_20211020.txt")
-        file2_path = os.path.join(DATA_DIR, "nat_v2.txt")
-        file_path = os.path.join(DATA_DIR, "nat_main_all_20211020.txt")
+        file1_path = os.path.join(DATA_DIR, "text_line_4c_印刷文字.20211008.txt")
+        file2_path = os.path.join(DATA_DIR, "text_line_4c_手写文字.20211008.txt")
+        file3_path = os.path.join(DATA_DIR, "text_line_4c_艺术字.20211008.txt")
+        file_path = os.path.join(DATA_DIR, "nat_tl_all_20211021.txt")
         data1_lines = read_file(file1_path)
         data2_lines = read_file(file2_path)
-        data_lines = data1_lines + data2_lines
+        data3_lines = read_file(file3_path)
+        data_lines = data1_lines + data2_lines + data3_lines
         write_list_to_file(file_path, data_lines)
-
 
 
 def main():
     rc = RoiChecker()
-    rc.process()
-    # rc.merge_files()
+    # rc.process()
+    rc.merge_files()
 
 
 if __name__ == '__main__':
