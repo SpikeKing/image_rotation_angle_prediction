@@ -465,7 +465,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='训练数据')
     parser.add_argument('-v', dest='version', required=True, help='模型版本', type=str)
-    parser.add_argument('-f', dest='file_path', required=True, help='数据路径', type=str)
+    parser.add_argument('-f', dest='file_path', required=False, help='数据路径', type=str)
     parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
     parser.add_argument('-m', dest='mode', required=False, default="resnet50", help='模型版本', type=str)
 
@@ -491,7 +491,7 @@ def main():
     入口函数
     """
     arg_version, arg_file_path, arg_batch_size, arg_mode = parse_args()
-    pt = ProblemTrainer(version=arg_version, batch_size=arg_batch_size, mode=arg_mode)
+    pt = ProblemTrainer(version=arg_version, file_path=arg_file_path, batch_size=arg_batch_size, mode=arg_mode)
     pt.train()
 
 
