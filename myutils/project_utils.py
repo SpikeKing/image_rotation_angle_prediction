@@ -9,11 +9,10 @@ Created by C. L. Wang on 2018/7/9
 
 # from __future__ import absolute_import
 
-import pathlib
-import glob
 import collections
 import io
 import os
+import pathlib
 import random
 import shutil
 import sys
@@ -306,7 +305,8 @@ def safe_div(x, y):
     y = float(y)
     if y == 0.0:
         return 0.0
-    return x / y
+    r = x / y
+    return r
 
 
 def calculate_percent(x, y):
@@ -809,11 +809,12 @@ def download_url_img(url):
     """
     import cv2
     import requests
-    from requests.packages.urllib3.exceptions import InsecureRequestWarning
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+    import urllib3
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     try:
-        response = requests.get(url, timeout=3, verify=False)
+        response = requests.get(url, verify=False)
     except Exception as e:
         print(str(e))
         return False, []
@@ -957,7 +958,7 @@ def check_english_str(string):
         return False
 
 
-def format_samples_num(a_list, num=20000):
+def get_fixed_samples(a_list, num=20000):
     """
     固定数量的样本
     """
@@ -970,3 +971,17 @@ def format_samples_num(a_list, num=20000):
     random.shuffle(x_list)
     x_list = x_list[:num]
     return x_list
+
+
+def split_train_and_val(data_lines, gap=20):
+    """
+    分离数据集为训练和验证
+    """
+    print('[Info] 样本总数: {}'.format(len(data_lines)))
+    random.seed(47)
+    random.shuffle(data_lines)
+    train_num = len(data_lines) // gap * (gap - 1)
+    train_data = data_lines[:train_num]
+    val_data = data_lines[train_num:]
+    print('[Info] train: {}, val: {}'.format(len(train_data), len(val_data)))
+    return train_data, val_data
