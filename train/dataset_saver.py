@@ -89,7 +89,7 @@ class DatasetSaver(object):
 
     def load_dataset_mul_file_v2(self):
         s_time = time.time()
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_nat_roi')
+        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_nat_roi')  # 113430
         dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_nat_tl')
         dataset_num_list = [[dataset1_path, -1], [dataset2_path, -1]]
         pool = Pool(processes=100)
@@ -114,10 +114,29 @@ class DatasetSaver(object):
         write_list_to_file(out_file, paths_list)
         print('[Info] 写入文件: {}'.format(out_file))
 
+    @staticmethod
+    def merge_files():
+        data_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021")
+        data_file = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021.txt")
+        paths_list, names_list = traverse_dir_files(data_folder)
+        all_data_lines = []
+        for path in paths_list:
+            data_lines = read_file(path)
+            n_lines = len(data_lines)
+            if n_lines > 100000:
+                data_lines = data_lines[:100000]
+            print('[Info] path: {}, len: {}'.format(path, len(data_lines)))
+            all_data_lines += data_lines
+        random.seed(47)
+        random.shuffle(all_data_lines)
+        print('[Info] 样本总数: {}'.format(len(all_data_lines)))
+        write_list_to_file(data_file, all_data_lines)
+
 
 def main():
     ds = DatasetSaver()
     ds.load_dataset_mul_file_v2()
+    # ds.merge_files()
 
 
 if __name__ == '__main__':
