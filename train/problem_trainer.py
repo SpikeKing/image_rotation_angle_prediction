@@ -64,7 +64,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20210923.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20211013.hdf5')
         elif self.mode == "densenet121":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210914.hdf5')
 
@@ -101,7 +101,7 @@ class ProblemTrainer(object):
             if self.file_path:
                 all_data_path = self.file_path
             else:
-                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20210924.txt")
+                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021.txt")
             print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
             if not os.path.exists(all_data_path):
                 self.train_data, self.test_data = self.load_train_and_test_dataset_v1()

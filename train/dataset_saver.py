@@ -136,6 +136,7 @@ class DatasetSaver(object):
         random.shuffle(all_data_lines)
         print('[Info] 样本总数: {}'.format(len(all_data_lines)))
         write_list_to_file(data_file, all_data_lines)
+        print('[Info] 写入完成: {}'.format(data_file))
 
 
 def main():
