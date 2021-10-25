@@ -39,15 +39,15 @@ class DatasetReorder(object):
         out_path = os.path.join(dataset_folder, out_name)
         shutil.copy(data_line, out_path)
         write_line(out_path_file, out_path)
-        if data_idx % 100 == 0:
+        if data_idx % 2000 == 0:
             print('[Info] \t{}'.format(data_idx))
 
     def merge_hardcase(self, file_list, type_name):
         data_lines = []
         for file_name in file_list:
             file_path = os.path.join(self.folder, file_name)
-            data_lines = read_file(file_path)
-            data_lines += data_lines
+            sub_lines = read_file(file_path)
+            data_lines += sub_lines
         print('[Info] 样本行数: {}'.format(len(data_lines)))
 
         folder_name = "dataset_{}_{}".format(type_name, len(data_lines))
@@ -70,9 +70,9 @@ class DatasetReorder(object):
         print('[Info] 处理完成: {}'.format(out_path_file))
 
     def process(self):
-        # file_list = ["rotation_datasets_hardcase.112.txt", "rotation_ds_other_1024_20210927.txt"]
-        # type_name = "hardcase"
-        # self.merge_hardcase(file_list, type_name)
+        file_list = ["rotation_datasets_hardcase.112.txt", "rotation_ds_other_1024_20210927.txt"]
+        type_name = "hardcase"
+        self.merge_hardcase(file_list, type_name)
 
         file_list = ["datasets_v4_checked_r.131k.txt", "segmentation_ds_v4_20210927.txt"]
         type_name = "query"
