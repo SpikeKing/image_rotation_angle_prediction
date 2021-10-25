@@ -70,8 +70,44 @@ class DatasetReorder(object):
         print('[Info] 处理完成: {}'.format(out_path_file))
 
     def process(self):
-        file_list = ["rotation_datasets_hardcase.112.txt", "rotation_ds_other_1024_20210927.txt"]
-        type_name = "hardcase"
+        # file_list = ["rotation_datasets_hardcase.112.txt", "rotation_ds_other_1024_20210927.txt"]
+        # type_name = "hardcase"
+        # self.merge_hardcase(file_list, type_name)
+
+        file_list = ["datasets_v4_checked_r.131k.txt", "segmentation_ds_v4_20210927.txt"]
+        type_name = "query"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_datasets_table.45k.txt"]
+        type_name = "table"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_datasets_trans.93k.txt"]
+        type_name = "translation"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_ds_write2_3w_20210927.txt", "rotation_ds_write_4w_20210927.txt"]
+        type_name = "handwrite"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_ds_xiaotu_25w_512_20210927.txt"]
+        type_name = "little-symbol"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_ds_tiku_5k_20210927.txt", "rotation_ds_page_2w_20210927.txt", "rotation_ds_page_bkg_2w_20210927.txt"]
+        type_name = "fullpage"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_datasets_nat_v2_raw.75k.txt", "rotation_datasets_nat.14k.txt"]
+        type_name = "nature"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_ds_nat_roi_20211021.txt"]
+        type_name = "nature-roi"
+        self.merge_hardcase(file_list, type_name)
+
+        file_list = ["rotation_ds_nat_tl_20211021.txt"]
+        type_name = "nature-textline"
         self.merge_hardcase(file_list, type_name)
 
 
