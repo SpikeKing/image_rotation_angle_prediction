@@ -1,0 +1,1 @@
+nohup python3 -u problem_trainer.py -v v1 > nohup.20211026.out &
