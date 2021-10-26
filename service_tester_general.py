@@ -40,7 +40,7 @@ class ServiceTesterGeneral(object):
         return img_url
 
     @staticmethod
-    def process_img_path(img_idx, img_path, service,  out_file):
+    def process_img_path(img_idx, img_path, service,  out_file, type_name):
         img_bgr = cv2.imread(img_path)
         res_dict = get_vpf_service_np(img_np=img_bgr, service_name=service)  # 表格
         angle = res_dict["data"]["angle"]
@@ -50,7 +50,7 @@ class ServiceTesterGeneral(object):
             img_url = ServiceTesterGeneral.save_img_path(img_bgr, img_name)
             write_line(out_file, "{}\t{}\t{}".format(img_url, angle, img_path))
         if img_idx % 1000 == 0:
-            print('[Info] 处理完成: {}, angle: {}'.format(img_idx, angle))
+            print('[Info] {} 处理完成: {}, angle: {}'.format(type_name, img_idx, angle))
 
     def process_folder(self):
         print('[Info] 测试文件夹: {}'.format(self.in_folder))
@@ -60,6 +60,7 @@ class ServiceTesterGeneral(object):
             data_lines = read_file(file_path)
             data_dict[file_name] = data_lines
 
+        time_str = get_current_time_str()
         out_dict = dict()
         pool = Pool(processes=100)
         for file_name in data_dict.keys():
@@ -69,18 +70,21 @@ class ServiceTesterGeneral(object):
             if len(data_lines) > self.max_num:
                 data_lines = data_lines[:self.max_num]
             print('[Info] 文件名: {}, 样本数: {}'.format(file_name, len(data_lines)))
-
-            time_str = get_current_time_str()
             type_name = file_name.split(".")[0]
             sub_folder = os.path.join(self.out_folder, type_name)
+            mkdir_if_not_exist(sub_folder)
             out_file = os.path.join(sub_folder, "out_{}.txt".format(time_str))
             out_html = os.path.join(sub_folder, "out_{}.html".format(time_str))
             out_dict[file_name] = [out_file, out_html]
             for img_idx, img_path in enumerate(data_lines):
-                pool.apply_async(ServiceTesterGeneral.process_img_path, (img_idx, img_path, self.service, out_file))
+                # ServiceTesterGeneral.process_img_path(img_idx, img_path, self.service, out_file, type_name)
+                pool.apply_async(
+                    ServiceTesterGeneral.process_img_path,
+                    (img_idx, img_path, self.service, out_file, type_name)
+                )
         pool.close()
         pool.join()
-        print('[Info] 服务处理完成!')
+        print('[Info] 服务处理完成! time: {}'.format(time.time() - time_str))
         print('[Info] 最终结果: ')
         for file_name in out_dict.keys():
             out_file, out_html = out_dict[file_name]
