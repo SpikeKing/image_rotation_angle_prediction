@@ -193,10 +193,55 @@ class DatasetReorder(object):
         self.format_samples_v2("dataset_translation_50000.txt", 3000)
         self.format_samples_v2("dataset_val_2000.txt", 1000)
 
+    def process_v5(self):
+        folder = os.path.join(DATA_DIR, "files_v2", "text_line_folder")
+        urls_format = os.path.join(DATA_DIR, "files_v2", "urls_textline_{}.txt")
+        paths_list, _ = traverse_dir_files(folder)
+        data_lines = []
+        for path in paths_list:
+            sub_lines = read_file(path)
+            data_lines += sub_lines
+        print('[Info] 样本数: {}'.format(len(data_lines)))
+        num = (len(data_lines) // 10000 + 1) * 10000
+        data_lines = get_fixed_samples(data_lines, num)
+        print('[Info] 样本数: {}'.format(len(data_lines)))
+        file_path = urls_format.format(len(data_lines))
+        write_list_to_file(file_path, data_lines)
+        print('[Info] urls 写入完成: {}'.format(file_path))
+
+    @staticmethod
+    def download_line_mul(data_idx, data_line, type_name, dataset_folder, out_path_file):
+        data_idx_str = str(data_idx).zfill(6)
+        out_name = "{}_{}.jpg".format(type_name, data_idx_str)
+        _, img_bgr = download_url_img(data_line)
+        img_path = os.path.join(dataset_folder, out_name)
+        write_line(out_path_file, img_path)
+        cv2.imwrite(img_path, img_bgr)
+        if data_idx % 2000 == 0:
+            print('[Info] \t{}'.format(data_idx))
+
+    def process_v6(self):
+        dataset_folder = os.path.join(self.out_ds_folder, "dataset_textline_200000")
+        mkdir_if_not_exist(dataset_folder)
+        out_path_file = os.path.join(self.out_files_folder, "dataset_textline_200000.txt")
+        file_path = os.path.join(DATA_DIR, "files_v2", "urls_textline_200000.txt")
+        type_name = "textline"
+        data_lines = read_file(file_path)
+        print('[Info] 样本数: {}'.format(len(data_lines)))
+        pool = Pool(processes=100)
+        for data_idx, data_line in enumerate(data_lines):
+            pool.apply_async(DatasetReorder.download_line_mul,
+                             (data_idx, data_line, type_name, dataset_folder, out_path_file))
+        pool.close()
+        pool.join()
+        path_list = read_file(out_path_file)
+        print('[Info] 输出路径: {}, 样本数: {}'.format(len(path_list), len(data_lines)))
+        print('[Info] 处理完成: {}'.format(out_path_file))
+
 
 def main():
     dr = DatasetReorder()
-    dr.process_v4()
+    dr.process_v6()
 
 
 if __name__ == '__main__':

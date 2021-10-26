@@ -35,7 +35,7 @@ input_shape = (224, 224, 3)
 # print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
 # Open a strategy scope.
-    # load base model
+# load base model
 base_model = ResNet50(weights='imagenet', include_top=False,
                       input_shape=input_shape)
 
@@ -48,7 +48,6 @@ final_output = Dense(1, activation='sigmoid', name='fc1')(x)
 model = Model(inputs=base_model.input, outputs=final_output)
 
 # model.summary()
-
 lr_schedule = ExponentialDecay(
     initial_learning_rate=0.001,
     decay_steps=10000,
