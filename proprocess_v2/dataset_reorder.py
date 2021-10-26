@@ -110,10 +110,36 @@ class DatasetReorder(object):
         type_name = "nature-textline"
         self.merge_hardcase(file_list, type_name)
 
+    def process_v2(self):
+        val_folder = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
+        data_lines, _ = traverse_dir_files(val_folder)
+        print('[Info] 样本数: {}'.format(len(data_lines)))
+        type_name = "val"
+
+        folder_name = "dataset_{}_{}".format(type_name, len(data_lines))
+        dataset_folder = os.path.join(self.out_ds_folder, folder_name)
+        mkdir_if_not_exist(dataset_folder)
+        print('[Info] 输出文件夹路径: {}'.format(dataset_folder))
+
+        mkdir_if_not_exist(self.out_files_folder)
+        out_path_file = os.path.join(self.out_files_folder, "{}.txt".format(folder_name))
+        print('[Info] 输出文件路径: {}'.format(out_path_file))
+
+        pool = Pool(processes=100)
+        for data_idx, data_line in enumerate(data_lines):
+            pool.apply_async(
+                DatasetReorder.copy_line_mul, (data_idx, data_line, type_name, dataset_folder, out_path_file))
+            
+        pool.close()
+        pool.join()
+        path_list = read_file(out_path_file)
+        print('[Info] 输出路径: {}, 样本数: {}'.format(len(path_list), len(data_lines)))
+        print('[Info] 处理完成: {}'.format(out_path_file))
+
 
 def main():
     dr = DatasetReorder()
-    dr.process()
+    dr.process_v2()
 
 
 if __name__ == '__main__':
