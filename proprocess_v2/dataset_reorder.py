@@ -30,6 +30,8 @@ class DatasetReorder(object):
     def __init__(self):
         self.folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021")
         self.out_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211025")
+        self.out2_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026")
+        self.out3_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_val_20211026")
         self.out_ds_folder = os.path.join(ROOT_DIR, "..", "datasets", "angle_datasets")
 
     @staticmethod
@@ -129,17 +131,72 @@ class DatasetReorder(object):
         for data_idx, data_line in enumerate(data_lines):
             pool.apply_async(
                 DatasetReorder.copy_line_mul, (data_idx, data_line, type_name, dataset_folder, out_path_file))
-            
+
         pool.close()
         pool.join()
         path_list = read_file(out_path_file)
         print('[Info] 输出路径: {}, 样本数: {}'.format(len(path_list), len(data_lines)))
         print('[Info] 处理完成: {}'.format(out_path_file))
 
+    def format_samples(self, in_file, sample_num):
+        in_path = os.path.join(self.out_files_folder, in_file)
+        data_lines = read_file(in_path)
+        data_lines = get_fixed_samples(data_lines, sample_num)
+        n_data = len(data_lines)
+        print('[Info] 样本数: {}'.format(n_data))
+        out_file = "_".join(in_file.split("_")[:-1] + [str(n_data)]) + ".txt"
+        mkdir_if_not_exist(self.out2_files_folder)
+        out_path = os.path.join(self.out2_files_folder, out_file)
+        print('[Info] 输出路径: {}'.format(out_path))
+        create_file(out_path)
+        write_list_to_file(out_path, data_lines)
+        print('[Info] 写入完成: {}'.format(out_file))
+
+    def format_samples_v2(self, in_file, sample_num):
+        in_path = os.path.join(self.out2_files_folder, in_file)
+        data_lines = read_file(in_path)
+        print('[Info] 样本数: {}'.format(len(data_lines)))
+        data_lines = get_fixed_samples(data_lines, sample_num)
+        n_data = len(data_lines)
+        print('[Info] 样本数: {}'.format(n_data))
+        out_file = "_".join(in_file.split("_")[:-1] + [str(n_data)]) + ".val.txt"
+        mkdir_if_not_exist(self.out3_files_folder)
+        out_path = os.path.join(self.out3_files_folder, out_file)
+        print('[Info] 输出路径: {}'.format(out_path))
+        create_file(out_path)
+        write_list_to_file(out_path, data_lines)
+        print('[Info] 写入完成: {}'.format(out_file))
+
+    def process_v3(self):
+        self.format_samples("dataset_fullpage_49614.txt", 50000)
+        self.format_samples("dataset_handwrite_69449.txt", 70000)
+        self.format_samples("dataset_hardcase_2280.txt", 3000)
+        self.format_samples("dataset_little-symbol_238753.txt", 50000)
+        self.format_samples("dataset_nature_89507.txt", 90000)
+        self.format_samples("dataset_nature-roi_113430.txt", 120000)
+        self.format_samples("dataset_nature-textline_44338.txt", 50000)
+        self.format_samples("dataset_query_278744.txt", 100000)
+        self.format_samples("dataset_table_44812.txt", 50000)
+        self.format_samples("dataset_translation_93670.txt", 50000)
+        self.format_samples("dataset_val_1054.txt", 2000)
+
+    def process_v4(self):
+        self.format_samples_v2("dataset_fullpage_50000.txt", 3000)
+        self.format_samples_v2("dataset_handwrite_70000.txt", 3000)
+        self.format_samples_v2("dataset_hardcase_3000.txt", 2000)
+        self.format_samples_v2("dataset_little-symbol_50000.txt", 3000)
+        self.format_samples_v2("dataset_nature_90000.txt", 3000)
+        self.format_samples_v2("dataset_nature-roi_120000.txt", 3000)
+        self.format_samples_v2("dataset_nature-textline_50000.txt", 3000)
+        self.format_samples_v2("dataset_query_100000.txt", 3000)
+        self.format_samples_v2("dataset_table_50000.txt", 3000)
+        self.format_samples_v2("dataset_translation_50000.txt", 3000)
+        self.format_samples_v2("dataset_val_2000.txt", 1000)
+
 
 def main():
     dr = DatasetReorder()
-    dr.process_v2()
+    dr.process_v4()
 
 
 if __name__ == '__main__':

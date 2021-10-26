@@ -66,7 +66,7 @@ class ProblemTrainer(object):
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20211013.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50_best_20211026.hdf5')
         elif self.mode == "densenet121":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_densenet121_best_20210914.hdf5')
 
@@ -80,9 +80,9 @@ class ProblemTrainer(object):
                 self.batch_size = 100
         print('[Info] batch_size: {}'.format(self.batch_size))
 
-        # 输出文件夹
-        self.output_dir = os.path.join(
-            DATA_DIR, "models", "model_{}_{}_{}_{}".format(self.version, self.mode, self.input_shape[0], get_current_time_str()))
+        model_folder = "model_{}_{}_{}_{}".format(self.version, self.mode, self.input_shape[0], get_current_time_str())
+        self.output_dir = os.path.join(DATA_DIR, "models", model_folder)  # 输出文件夹
+        mkdir_if_not_exist(self.output_dir)
 
         print('[Info] ' + "-" * 50)
         print('[Info] 训练参数: ')
@@ -104,29 +104,10 @@ class ProblemTrainer(object):
             if self.file_path:
                 all_data_path = self.file_path
             else:
-                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021.txt")
+                all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026")
             print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
-            print('[Info] 读取: {}'.format(all_data_path))
             self.train_data, self.test_data = \
                 self.load_train_and_test_dataset_quick(all_data_path, is_val=True, num=self.sample_num)
-        elif self.version == "v2":
-            if self.file_path:
-                all_data_path = self.file_path
-            else:
-                all_data_path = os.path.join(DATA_DIR, "files_v2", "text_line_v1_200w_path.txt")
-            print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
-            if not os.path.exists(all_data_path):
-                self.train_data, self.test_data = self.load_train_and_test_dataset_v2()
-            else:
-                print('[Info] 读取: {}'.format(all_data_path))
-                self.train_data, self.test_data = \
-                    self.load_train_and_test_dataset_quick(all_data_path, is_val=False, num=400000)
-        elif self.version == "v3":
-            self.train_data, self.test_data = self.load_train_and_test_dataset_v3()  # 加载训练和测试数据
-        elif self.version == "v4":
-            self.train_data, self.test_data = self.load_train_and_test_dataset_v4()  # 加载训练和测试数据
-
-        mkdir_if_not_exist(self.output_dir)
 
     def init_model(self, mode="resnet50"):
         """
@@ -190,21 +171,19 @@ class ProblemTrainer(object):
         return model_name, model
 
     @staticmethod
-    def format_samples_num(a_list, num=20000):
-        """
-        固定数量的样本
-        """
-        a_n = len(a_list)
-        n_piece = num // a_n + 1
-        x_list = a_list * n_piece
-        random.seed(47)
-        random.shuffle(x_list)
-        x_list = x_list[:num]
-        return x_list
-
-    @staticmethod
     def load_train_and_test_dataset_quick(path, prob=0.95, is_val=False, num=-1):
-        image_paths = read_file(path)
+        if path.endswith("txt"):  # 直接是文件
+            print('[Info] 读取文件: {}'.format(path))
+            image_paths = read_file(path)
+        else:  # 文件夹
+            print('[Info] 读取文件夹: {}'.format(path))
+            file_paths, _ = traverse_dir_files(path)
+            image_paths = []
+            for file in file_paths:
+                sub_lines = read_file(file)
+                image_paths += sub_lines
+        print('[Info] 样本数: {}'.format(len(image_paths)))
+
         if is_val:  # 加载验证
             dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
             test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
@@ -220,165 +199,10 @@ class ProblemTrainer(object):
         train_filenames = image_paths[:n_train_samples]
         test_filenames = image_paths[n_train_samples:]
 
-        # train_filenames = train_filenames + test_filenames
-        train_filenames = train_filenames
+        train_filenames = train_filenames + test_filenames
         print('[Info] ' + '-' * 50)
         print('[Info] 数据总量: {}, 训练集: {}, 验证集: {}'.format(n_train_samples, len(train_filenames), len(test_filenames)))
         print('[Info] ' + '-' * 50)
-        return train_filenames, test_filenames
-
-    # @staticmethod
-    # def load_train_and_test_dataset_v1():
-    #     # 自然场景图像, 75680
-    #     dataset13_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_v2_raw_20210829_1024')
-    #     train13_filenames, test13_filenames = ProblemTrainer.get_split_datasets(dataset13_path, num=-1)
-    #
-    #     # 自然场景图像, 14016
-    #     dataset12_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828_1024')
-    #     train12_filenames, test12_filenames = ProblemTrainer.get_split_datasets(dataset12_path, num=-1)
-    #
-    #     # 表格图像, 44842
-    #     dataset11_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_table_20210828')
-    #     train11_filenames, test11_filenames = ProblemTrainer.get_split_datasets(dataset11_path, num=-1)
-    #
-    #     # 图像翻译图像, 93748
-    #     dataset10_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_trans_20210828')
-    #     train10_filenames, test10_filenames = ProblemTrainer.get_split_datasets(dataset10_path, num=-1)
-    #
-    #     # 其他图像
-    #     dataset9_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_other_1024')
-    #     train9_filenames, test9_filenames = ProblemTrainer.get_split_datasets(dataset9_path, num=-1)
-    #
-    #     # 22w小图数据集
-    #     dataset8_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_xiaotu_25w_512')
-    #     train8_filenames, test8_filenames = ProblemTrainer.get_split_datasets(dataset8_path, num=100000)
-    #
-    #     # 14w query数据, 已验证
-    #     dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'segmentation_ds_v4', 'images')
-    #     train1_filenames, test1_filenames = ProblemTrainer.get_split_datasets(dataset1_path, num=100000)
-    #
-    #     # 12w query数据
-    #     dataset2_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_v4_checked_r')
-    #     train2_filenames, test2_filenames = ProblemTrainer.get_split_datasets(dataset2_path, num=100000)
-    #
-    #     # 5k 题库数据, 已验证
-    #     dataset3_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_tiku_5k')
-    #     train3_filenames, test3_filenames = ProblemTrainer.get_split_datasets(dataset3_path, num=-1)
-    #
-    #     # 2w 题库数据, 已验证
-    #     dataset4_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_2w')
-    #     train4_filenames, test4_filenames = ProblemTrainer.get_split_datasets(dataset4_path, num=-1)
-    #
-    #     # 4w 手写数据, 已验证
-    #     dataset5_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write_4w')
-    #     train5_filenames, test5_filenames = ProblemTrainer.get_split_datasets(dataset5_path, num=-1)
-    #
-    #     # 3w 手写数据, 已验证
-    #     dataset6_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_write2_3w')
-    #     train6_filenames, test6_filenames = ProblemTrainer.get_split_datasets(dataset6_path, num=-1)
-    #
-    #     # 2.2w 题库修改数据, 已验证
-    #     dataset7_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_ds_page_bkg_2w')
-    #     train7_filenames, test7_filenames = ProblemTrainer.get_split_datasets(dataset7_path, num=-1)
-    #
-    #     dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
-    #     test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
-    #
-    #     # 全部数据集
-    #     train_filenames = train1_filenames + train2_filenames + train3_filenames + \
-    #                       train4_filenames + train5_filenames + train6_filenames + \
-    #                       train7_filenames + train8_filenames + train9_filenames + \
-    #                       train10_filenames + train11_filenames + train12_filenames +\
-    #                       train13_filenames + test_val_filenames * 4
-    #
-    #     test_filenames = test1_filenames + test2_filenames + test3_filenames + \
-    #                      test4_filenames + test5_filenames + test6_filenames + \
-    #                      test7_filenames + test8_filenames + test9_filenames + \
-    #                      test10_filenames + test11_filenames + test12_filenames + \
-    #                      test13_filenames + test_val_filenames * 4
-    #
-    #     train_filenames = train_filenames + test_filenames
-    #
-    #     random.shuffle(train_filenames)
-    #     random.shuffle(test_filenames)
-    #     print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
-    #
-    #     return train_filenames, test_filenames
-
-    @staticmethod
-    def load_train_and_test_dataset_v2():
-        """
-        自然翻译
-        """
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'text_line_v1_200w')
-        print('[Info] 数据集: {}'.format(dataset1_path))
-        train1_filenames, test1_filenames = ProblemTrainer.get_split_datasets(dataset1_path)
-
-        # 全部数据集
-        train_filenames = train1_filenames
-        test_filenames = test1_filenames
-
-        random.shuffle(train_filenames)
-        random.shuffle(test_filenames)
-        print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
-
-        return train_filenames, test_filenames
-
-    def load_train_and_test_dataset_v3(self):
-        """
-        自然翻译
-        """
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_nat_20210828', 'train')
-        print('[Info] 数据集: {}'.format(dataset1_path))
-        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
-
-        # 全部数据集
-        train_filenames = train1_filenames
-        test_filenames = test1_filenames
-
-        random.shuffle(train_filenames)
-        random.shuffle(test_filenames)
-        print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
-
-        return train_filenames, test_filenames
-
-    def load_train_and_test_dataset_v4(self):
-        """
-        自然翻译
-        """
-        dataset1_path = os.path.join(ROOT_DIR, '..', 'datasets', 'rotation_datasets_table_20210828', 'train')
-        print('[Info] 数据集: {}'.format(dataset1_path))
-        train1_filenames, test1_filenames = self.get_split_datasets(dataset1_path)
-
-        # 全部数据集
-        train_filenames = train1_filenames
-        test_filenames = test1_filenames
-
-        random.shuffle(train_filenames)
-        random.shuffle(test_filenames)
-        print('[Info] 训练数据: {}, 验证数据: {}'.format(len(train_filenames), len(test_filenames)))
-
-        return train_filenames, test_filenames
-
-    @staticmethod
-    def get_split_datasets(img_dir, prob=0.95, num=20000):
-        """
-        获取训练和测试数据
-        """
-        image_paths, _ = traverse_dir_files(img_dir, is_sorted=False, ext="jpg")
-        random.shuffle(image_paths)
-        if num > 0:
-            image_paths = ProblemTrainer.format_samples_num(image_paths, num)
-
-        n_train_samples = int(len(image_paths) * prob)  # 数据总量
-        train_filenames = image_paths[:n_train_samples]
-        test_filenames = image_paths[n_train_samples:]
-        print('[Info] ' + '-' * 50)
-        print('[Info] img_dir: {}'.format(img_dir))
-        print('[Info] 数据总量: {}, 训练集: {}, 验证集: {}'
-              .format(n_train_samples, len(train_filenames), len(test_filenames)))
-        print('[Info] ' + '-' * 50)
-
         return train_filenames, test_filenames
 
     @staticmethod
@@ -437,9 +261,6 @@ class ProblemTrainer(object):
             monitor=monitor,
             save_best_only=True
         )
-        reduce_lr = ReduceLROnPlateau(monitor=monitor, patience=3)
-        tensorboard = TensorBoard()
-
         n_workers = 3
         print('[Info] n_workers: {}'.format(n_workers))
 
@@ -450,16 +271,10 @@ class ProblemTrainer(object):
             epochs=self.nb_epoch,
             validation_data=test_generator,
             validation_steps=validation_steps,
-            # callbacks=[checkpointer, reduce_lr, tensorboard],
-            # callbacks=[checkpointer, reduce_lr],
             callbacks=[checkpointer],
             workers=n_workers,
         )
 
-
-# def main():
-#     pt = ProblemTrainer()
-#     pt.train()
 
 def parse_args():
     """
