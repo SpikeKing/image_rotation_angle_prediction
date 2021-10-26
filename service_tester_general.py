@@ -75,6 +75,8 @@ class ServiceTesterGeneral(object):
             mkdir_if_not_exist(sub_folder)
             out_file = os.path.join(sub_folder, "out_{}.txt".format(time_str))
             out_html = os.path.join(sub_folder, "out_{}.html".format(time_str))
+            create_file(out_file)
+            create_file(out_html)
             out_dict[file_name] = [out_file, out_html]
             for img_idx, img_path in enumerate(data_lines):
                 # ServiceTesterGeneral.process_img_path(img_idx, img_path, self.service, out_file, type_name)
