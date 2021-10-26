@@ -104,7 +104,7 @@ def parse_args():
     parser.add_argument('-i', dest='in_folder', required=False, help='测试文件夹', type=str)
     parser.add_argument('-s', dest='service', required=False, help='服务', type=str)
     parser.add_argument('-o', dest='out_folder', required=False, help='输出文件夹', type=str)
-    parser.add_argument('-m', dest='max_num', required=False, help='最大测试量', type=int)
+    parser.add_argument('-m', dest='max_num', required=False, help='最大测试量', type=int, default=-1)
 
     args = parser.parse_args()
 
