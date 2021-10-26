@@ -60,7 +60,7 @@ class ServiceTesterGeneral(object):
             data_lines = read_file(file_path)
             data_dict[file_name] = data_lines
 
-        time_str = get_current_time_str()
+        s_time = time.time()
         out_dict = dict()
         pool = Pool(processes=100)
         for file_name in data_dict.keys():
@@ -73,6 +73,7 @@ class ServiceTesterGeneral(object):
             type_name = file_name.split(".")[0]
             sub_folder = os.path.join(self.out_folder, type_name)
             mkdir_if_not_exist(sub_folder)
+            time_str = get_current_time_str()
             out_file = os.path.join(sub_folder, "out_{}.txt".format(time_str))
             out_html = os.path.join(sub_folder, "out_{}.html".format(time_str))
             create_file(out_file)
@@ -86,7 +87,7 @@ class ServiceTesterGeneral(object):
                 )
         pool.close()
         pool.join()
-        print('[Info] 服务处理完成! time: {}'.format(time.time() - time_str))
+        print('[Info] 服务处理完成! time: {}'.format(time.time() - s_time))
         print('[Info] 最终结果: ')
         for file_name in out_dict.keys():
             out_file, out_html = out_dict[file_name]
