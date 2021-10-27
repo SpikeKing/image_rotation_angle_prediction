@@ -235,7 +235,7 @@ class DatasetReorder(object):
         for data_idx, data_line in enumerate(data_lines):
             pool.apply_async(DatasetReorder.download_line_mul,
                              (data_idx, data_line, type_name, dataset_folder, out_path_file))
-            
+
         pool.close()
         pool.join()
         path_list = read_file(out_path_file)
