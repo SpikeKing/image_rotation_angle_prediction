@@ -29,7 +29,7 @@ class DatasetReorder(object):
     """
     def __init__(self):
         self.folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021")
-        self.out_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211025")
+        self.out_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026_raw")
         self.out2_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026")
         self.out3_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_val_20211026")
         self.out_ds_folder = os.path.join(ROOT_DIR, "..", "datasets", "angle_datasets")
@@ -221,17 +221,21 @@ class DatasetReorder(object):
             print('[Info] \t{}'.format(data_idx))
 
     def process_v6(self):
-        dataset_folder = os.path.join(self.out_ds_folder, "dataset_textline_200000")
-        mkdir_if_not_exist(dataset_folder)
-        out_path_file = os.path.join(self.out_files_folder, "dataset_textline_200000.txt")
-        file_path = os.path.join(DATA_DIR, "files_v2", "urls_textline_200000.txt")
-        type_name = "textline"
+        file_path = os.path.join(DATA_DIR, "files_v2", "urls_handwrite-v2_323827.txt")
+        type_name = "handwrite-v2"
         data_lines = read_file(file_path)
         print('[Info] 样本数: {}'.format(len(data_lines)))
+
+        # 输出文件夹和输出路径
+        dataset_folder = os.path.join(self.out_ds_folder, "dataset_handwrite-v2_{}".format(len(data_lines)))
+        mkdir_if_not_exist(dataset_folder)
+        out_path_file = os.path.join(self.out_files_folder, "dataset_handwrite-v2_{}.txt".format(len(data_lines)))
+
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
             pool.apply_async(DatasetReorder.download_line_mul,
                              (data_idx, data_line, type_name, dataset_folder, out_path_file))
+            
         pool.close()
         pool.join()
         path_list = read_file(out_path_file)
