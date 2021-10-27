@@ -325,7 +325,7 @@ def main():
     """
     arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_number = parse_args()
     pt = ProblemTrainer(version=arg_version, file_path=arg_file_path, batch_size=arg_batch_size,
-                        mode=arg_mode, number=arg_number)
+                        img_size=arg_image_size, mode=arg_mode, number=arg_number)
     pt.train()
 
 
