@@ -44,17 +44,19 @@ class ProblemTrainer(object):
                  nb_epoch=200,
                  is_random_crop=False,  # 随机高度剪裁
                  version="v1",  # 版本
-                 batch_size=32  # batch_size
+                 batch_size=32,  # batch_size
+                 img_size=448,  # 图像尺寸
                  ):
 
         self.mode = mode  # 训练模式
         self.nb_classes = nb_classes  # 类别数
-        self.input_shape = (448, 448, 3)  # 输入图像尺寸
+        self.input_shape = (img_size, img_size, 3)  # 输入图像尺寸
         self.random_angle = random_angle  # 随机角度
         self.is_hw_ratio = is_hw_ratio  # 是否使用高宽比
         self.nb_epoch = nb_epoch  # epoch
         self.is_random_crop = is_random_crop  # 随机高度剪裁
         self.batch_size = int(batch_size)  # batch size
+        self.img_size = img_size  # 图像尺寸
 
         self.version = version
         self.file_path = file_path
@@ -62,7 +64,7 @@ class ProblemTrainer(object):
 
         self.model_path = None
         if self.mode == "mobilenetv2":
-            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_20201213.2.hdf5')
+            self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_mobilenetv2_224_base.hdf5')
         elif self.mode == "resnet50v2":
             self.model_path = os.path.join(DATA_DIR, 'models', 'rotnet_v3_resnet50v2_448_20201216.6.hdf5')
         elif self.mode == "resnet50":
@@ -103,11 +105,13 @@ class ProblemTrainer(object):
         if self.version == "v1":
             if self.file_path:
                 all_data_path = self.file_path
+                self.train_data, self.test_data = \
+                    self.load_train_and_test_dataset_quick(all_data_path, is_val=False, num=self.sample_num)
             else:
                 all_data_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026")
-            print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
-            self.train_data, self.test_data = \
-                self.load_train_and_test_dataset_quick(all_data_path, is_val=True, num=self.sample_num)
+                print('[Info] 样本数据汇总路径: {}'.format(all_data_path))
+                self.train_data, self.test_data = \
+                    self.load_train_and_test_dataset_quick(all_data_path, is_val=True, num=self.sample_num)
 
     def init_model(self, mode="resnet50"):
         """
@@ -139,8 +143,8 @@ class ProblemTrainer(object):
             layer.trainable = True
 
         x = base_model.output
-        if mode == "mobilenetv2":
-            x = Dense(128, activation="relu")(x)
+        # if mode == "mobilenetv2":
+        #     x = Dense(128, activation="relu")(x)
         x = Flatten()(x)
 
         if self.is_hw_ratio:  # 是否使用宽高比
@@ -153,7 +157,7 @@ class ProblemTrainer(object):
         final_output = Dense(self.nb_classes, activation='softmax', name='fc360')(x)
         model = Model(inputs=base_model.input, outputs=final_output)
 
-        model.summary()
+        # model.summary()
 
         # 优化器
         if self.nb_classes == 360:
@@ -288,6 +292,7 @@ def parse_args():
     parser.add_argument('-v', dest='version', required=True, help='模型版本', type=str)
     parser.add_argument('-f', dest='file_path', required=False, help='数据路径', type=str)
     parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
+    parser.add_argument('-s', dest='image_size', required=False, default=448, help='图像尺寸', type=int)
     parser.add_argument('-m', dest='mode', required=False, default="resnet50", help='模型版本', type=str)
     parser.add_argument('-n', dest='number', required=False, default="-1", help='样本数量', type=str)
 
@@ -302,20 +307,23 @@ def parse_args():
     arg_batch_size = int(args.batch_size)
     print("[Info] batch_size: {}".format(arg_batch_size))
 
+    arg_image_size = int(args.image_size)
+    print("[Info] image_size: {}".format(arg_image_size))
+
     arg_mode = args.mode
     print("[Info] mode: {}".format(arg_mode))
 
     arg_number = int(args.number)
     print("[Info] number: {}".format(arg_number))
 
-    return arg_version, arg_file_path, arg_batch_size, arg_mode, arg_number
+    return arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_number
 
 
 def main():
     """
     入口函数
     """
-    arg_version, arg_file_path, arg_batch_size, arg_mode, arg_number = parse_args()
+    arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_number = parse_args()
     pt = ProblemTrainer(version=arg_version, file_path=arg_file_path, batch_size=arg_batch_size,
                         mode=arg_mode, number=arg_number)
     pt.train()

@@ -222,6 +222,7 @@ class DatasetReorder(object):
 
     def process_v6(self):
         file_path = os.path.join(DATA_DIR, "files_v2", "urls_handwrite-v2_323827.txt")
+        print('[Info] 处理文件: {}'.format(file_path))
         type_name = "handwrite-v2"
         data_lines = read_file(file_path)
         print('[Info] 样本数: {}'.format(len(data_lines)))
