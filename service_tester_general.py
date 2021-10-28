@@ -96,7 +96,7 @@ class ServiceTesterGeneral(object):
             right_rate = safe_div(len(data_lines) - len(out_lines), len(data_lines))
             print('[Info] \t文件: {}, 正确率: {}%'.format(file_name, right_rate * 100))
             out_list = []
-            for data_line in data_lines:
+            for data_line in out_lines:
                 items = data_line.split("\t")
                 out_list.append(items)
             make_html_page(out_html, out_list)
