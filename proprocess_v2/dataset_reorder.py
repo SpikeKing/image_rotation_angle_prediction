@@ -221,16 +221,16 @@ class DatasetReorder(object):
             print('[Info] \t{}'.format(data_idx))
 
     def process_v6(self):
-        file_path = os.path.join(DATA_DIR, "files_v2", "urls_handwrite-v2_323827.txt")
+        file_path = os.path.join(DATA_DIR, "files_v2", "urls_english_page.txt")
         print('[Info] 处理文件: {}'.format(file_path))
-        type_name = "handwrite-v2"
+        type_name = "english-page-v2"
         data_lines = read_file(file_path)
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
         # 输出文件夹和输出路径
-        dataset_folder = os.path.join(self.out_ds_folder, "dataset_handwrite-v2_{}".format(len(data_lines)))
+        dataset_folder = os.path.join(self.out_ds_folder, "dataset_english-page_{}".format(len(data_lines)))
         mkdir_if_not_exist(dataset_folder)
-        out_path_file = os.path.join(self.out_files_folder, "dataset_handwrite-v2_{}.txt".format(len(data_lines)))
+        out_path_file = os.path.join(self.out_files_folder, "dataset_english-page_{}.txt".format(len(data_lines)))
 
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
@@ -251,7 +251,7 @@ class DatasetReorder(object):
 
 def main():
     dr = DatasetReorder()
-    dr.process_v7()
+    dr.process_v6()
 
 
 if __name__ == '__main__':
