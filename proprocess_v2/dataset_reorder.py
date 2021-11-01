@@ -30,7 +30,7 @@ class DatasetReorder(object):
     def __init__(self):
         self.folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021")
         self.out_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026_raw")
-        self.out2_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026")
+        self.out2_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_textline_20211101")
         self.out3_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_val_20211026")
         self.out_ds_folder = os.path.join(ROOT_DIR, "..", "datasets", "angle_datasets")
 
@@ -244,8 +244,9 @@ class DatasetReorder(object):
         print('[Info] 处理完成: {}'.format(out_path_file))
 
     def process_v7(self):
-        self.format_samples("dataset_handwrite-v2_323827.txt", 150000)
-        self.format_samples_val("dataset_handwrite-v2_150000.txt", 3000)
+        self.format_samples("dataset_nature-textline_44338.txt", 200000)
+        self.format_samples("dataset_textline_200000.txt", 200000)
+        self.format_samples_val("dataset_textline_3000.txt", 1000)
 
 
 def main():
