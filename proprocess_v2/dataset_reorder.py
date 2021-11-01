@@ -30,7 +30,7 @@ class DatasetReorder(object):
     def __init__(self):
         self.folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211021")
         self.out_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026_raw")
-        self.out2_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_textline_20211101")
+        self.out2_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026")
         self.out3_files_folder = os.path.join(DATA_DIR, "files_v2", "angle_dataset_val_20211026")
         self.out_ds_folder = os.path.join(ROOT_DIR, "..", "datasets", "angle_datasets")
 
