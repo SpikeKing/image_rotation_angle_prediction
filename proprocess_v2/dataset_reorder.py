@@ -246,7 +246,7 @@ class DatasetReorder(object):
     def process_v7(self):
         self.format_samples("dataset_nature-textline_44338.txt", 200000)
         self.format_samples("dataset_textline_200000.txt", 200000)
-        self.format_samples_val("dataset_textline_3000.txt", 1000)
+        self.format_samples_val("dataset_textline_200000.txt", 3000)
 
 
 def main():
