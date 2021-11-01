@@ -244,14 +244,13 @@ class DatasetReorder(object):
         print('[Info] 处理完成: {}'.format(out_path_file))
 
     def process_v7(self):
-        self.format_samples("dataset_nature-textline_44338.txt", 200000)
-        self.format_samples("dataset_textline_200000.txt", 200000)
-        self.format_samples_val("dataset_textline_200000.txt", 3000)
+        self.format_samples("dataset_english-page_45126.txt", 100000)
+        self.format_samples_val("dataset_english-page_45126.txt", 3000)
 
 
 def main():
     dr = DatasetReorder()
-    dr.process_v6()
+    dr.process_v7()
 
 
 if __name__ == '__main__':
