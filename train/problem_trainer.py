@@ -204,7 +204,8 @@ class ProblemTrainer(object):
         train_filenames = image_paths[:n_train_samples] + test_val_filenames
         test_filenames = image_paths[n_train_samples:] + test_val_filenames
 
-        train_filenames = train_filenames + test_filenames
+        # train_filenames = train_filenames + test_filenames
+        train_filenames = train_filenames
         print('[Info] ' + '-' * 50)
         print('[Info] 数据总量: {}, 训练集: {}, 验证集: {}'.format(n_train_samples, len(train_filenames), len(test_filenames)))
         print('[Info] ' + '-' * 50)
