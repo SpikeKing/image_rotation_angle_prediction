@@ -260,10 +260,21 @@ class DatasetReorder(object):
         data_line = data_line1 + data_line2 + data_line3
         write_list_to_file(out_file, data_line)
 
+    def process_v9(self):
+        dataset_folder = os.path.join(self.out_ds_folder, "dataset_english-page-raw_45126")
+        print('[Info] 文件夹: {}'.format(dataset_folder))
+        out_path_format = os.path.join(self.out_files_folder, "dataset_english-page-raw_{}.txt")
+        paths_list, names_list = traverse_dir_files(dataset_folder)
+        print('[Info] 样本数: {}'.format(len(paths_list)))
+        out_path = out_path_format.format(len(paths_list))
+        print('[Info] 路径: {}'.format(out_path))
+        write_list_to_file(out_path, paths_list)
+        print('[Info] 写入完成: {}'.format(out_path))
+
 
 def main():
     dr = DatasetReorder()
-    dr.process_v6()
+    dr.process_v9()
 
 
 if __name__ == '__main__':
