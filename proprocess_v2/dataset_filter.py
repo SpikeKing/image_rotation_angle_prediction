@@ -5,6 +5,7 @@ Copyright (c) 2021. All rights reserved.
 Created by C. L. Wang on 7.9.21
 """
 
+import cv2
 import os
 import sys
 from multiprocessing.pool import Pool
@@ -46,7 +47,7 @@ class DatasetFilter(object):
 
     @staticmethod
     def process_item(data_idx, data_line):
-        _, img_bgr = download_url_img(data_line)
+        img_bgr = cv2.imread(data_line)
         angle1 = DatasetFilter.call_service(img_bgr, service="k8eaBD9BgC7KVz6KmiBx3F")  # v5.03
         angle2 = DatasetFilter.call_service(img_bgr, service="vM7SwdTx45k7ur2cDwsrke")  # v5.05
         angle3 = DatasetFilter.call_service(img_bgr, service="M8LRT5PUtfjdwBwp8L9eeH")  # v5.10
