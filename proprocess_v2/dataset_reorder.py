@@ -249,10 +249,21 @@ class DatasetReorder(object):
         self.format_samples("dataset_english-page_45126.txt", 100000)
         self.format_samples_val("dataset_english-page_100000.txt", 3000)
 
+    def process_v8(self):
+        file1 = os.path.join(DATA_DIR, "english_page_1.txt")
+        file2 = os.path.join(DATA_DIR, "english_page_2.txt")
+        file3 = os.path.join(DATA_DIR, "english_page_3.txt")
+        out_file = os.path.join(DATA_DIR, "urls_english_page.txt")
+        data_line1 = read_file(file1)
+        data_line2 = read_file(file2)
+        data_line3 = read_file(file3)
+        data_line = data_line1 + data_line2 + data_line3
+        write_list_to_file(out_file, data_line)
+
 
 def main():
     dr = DatasetReorder()
-    dr.process_v7()
+    dr.process_v6()
 
 
 if __name__ == '__main__':
