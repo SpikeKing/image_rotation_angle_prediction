@@ -597,6 +597,7 @@ def write_list_to_file(file_name, data_list, log=False):
     :param log: 日志
     :return: None
     """
+    create_file(file_name)  # 删除已有文件
     if file_name == "":
         return
     with io.open(file_name, "a+", encoding='utf8') as fs:
