@@ -8,7 +8,6 @@ Created by C. L. Wang on 25.10.21
 """
 
 import os
-import shutil
 import sys
 
 from multiprocessing.pool import Pool
@@ -18,7 +17,6 @@ if p not in sys.path:
     sys.path.append(p)
 
 from root_dir import ROOT_DIR, DATA_DIR
-from x_utils.vpf_sevices import get_vpf_service_np
 from myutils.project_utils import *
 from myutils.cv_utils import *
 
@@ -223,16 +221,16 @@ class DatasetReorder(object):
             print('[Info] \t{}'.format(data_idx))
 
     def process_v6(self):
-        file_path = os.path.join(DATA_DIR, "files_v2", "urls_english_page_raw.txt")
+        file_path = os.path.join(DATA_DIR, "files_v2", "urls_handwrite-v2_raw.txt")
         print('[Info] 处理文件: {}'.format(file_path))
-        type_name = "english-page-raw"
+        type_name = "handwrite-v2-raw"
         data_lines = read_file(file_path)
         print('[Info] 样本数: {}'.format(len(data_lines)))
 
         # 输出文件夹和输出路径
-        dataset_folder = os.path.join(self.out_ds_folder, "dataset_english-page-raw_{}".format(len(data_lines)))
+        dataset_folder = os.path.join(self.out_ds_folder, "dataset_handwrite-v2-raw_{}".format(len(data_lines)))
         mkdir_if_not_exist(dataset_folder)
-        out_path_file = os.path.join(self.out_files_folder, "dataset_english-page-raw_{}.txt".format(len(data_lines)))
+        out_path_file = os.path.join(self.out_files_folder, "dataset_handwrite-v2-raw_{}.txt".format(len(data_lines)))
 
         pool = Pool(processes=100)
         for data_idx, data_line in enumerate(data_lines):
@@ -274,7 +272,7 @@ class DatasetReorder(object):
 
 def main():
     dr = DatasetReorder()
-    dr.process_v7()
+    dr.process_v6()
 
 
 if __name__ == '__main__':
