@@ -267,7 +267,7 @@ class ProblemTrainer(object):
             monitor=monitor,
             save_best_only=True
         )
-        n_workers = 5
+        n_workers = 3
         print('[Info] n_workers: {}'.format(n_workers))
 
         # training loop
