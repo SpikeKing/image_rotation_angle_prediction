@@ -57,7 +57,7 @@ class DatasetFilter(object):
         if angle1 != 0 or angle2 != 0 or angle3 != 0:
             print('[Info] angle1: {}, angle2: {}, angle3: {}'.format(angle1, angle2, angle3))
         # if angle1 != 0:
-        #     os.remove(data_line)
+            os.remove(data_line)
             print('[Info] 删除: {}'.format(data_line))
 
         if data_idx % 500 == 0:
