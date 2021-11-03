@@ -175,7 +175,7 @@ class ProblemTrainer(object):
         return model_name, model
 
     @staticmethod
-    def load_train_and_test_dataset_quick(path, prob=0.95, is_val=False, num=-1):
+    def load_train_and_test_dataset_quick(path, prob=0.97, is_val=False, num=-1):
         if path.endswith("txt"):  # 直接是文件
             print('[Info] 读取文件: {}'.format(path))
             image_paths = read_file(path)
