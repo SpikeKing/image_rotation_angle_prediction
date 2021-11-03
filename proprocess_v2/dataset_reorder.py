@@ -259,9 +259,9 @@ class DatasetReorder(object):
         write_list_to_file(out_file, data_line)
 
     def process_v9(self):
-        dataset_folder = os.path.join(self.out_ds_folder, "dataset_handwrite-v2-raw_323827")
+        dataset_folder = os.path.join(self.out_ds_folder, "dataset_textline_200000")
         print('[Info] 文件夹: {}'.format(dataset_folder))
-        out_path_format = os.path.join(self.out_files_folder, "dataset_handwrite-v2-raw_{}.txt")
+        out_path_format = os.path.join(self.out_files_folder, "dataset_textline_{}.txt")
         s_time = time.time()
         paths_list, names_list = traverse_dir_files(dataset_folder)
         print('[Info] 耗时: {}'.format(time.time() - s_time))
