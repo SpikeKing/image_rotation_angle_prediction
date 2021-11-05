@@ -191,7 +191,7 @@ class ProblemTrainer(object):
         if is_val:  # 加载验证
             dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
             test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
-            test_val_filenames = test_val_filenames * 2  # 扩大2倍
+            test_val_filenames = test_val_filenames * 4  # 扩大4倍
         else:
             test_val_filenames = []
 
@@ -201,8 +201,8 @@ class ProblemTrainer(object):
             image_paths = image_paths[:num]  # 只用40万
 
         n_train_samples = int(len(image_paths) * prob)  # 数据总量
-        train_filenames = image_paths[:n_train_samples] + test_val_filenames
-        test_filenames = image_paths[n_train_samples:] + test_val_filenames
+        train_filenames = test_val_filenames + image_paths[:n_train_samples]
+        test_filenames = test_val_filenames + image_paths[n_train_samples:]
 
         # train_filenames = train_filenames + test_filenames
         train_filenames = train_filenames
