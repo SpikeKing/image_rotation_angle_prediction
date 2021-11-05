@@ -323,6 +323,9 @@ class RotNetDataGenerator(Iterator):
             self.filenames = input
             N = len(self.filenames)
 
+        if N > 100000:  # 每次只处理10w数据，图像太多处理较慢
+            N = 100000
+        self.n_name = len(self.filenames)
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
     @staticmethod
@@ -383,6 +386,7 @@ class RotNetDataGenerator(Iterator):
                 image = self.images[j]
             else:
                 is_color = int(self.color_mode == 'rgb')
+                j = random.randint(0, self.n_name)  # 随机旋转一张图像
                 try:
                     image = cv2.imread(self.filenames[j], is_color)
                     try:
