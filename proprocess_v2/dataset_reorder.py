@@ -138,7 +138,7 @@ class DatasetReorder(object):
 
     def format_samples(self, in_file, sample_num):
         in_path = os.path.join(self.out_files_folder, in_file)
-        print('[Info] 路径: {}'.format(in_file))
+        print('[Info] 路径: {}'.format(in_path))
         data_lines = read_file(in_path)
         data_lines = get_fixed_samples(data_lines, sample_num)
         n_data = len(data_lines)
@@ -244,7 +244,7 @@ class DatasetReorder(object):
         print('[Info] 处理完成: {}'.format(out_path_file))
 
     def process_v7(self):
-        self.format_samples("dataset_english-page-raw_43984", 50000)
+        self.format_samples("dataset_english-page-raw_43984.txt", 50000)
         self.format_samples_val("dataset_english-page-raw_3000.txt", 3000)
 
     def process_v8(self):
