@@ -22,9 +22,7 @@ from x_utils.vpf_sevices import get_vpf_service_np
 class DatasetFilter(object):
     def __init__(self):
         self.file_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026_raw",
-                                      # "dataset_english-page-raw_45126.txt")
-                                      # "dataset_english-page-raw_43987.txt")
-                                      "dataset_handwrite-v2-raw_323827.txt")
+                                      "dataset_english-page-raw_43985.txt")
 
     @staticmethod
     def call_service(img_bgr, service):
@@ -50,13 +48,15 @@ class DatasetFilter(object):
     @staticmethod
     def process_item(data_idx, data_line):
         img_bgr = cv2.imread(data_line)
-        angle1 = DatasetFilter.call_service(img_bgr, service="k8eaBD9BgC7KVz6KmiBx3F")  # v5.03
-        angle2 = DatasetFilter.call_service(img_bgr, service="vM7SwdTx45k7ur2cDwsrke")  # v5.05
-        angle3 = DatasetFilter.call_service(img_bgr, service="M8LRT5PUtfjdwBwp8L9eeH")  # v5.10
+        angle1 = DatasetFilter.call_service(img_bgr, service="k8eaBD9BgC7KVz6KmiBx3F")  # v5.11
+        # angle2 = DatasetFilter.call_service(img_bgr, service="vM7SwdTx45k7ur2cDwsrke")  # v5.05
+        # angle3 = DatasetFilter.call_service(img_bgr, service="M8LRT5PUtfjdwBwp8L9eeH")  # v5.10
 
-        if angle1 != 0 or angle2 != 0 or angle3 != 0:
-            print('[Info] angle1: {}, angle2: {}, angle3: {}'.format(angle1, angle2, angle3))
-        # if angle1 != 0:
+        # if angle1 != 0 or angle2 != 0 or angle3 != 0:
+        #     print('[Info] angle1: {}, angle2: {}, angle3: {}'.format(angle1, angle2, angle3))
+        if angle1 != 0:
+            print('[Info] angle1: {}'.format(angle1))
+
             os.remove(data_line)
             print('[Info] 删除: {}'.format(data_line))
 
