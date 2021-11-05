@@ -263,7 +263,7 @@ class DatasetReorder(object):
         print('[Info] 文件夹: {}'.format(dataset_folder))
         out_path_format = os.path.join(self.out_files_folder, "dataset_handwrite-v2-raw_{}.txt")
         s_time = time.time()
-        paths_list, names_list = traverse_dir_files(dataset_folder)
+        paths_list, names_list = traverse_dir_files(dataset_folder, is_sorted=False)
         print('[Info] 耗时: {}'.format(time.time() - s_time))
         print('[Info] 样本数: {}'.format(len(paths_list)))
         out_path = out_path_format.format(len(paths_list))
