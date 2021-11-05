@@ -245,7 +245,7 @@ class DatasetReorder(object):
 
     def process_v7(self):
         self.format_samples("dataset_english-page-raw_43984.txt", 50000)
-        self.format_samples_val("dataset_english-page-raw_3000.txt", 3000)
+        self.format_samples_val("dataset_english-page-raw_50000.txt", 3000)
 
     def process_v8(self):
         file1 = os.path.join(DATA_DIR, "english_page_1.txt")
