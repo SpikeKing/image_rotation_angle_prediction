@@ -244,8 +244,8 @@ class DatasetReorder(object):
         print('[Info] 处理完成: {}'.format(out_path_file))
 
     def process_v7(self):
-        self.format_samples("dataset_handwrite-v2-raw_258197.txt", 200000)
-        self.format_samples_val("dataset_handwrite-v2-raw_200000.txt", 3000)
+        self.format_samples("dataset_textline_195043.txt", 50000)
+        self.format_samples_val("dataset_textline_50000.txt", 3000)
 
     def process_v8(self):
         file1 = os.path.join(DATA_DIR, "english_page_1.txt")
