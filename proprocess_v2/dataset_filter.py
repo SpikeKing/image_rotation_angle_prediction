@@ -22,7 +22,7 @@ from x_utils.vpf_sevices import get_vpf_service_np
 class DatasetFilter(object):
     def __init__(self):
         self.file_path = os.path.join(DATA_DIR, "files_v2", "angle_dataset_all_20211026_raw",
-                                      "dataset_handwrite-v2-raw_258224.txt")
+                                      "dataset_textline_199723.txt")
 
     @staticmethod
     def call_service(img_bgr, service):
