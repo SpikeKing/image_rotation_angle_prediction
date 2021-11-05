@@ -35,7 +35,7 @@ def traverse_dir_files(root_dir, ext=None):
     return paths_list, names_list
 
 
-def check_img(path, size):
+def check_img(idx, path, size):
     """
     检查图像
     """
@@ -59,6 +59,10 @@ def check_img(path, size):
     if not is_good:
         print('[Info] error path: {}'.format(path))
         os.remove(path)
+
+    if (idx + 1) % 1000 == 0:
+        print('[Info] idx: {}'.format(idx + 1))
+
 
 def read_file(data_file, mode='more'):
     """
@@ -93,9 +97,7 @@ def check_error(img_dir, n_prc, size):
 
     pool = Pool(processes=n_prc)  # 多线程下载
     for idx, path in enumerate(paths_list):
-        pool.apply_async(check_img, (path, size))
-        if (idx+1) % 1000 == 0:
-            print('[Info] idx: {}'.format(idx+1))
+        pool.apply_async(check_img, (idx, path, size))
 
     pool.close()
     pool.join()
