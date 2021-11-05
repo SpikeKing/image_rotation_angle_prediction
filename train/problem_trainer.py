@@ -42,7 +42,7 @@ class ProblemTrainer(object):
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
                  nb_epoch=10000,
-                 is_random_crop=False,  # 随机高度和宽度剪裁
+                 is_random_crop=True,  # 随机高度和宽度剪裁
                  version="v1",  # 版本
                  batch_size=32,  # batch_size
                  img_size=448,  # 图像尺寸
