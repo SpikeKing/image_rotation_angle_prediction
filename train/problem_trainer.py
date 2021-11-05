@@ -41,7 +41,7 @@ class ProblemTrainer(object):
                  nb_classes=4,
                  random_angle=10,  # 随机10度
                  is_hw_ratio=False,  # 是否使用高宽比
-                 nb_epoch=200,
+                 nb_epoch=10000,
                  is_random_crop=True,  # 随机高度和宽度剪裁
                  version="v1",  # 版本
                  batch_size=32,  # batch_size
@@ -258,8 +258,8 @@ class ProblemTrainer(object):
             is_random_crop=self.is_random_crop
         )
 
-        steps_per_epoch = max(len(self.train_data) // self.batch_size, 5000)
-        validation_steps = max(len(self.test_data) // self.batch_size, 500)
+        steps_per_epoch = min(len(self.train_data) // self.batch_size, 5000)
+        validation_steps = min(len(self.test_data) // self.batch_size, 500)
 
         monitor = 'val_acc'
         checkpointer = ModelCheckpoint(
