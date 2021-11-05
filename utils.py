@@ -323,8 +323,7 @@ class RotNetDataGenerator(Iterator):
             self.filenames = input
             N = len(self.filenames)
 
-        if N > 100000:  # 每次只处理10w数据，图像太多处理较慢
-            N = 100000
+        N = max(50000, N)  # 每次只处理少量数据，图像太多处理较慢
         self.n_name = len(self.filenames)
         super(RotNetDataGenerator, self).__init__(N, batch_size, shuffle, seed)
 
