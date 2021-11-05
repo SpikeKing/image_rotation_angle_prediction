@@ -259,7 +259,7 @@ class ProblemTrainer(object):
         )
 
         steps_per_epoch = max(len(self.train_data) // self.batch_size, 5000)
-        validation_steps = max(len(self.test_data) // self.batch_size, 200)
+        validation_steps = max(len(self.test_data) // self.batch_size, 500)
 
         monitor = 'val_acc'
         checkpointer = ModelCheckpoint(
