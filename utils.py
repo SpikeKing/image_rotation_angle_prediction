@@ -404,11 +404,11 @@ class RotNetDataGenerator(Iterator):
                     if random_prob(0.5):
                         if random_prob(0.5):
                             h, w, _ = image.shape
-                            out_h = int(h // 2)  # mode 1
+                            out_h = int(h // 4 * 3)  # mode 1
                             image = random_crop(image, out_h, w)
                         else:
                             h, w, _ = image.shape
-                            out_w = int(w // 2)  # mode 1
+                            out_w = int(w // 4 * 3)  # mode 1
                             image = random_crop(image, h, out_w)
 
             rotated_image, rotation_angle, rotated_ratio = self.process_img(image)

@@ -683,7 +683,6 @@ def random_crop(img, height, width, sh=0, sw=0):
     随机剪裁
     """
     import random
-    # print(sh, img.shape[0] - height - sh)
     h, w, _ = img.shape
     img = img[sh:h - sh, sw:w - sw]
     h, w, _ = img.shape
