@@ -409,8 +409,12 @@ class RotNetDataGenerator(Iterator):
                             h, w, _ = image.shape
                             out_w = int(w // 4 * 3)  # mode 1
                             image = random_crop(image, h, out_w)
-
-            rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
+            try:
+                rotated_image, rotation_angle, rotated_ratio = self.process_img(image)
+            except Exception as e:
+                print('[Error] e: {}'.format(e))
+                print('[Error] 错误 image path: {}'.format(self.filenames[j]))
+                continue
 
             # add dimension to account for the channels if the image is greyscale
             if rotated_image.ndim == 2:
