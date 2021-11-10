@@ -243,9 +243,29 @@ class DatasetReorder(object):
         print('[Info] 输出路径: {}, 样本数: {}'.format(len(path_list), len(data_lines)))
         print('[Info] 处理完成: {}'.format(out_path_file))
 
+    def merge_val_cases(self):
+        print('[Info] 验证文件夹: {}'.format(self.out3_files_folder))
+        paths_list, names_list = traverse_dir_files(self.out3_files_folder)
+        out_file_format = os.path.join(self.out2_files_folder, "dataset_merged_val_{}.txt")
+        out_lines = []
+        for path in paths_list:
+            data_lines = read_file(path)
+            out_lines += data_lines
+        print('[Info] 验证样本数: {}'.format(out_lines))
+        out_lines = out_lines * 4
+        print('[Info] 验证样本数: {}'.format(out_lines))
+        out_file = out_file_format.format(len(out_lines))
+        write_list_to_file(out_file, out_lines)
+        print('[Info] 写入完成: {}'.format(out_file))
+
     def process_v7(self):
-        self.format_samples("dataset_textline_195043.txt", 50000)
-        self.format_samples_val("dataset_textline_50000.txt", 3000)
+        self.format_samples("dataset_textline_195043.txt", 200000)
+        self.format_samples_val("dataset_textline_200000.txt", 3000)
+        self.format_samples("dataset_little-symbol_238753.txt", 100000)
+        self.format_samples_val("dataset_textline_100000.txt", 3000)
+        self.format_samples("dataset_hardcase_2280.txt", 10000)
+        self.format_samples_val("dataset_textline_10000.txt", 3000)
+        self.merge_val_cases()  # 合并全部验证文件
 
     def process_v8(self):
         file1 = os.path.join(DATA_DIR, "english_page_1.txt")

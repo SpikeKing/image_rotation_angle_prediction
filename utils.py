@@ -303,12 +303,11 @@ class RotNetDataGenerator(Iterator):
         print('[Info] is_hw_ratio: {}'.format(self.is_hw_ratio))
         print('[Info] random_angle: {}'.format(self.random_angle))
         print('[Info] nb_classes: {}'.format(self.nb_classes))
-        print('[Info] is_random_crop_h: {}'.format(self.is_random_crop))
+        print('[Info] is_random_crop: {}'.format(self.is_random_crop))
         print('[Info] ' + "-" * 50)
 
         if self.color_mode not in {'rgb', 'grayscale'}:
-            raise ValueError('Invalid color mode:', self.color_mode,
-                             '; expected "rgb" or "grayscale".')
+            raise ValueError('Invalid color mode:', self.color_mode, '; expected "rgb" or "grayscale".')
 
         # check whether the input is a NumPy array or a list of paths
         if isinstance(input, np.ndarray):
