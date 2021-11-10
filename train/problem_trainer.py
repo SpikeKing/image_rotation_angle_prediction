@@ -295,6 +295,7 @@ def parse_args():
     parser.add_argument('-b', dest='batch_size', required=False, default="16", help='模型版本', type=str)
     parser.add_argument('-s', dest='image_size', required=False, default=448, help='图像尺寸', type=int)
     parser.add_argument('-m', dest='mode', required=False, default="resnet50", help='模型版本', type=str)
+    parser.add_argument('-c', dest='crop', required=False, default=False, help='是否剪裁', type=bool)
     parser.add_argument('-n', dest='number', required=False, default="-1", help='样本数量', type=str)
 
     args = parser.parse_args()
@@ -314,19 +315,22 @@ def parse_args():
     arg_mode = args.mode
     print("[Info] mode: {}".format(arg_mode))
 
+    arg_crop = args.crop
+    print("[Info] crop: {}".format(arg_crop))
+
     arg_number = int(args.number)
     print("[Info] number: {}".format(arg_number))
 
-    return arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_number
+    return arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_crop, arg_number
 
 
 def main():
     """
     入口函数
     """
-    arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_number = parse_args()
+    arg_version, arg_file_path, arg_batch_size, arg_image_size, arg_mode, arg_crop, arg_number = parse_args()
     pt = ProblemTrainer(version=arg_version, file_path=arg_file_path, batch_size=arg_batch_size,
-                        img_size=arg_image_size, mode=arg_mode, number=arg_number)
+                        img_size=arg_image_size, mode=arg_mode, number=arg_number, is_random_crop=arg_crop)
     pt.train()
 
 
