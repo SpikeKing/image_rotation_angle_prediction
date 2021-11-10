@@ -251,9 +251,9 @@ class DatasetReorder(object):
         for path in paths_list:
             data_lines = read_file(path)
             out_lines += data_lines
-        print('[Info] 验证样本数: {}'.format(out_lines))
+        print('[Info] 验证样本数: {}'.format(len(out_lines)))
         out_lines = out_lines * 4
-        print('[Info] 验证样本数: {}'.format(out_lines))
+        print('[Info] 验证样本数: {}'.format(len(out_lines)))
         out_file = out_file_format.format(len(out_lines))
         write_list_to_file(out_file, out_lines)
         print('[Info] 写入完成: {}'.format(out_file))
