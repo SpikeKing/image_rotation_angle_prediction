@@ -258,8 +258,8 @@ class ProblemTrainer(object):
             is_random_crop=self.is_random_crop
         )
 
-        steps_per_epoch = min(len(self.train_data) // self.batch_size, 5000)
-        validation_steps = min(len(self.test_data) // self.batch_size, 500)
+        steps_per_epoch = min(len(self.train_data) // self.batch_size, 50000)
+        validation_steps = min(len(self.test_data) // self.batch_size, 5000)
 
         monitor = 'val_acc'
         checkpointer = ModelCheckpoint(
