@@ -262,9 +262,9 @@ class DatasetReorder(object):
         self.format_samples("dataset_textline_195043.txt", 200000)
         self.format_samples_val("dataset_textline_200000.txt", 3000)
         self.format_samples("dataset_little-symbol_238753.txt", 100000)
-        self.format_samples_val("dataset_textline_100000.txt", 3000)
+        self.format_samples_val("dataset_little-symbol_100000.txt", 3000)
         self.format_samples("dataset_hardcase_2280.txt", 10000)
-        self.format_samples_val("dataset_textline_10000.txt", 3000)
+        self.format_samples_val("dataset_hardcase_10000.txt", 3000)
         self.merge_val_cases()  # 合并全部验证文件
 
     def process_v8(self):
