@@ -25,6 +25,7 @@ class Processor20220314(object):
         self.file_path = os.path.join(DATA_DIR, "files_v3", "all_train_data_0311.txt")
         self.out_file_path = os.path.join(DATA_DIR, "files_v3", "all_train_data_0311.out.txt")
         self.out_folder = "/ProjectRoot/workspace/datasets/rotation_ds_new20220314"
+        mkdir_if_not_exist(self.out_folder)
 
     @staticmethod
     def save_img(img_bgr, img_name):
