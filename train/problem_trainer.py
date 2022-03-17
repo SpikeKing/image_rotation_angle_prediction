@@ -189,6 +189,7 @@ class ProblemTrainer(object):
         print('[Info] 样本数: {}'.format(len(image_paths)))
 
         if is_val:  # 加载验证
+            print('[Info] 增加额外的 datasets_val 数据')
             dataset_val_path = os.path.join(ROOT_DIR, '..', 'datasets', 'datasets_val')
             test_val_filenames = ProblemTrainer.get_total_datasets(dataset_val_path)
             test_val_filenames = test_val_filenames * 4  # 扩大4倍
